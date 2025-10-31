@@ -5,6 +5,7 @@ import com.board_game_statistics.api.auth.dto.LoginResponse;
 import com.board_game_statistics.api.auth.dto.RegisterRequest;
 import com.board_game_statistics.api.users.User;
 import com.board_game_statistics.api.users.dto.UserResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,10 +28,9 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     public ResponseEntity<UserResponse> register(@RequestBody RegisterRequest registerRequest) {
-        User registeredUser = authenticationService.register(registerRequest.email(), registerRequest.password());
-        UserResponse registeredUserResponse = registeredUser.asResponse();
+        authenticationService.register(registerRequest.email(), registerRequest.password());
 
-        return ResponseEntity.ok(registeredUserResponse);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
