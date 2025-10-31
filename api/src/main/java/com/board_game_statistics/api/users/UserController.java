@@ -2,6 +2,7 @@ package com.board_game_statistics.api.users;
 
 import com.board_game_statistics.api.users.dto.UserResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,8 +19,8 @@ public class UserController {
         this.userService = userService;
     }
 
-    // TODO - hide endpoint behind permission
-    @GetMapping()
+    @GetMapping
+    @PreAuthorize("hasAuthority('MANAGE_USERS')")
     public ResponseEntity<List<UserResponse>> users() {
         List<User> users = userService.getUsers();
         List<UserResponse> userResponses = users.stream().map(User::asResponse).toList();

@@ -12,7 +12,7 @@ import java.util.Map;
 public class GlobalExceptionHandler {
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<Map<String, String>> handleBadCredentialsException(BadCredentialsException e) {
-        return new ResponseEntity<>(bodyFrom(e), HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(bodyFrom(e), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(InvalidInputException.class)
