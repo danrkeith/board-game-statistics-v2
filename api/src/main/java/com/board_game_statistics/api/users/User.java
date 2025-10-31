@@ -58,6 +58,6 @@ public class User implements UserDetails {
     }
 
     public UserResponse asResponse() {
-        return new UserResponse(email, authorities);
+        return new UserResponse(id, email, authorities);
     }
 }

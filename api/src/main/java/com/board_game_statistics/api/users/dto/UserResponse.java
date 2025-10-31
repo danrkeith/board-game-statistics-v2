@@ -4,4 +4,4 @@ import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
 
-public record UserResponse(String email, Collection<? extends GrantedAuthority> authorities) { }
+public record UserResponse(long id, String email, Collection<? extends GrantedAuthority> authorities) { }

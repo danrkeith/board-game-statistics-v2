@@ -28,9 +28,11 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     public ResponseEntity<UserResponse> register(@RequestBody RegisterRequest registerRequest) {
-        authenticationService.register(registerRequest.email(), registerRequest.password());
+        User registeredUser = authenticationService.register(registerRequest.email(), registerRequest.password());
 
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        UserResponse registeredUserResponse = registeredUser.asResponse();
+
+        return new ResponseEntity<>(registeredUserResponse, HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
