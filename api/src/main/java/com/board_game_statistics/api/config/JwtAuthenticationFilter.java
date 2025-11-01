@@ -1,8 +1,6 @@
 package com.board_game_statistics.api.config;
 
 import com.board_game_statistics.api.auth.JwtService;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.MalformedJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
