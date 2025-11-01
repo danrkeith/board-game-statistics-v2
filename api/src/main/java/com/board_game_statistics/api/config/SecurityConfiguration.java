@@ -24,9 +24,14 @@ public class SecurityConfiguration {
     private String frontendUrl;
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final JwtExceptionHandlerFilter jwtExceptionHandlerFilter;
 
-    public SecurityConfiguration(JwtAuthenticationFilter jwtAuthenticationFilter) {
+    public SecurityConfiguration(
+            JwtAuthenticationFilter jwtAuthenticationFilter,
+            JwtExceptionHandlerFilter jwtExceptionHandlerFilter
+    ) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.jwtExceptionHandlerFilter = jwtExceptionHandlerFilter;
     }
 
     @Bean
@@ -40,6 +45,7 @@ public class SecurityConfiguration {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
+                .addFilterBefore(jwtExceptionHandlerFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
