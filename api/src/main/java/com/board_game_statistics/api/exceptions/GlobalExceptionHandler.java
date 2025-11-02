@@ -13,22 +13,30 @@ import java.util.Map;
 public class GlobalExceptionHandler {
     @ExceptionHandler(JwtException.class)
     public ResponseEntity<Map<String, String>> handleJwtException(JwtException e) {
-        return new ResponseEntity<>(bodyFrom(e), HttpStatus.UNAUTHORIZED);
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(bodyFrom(e));
     }
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<Map<String, String>> handleBadCredentialsException(BadCredentialsException e) {
-        return new ResponseEntity<>(bodyFrom(e), HttpStatus.UNAUTHORIZED);
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(bodyFrom(e));
     }
 
     @ExceptionHandler(InvalidInputException.class)
     public ResponseEntity<Map<String, String>> handleInvalidInputException(InvalidInputException e) {
-        return new ResponseEntity<>(bodyFrom(e), HttpStatus.BAD_REQUEST);
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(bodyFrom(e));
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<Map<String, String>> handleResourceNotFoundException(ResourceNotFoundException e) {
-        return new ResponseEntity<>(bodyFrom(e), HttpStatus.NOT_FOUND);
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(bodyFrom(e));
     }
 
     private static Map<String, String> bodyFrom(Exception e) {

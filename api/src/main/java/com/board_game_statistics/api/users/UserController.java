@@ -1,13 +1,11 @@
 package com.board_game_statistics.api.users;
 
 import com.board_game_statistics.api.users.dto.UserResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,7 +20,7 @@ public class UserController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('MANAGE_USERS')")
-    public ResponseEntity<List<UserResponse>> users() {
+    public ResponseEntity<List<UserResponse>> getUsers() {
         List<User> users = userService.getUsers();
         List<UserResponse> userResponses = users.stream().map(User::asResponse).toList();
 
@@ -30,7 +28,7 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<UserResponse> me(@AuthenticationPrincipal User user) {
+    public ResponseEntity<UserResponse> getMe(@AuthenticationPrincipal User user) {
         UserResponse userResponse = user.asResponse();
 
         return ResponseEntity.ok(userResponse);
@@ -38,11 +36,21 @@ public class UserController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('MANAGE_USERS')")
-    public ResponseEntity<UserResponse> user(@PathVariable long id) {
+    public ResponseEntity<UserResponse> getUser(@PathVariable long id) {
         User user = userService.getUser(id);
 
         UserResponse userResponse = user.asResponse();
 
         return ResponseEntity.ok(userResponse);
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('MANAGE_USERS')")
+    public ResponseEntity<?> deleteUser(@PathVariable long id) {
+        userService.deleteUser(id);
+
+        return ResponseEntity
+                .status(HttpStatus.NO_CONTENT)
+                .build();
     }
 }

@@ -23,4 +23,12 @@ public class UserServiceImpl implements UserService {
         return userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User does not exist"));
     }
+
+    @Override
+    public void deleteUser(long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User does not exist"));
+
+        userRepository.delete(user);
+    }
 }

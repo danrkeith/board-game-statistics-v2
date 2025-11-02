@@ -44,6 +44,13 @@ Body:
 ```
 
 Returns: `201 CREATED`
+```json
+{
+  "id": 1,
+  "email": "adam@example.com",
+  "authorities": []
+}
+```
 
 ## Users
 
@@ -69,7 +76,7 @@ Returns: `200 OK`
 ]
 ```
 
-### Me
+### Get me
 
 `GET /users/me`
 
@@ -99,3 +106,13 @@ Returns: `200 OK`
 "authorities": []
 }
 ```
+
+### Delete user
+
+`DELETE /users/{id}`
+
+Authority: `MANAGE_USERS`
+
+No body required
+
+Returns: `204 NO CONTENT`

@@ -32,7 +32,9 @@ public class AuthenticationController {
 
         UserResponse registeredUserResponse = registeredUser.asResponse();
 
-        return new ResponseEntity<>(registeredUserResponse, HttpStatus.CREATED);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(registeredUserResponse);
     }
 
     @PostMapping("/login")

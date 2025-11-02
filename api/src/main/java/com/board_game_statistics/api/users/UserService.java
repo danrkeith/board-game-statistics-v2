@@ -6,4 +6,6 @@ public interface UserService {
     List<User> getUsers();
 
     User getUser(long id);
+
+    void deleteUser(long id);
 }
