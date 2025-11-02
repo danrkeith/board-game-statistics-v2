@@ -1,5 +1,6 @@
 package com.board_game_statistics.api.users;
 
+import com.board_game_statistics.api.exceptions.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,5 +16,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> getUsers() {
         return userRepository.findAll();
+    }
+
+    @Override
+    public User getUser(long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User does not exist"));
     }
 }

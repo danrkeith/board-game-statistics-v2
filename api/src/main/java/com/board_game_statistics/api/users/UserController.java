@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,6 +31,16 @@ public class UserController {
 
     @GetMapping("/me")
     public ResponseEntity<UserResponse> me(@AuthenticationPrincipal User user) {
+        UserResponse userResponse = user.asResponse();
+
+        return ResponseEntity.ok(userResponse);
+    }
+
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('MANAGE_USERS')")
+    public ResponseEntity<UserResponse> user(@PathVariable long id) {
+        User user = userService.getUser(id);
+
         UserResponse userResponse = user.asResponse();
 
         return ResponseEntity.ok(userResponse);

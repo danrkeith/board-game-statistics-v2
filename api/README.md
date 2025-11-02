@@ -47,9 +47,11 @@ Returns: `201 CREATED`
 
 ## Users
 
-### Users
+### Get users
 
 `GET /users`
+
+Authority: `MANAGE_USERS`
 
 No body required
 
@@ -78,5 +80,22 @@ Returns: `200 OK`
 {
   "email": "adam@example.com",
   "authorities": []
+}
+```
+
+### Get user
+
+`GET /users/{id}`
+
+Authority: `MANAGE_USERS`
+
+No body required
+
+Returns: `200 OK`
+```json
+{
+"id": 1,
+"email": "adam@example.com",
+"authorities": []
 }
 ```
