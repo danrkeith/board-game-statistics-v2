@@ -1,16 +1,14 @@
-import { Col, Container, Row } from 'react-bootstrap'
-import LoginPage from './LoginPage'
+import { AuthProvider } from './context/AuthContext';
+import LoginPage from './pages/account/LoginPage';
 
 const App = () => {
     return (
-        <Container fluid>
-            <Row>
-                <Col>
-                    <LoginPage />
-                </Col>
-            </Row>
-        </Container>
-    )
-}
+        <div className="m-5">
+            <AuthProvider>
+                <LoginPage />
+            </AuthProvider>
+        </div>
+    );
+};
 
-export default App
+export default App;

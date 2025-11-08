@@ -30,6 +30,18 @@ export default defineConfig([
     },
     rules: {
       '@stylistic/indent': ['error', 4],
+      '@stylistic/semi': ['error', 'always'],
+      '@stylistic/member-delimiter-style': ['error', {
+        multiline: {
+          delimiter: 'semi',
+          requireLast: true
+        },
+        singleline: {
+          delimiter: 'semi',
+          requireLast: false
+        }
+      }],
+      '@stylistic/jsx-indent-props': ['error', 4],
     }
   },
 ])
