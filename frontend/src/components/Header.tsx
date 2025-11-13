@@ -1,9 +1,9 @@
 import { Container, Nav, Navbar } from 'react-bootstrap';
-import { HOME_PATH, LOGIN_PATH } from './App';
+import { HOME_PATH, LOGIN_PATH } from '../App';
 import { Link, useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
-import { AuthContext } from './context/AuthContext';
-import { UserContext } from './context/UserContext';
+import { AuthContext } from '../context/AuthContext';
+import { UserContext } from '../context/UserContext';
 
 const Header = () => {
     const { logout } = useContext(AuthContext);
