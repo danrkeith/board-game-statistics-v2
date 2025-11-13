@@ -27,5 +27,5 @@ jobs:
         cache: maven
       
     - name: Build and test with Maven
-      run: mvn package
+      run: mvn verify -Pci
       working-directory: api
