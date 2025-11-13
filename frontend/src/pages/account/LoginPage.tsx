@@ -1,8 +1,8 @@
 import { useContext, useState } from 'react';
 import { Button, Form, Spinner } from 'react-bootstrap';
 import { AuthContext } from '../../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
 import { HOME_PATH } from '../../App';
+import { useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
     const [email, setEmail] = useState('');
@@ -16,7 +16,7 @@ const LoginPage = () => {
     const handleSubmission = (event: React.FormEvent) => {
         event.preventDefault();
         login({ email, password })
-            .then(() => navigate(HOME_PATH))
+            .then(() => void navigate(HOME_PATH))
             .catch((err: Error) => {
                 setError(err.message);
                 setPassword('');

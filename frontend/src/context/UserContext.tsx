@@ -33,10 +33,10 @@ const UserProvider = ({ children }: UserProviderProps) => {
             return;
         }
 
-        callWithAuth(apiGetMe)
+        void callWithAuth(apiGetMe)
             .then(user => setUser(user))
             .finally(() => setIsLoading(false));
-    }, [jwt]);
+    }, [jwt, callWithAuth]);
 
     const contextValue = {
         isLoading,

@@ -29,7 +29,7 @@ const Header = () => {
                             <Nav.Item>
                                 <Nav.Link onClick={() => {
                                     logout();
-                                    navigate(HOME_PATH);
+                                    void navigate(HOME_PATH);
                                 }}
                                 >
                                     Logout
