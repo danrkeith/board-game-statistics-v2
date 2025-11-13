@@ -21,7 +21,7 @@ import java.util.List;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfiguration {
-    @Value("${BGSV2_FRONTEND_URL}")
+    @Value("${frontend.url}")
     private String frontendUrl;
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
