@@ -1,17 +1,22 @@
 import { useContext, useState } from 'react';
 import { Button, Form, Spinner } from 'react-bootstrap';
 import { AuthContext } from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import { HOME_PATH } from '../../App';
 
 const LoginPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState<string | null>(null);
 
-    const { isLoading, jwt, login } = useContext(AuthContext);
+    const navigate = useNavigate();
+
+    const { isLoading, login } = useContext(AuthContext);
 
     const handleSubmission = (event: React.FormEvent) => {
         event.preventDefault();
         login({ email, password })
+            .then(() => navigate(HOME_PATH))
             .catch((err: Error) => {
                 setError(err.message);
                 setPassword('');
@@ -58,14 +63,7 @@ const LoginPage = () => {
                         <Spinner as="span" className="ms-3" />
                     )}
                 </Form.Group>
-
             </Form>
-            <br />
-            <p>
-                JWT:
-                {' '}
-                {jwt ?? 'Not authorized'}
-            </p>
         </>
     );
 };
