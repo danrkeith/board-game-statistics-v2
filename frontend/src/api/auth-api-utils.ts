@@ -1,4 +1,4 @@
-import { apiPost, isErrorResponse, type ErrorResponse } from './api-utils';
+import { apiPost, returnDataFrom, } from './api-utils';
 
 const baseEndpoint = '/auth';
 
@@ -13,14 +13,6 @@ interface LoginResponse {
 }
 
 const apiLogin = (credentials: LoginRequest): Promise<LoginResponse> =>
-    apiPost(baseEndpoint + '/login', credentials)
-        .then((res: Response) => res.json())
-        .then((data: LoginResponse | ErrorResponse) => {
-            if (isErrorResponse(data)) {
-                throw new Error(data.message);
-            }
-
-            return data;
-        });
+    returnDataFrom<LoginResponse>(() => apiPost(baseEndpoint + '/login', credentials));
 
 export { apiLogin };

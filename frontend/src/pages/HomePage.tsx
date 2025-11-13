@@ -1,16 +1,15 @@
 import { useContext } from 'react';
-import { AuthContext } from '../context/AuthContext';
+import { UserContext } from '../context/UserContext';
 
 const HomePage = () => {
-    const { isLoggedIn } = useContext(AuthContext);
+    const { user } = useContext(UserContext);
 
     return (
         <>
             <h1>Home</h1>
-            <p>Welcome!</p>
-            <p>User is { isLoggedIn || 'not' } logged in</p>
+            <p>Welcome{user && user.email}!</p>
         </>
     );
-}
+};
 
 export default HomePage;

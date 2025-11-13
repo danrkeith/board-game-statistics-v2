@@ -1,13 +1,12 @@
 import { createContext, useEffect, useState } from 'react';
 import { apiLogin } from '../api/auth-api-utils';
-import { useNavigate } from 'react-router-dom';
 
 interface AuthContextType {
     isLoading: boolean;
-    isLoggedIn: boolean;
     jwt: string | null;
     login: (credentials: Credentials) => Promise<void>;
-    logout: (to: string) => void;
+    logout: () => void;
+    callWithAuth: <ReqT,ResT>(apiFunc: (jwt: string, body?: ReqT) => Promise<ResT>, body?: ReqT) => Promise<ResT>;
 }
 
 interface Credentials {
@@ -21,18 +20,15 @@ interface AuthProviderProps {
 
 const AuthContext = createContext<AuthContextType>({
     isLoading: true,
-    isLoggedIn: false,
     jwt: null,
-    login: () => new Promise(() => console.error('Login function not attached')),
-    logout: () => console.error('Logout function not attached'),
+    login: () => new Promise(() => console.error('AuthContext.login function not attached')),
+    logout: () => console.error('AuthContext.logout function not attached'),
+    callWithAuth: () => new Promise(() => console.error('AuthContext.passAuthTo function not attached')),
 });
 
 const AuthProvider = ({ children }: AuthProviderProps) => {
     const [isLoading, setIsLoading] = useState(true);
     const [jwt, setJwt] = useState<string | null>(null);
-    const navigate = useNavigate();
-
-    const isLoggedIn = jwt !== null;
 
     useEffect(() => {
         setJwt(sessionStorage.getItem('jwt'));
@@ -50,17 +46,26 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
             .finally(() => setIsLoading(false));
     };
 
-    const logout = (to: string) => {
+    const logout = () => {
         setJwt(null);
-        navigate(to);
-    }
+    };
+
+    const callWithAuth = <ReqT,ResT>(apiFunc: (jwt: string, body?: ReqT) => Promise<ResT>, body?: ReqT): Promise<ResT> => {
+        if (jwt === null) {
+            const error = new Error(`Api call to ${apiFunc.name} requires auth`);
+            console.error(error);
+            return Promise.reject(error);
+        }
+
+        return apiFunc(jwt, body);
+    };
 
     const contextValue: AuthContextType = {
         isLoading,
-        isLoggedIn,
         jwt,
         login,
         logout,
+        callWithAuth,
     };
 
     return (

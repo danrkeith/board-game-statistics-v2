@@ -13,4 +13,4 @@ test('should render home page by default', () => {
     render(<App />);
 
     expect(screen.getByText('Welcome!')).toBeInTheDocument();
-})
+});
