@@ -1,4 +1,4 @@
-import type { User } from '../model';
+import type { User } from '../types';
 import { apiGet, returnDataFrom } from './api-utils';
 
 const baseEndpoint = '/users';

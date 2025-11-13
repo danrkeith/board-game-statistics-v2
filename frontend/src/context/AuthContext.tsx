@@ -1,5 +1,5 @@
 import { createContext, useEffect, useState } from 'react';
-import { apiLogin } from '../api/auth-api-utils';
+import { apiLogin } from '../utils/api/auth-api-utils';
 
 interface AuthContextType {
     isLoading: boolean;

@@ -1,6 +1,6 @@
 import { Container } from 'react-bootstrap';
 import { AuthProvider } from './context/AuthContext';
-import Header from './Header';
+import Header from './components/Header';
 import LoginPage from './pages/account/LoginPage';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import HomePage from './pages/HomePage';

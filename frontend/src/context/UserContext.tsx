@@ -1,8 +1,8 @@
 import type React from 'react';
-import type { User } from '../model';
+import type { User } from '../utils/types';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { AuthContext } from './AuthContext';
-import { apiGetMe } from '../api/users-api-utils';
+import { apiGetMe } from '../utils/api/users-api-utils';
 
 interface UserContextType {
     isLoading: boolean;
