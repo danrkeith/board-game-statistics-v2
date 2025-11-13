@@ -9,7 +9,7 @@ const HomePage = () => {
             <h1>Home</h1>
             <p>
                 Welcome
-                {user?.email}
+                {user && ` ${user.email}`}
                 !
             </p>
         </>

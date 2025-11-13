@@ -18,6 +18,8 @@ interface AuthProviderProps {
     children?: React.ReactNode;
 }
 
+const JWT_STORAGE_KEY = 'jwt';
+
 const AuthContext = createContext<AuthContextType>({
     isLoading: true,
     jwt: null,
@@ -31,7 +33,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     const [jwt, setJwt] = useState<string | null>(null);
 
     useEffect(() => {
-        setJwt(sessionStorage.getItem('jwt'));
+        setJwt(sessionStorage.getItem(JWT_STORAGE_KEY));
         setIsLoading(false);
     }, []);
 
@@ -40,13 +42,14 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
 
         return apiLogin(credentials)
             .then(({ jwt }) => {
-                sessionStorage.setItem('jwt', jwt);
+                sessionStorage.setItem(JWT_STORAGE_KEY, jwt);
                 setJwt(jwt);
             })
             .finally(() => setIsLoading(false));
     };
 
     const logout = () => {
+        sessionStorage.removeItem(JWT_STORAGE_KEY);
         setJwt(null);
     };
 
