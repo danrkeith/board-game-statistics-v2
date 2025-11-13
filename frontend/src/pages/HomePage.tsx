@@ -7,7 +7,11 @@ const HomePage = () => {
     return (
         <>
             <h1>Home</h1>
-            <p>Welcome{user && user.email}!</p>
+            <p>
+                Welcome
+                {user && user.email}
+                !
+            </p>
         </>
     );
 };

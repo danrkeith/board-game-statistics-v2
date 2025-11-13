@@ -1,7 +1,7 @@
 import type React from 'react';
 import type { User } from '../model';
 import { createContext, useContext, useEffect, useState } from 'react';
-import { AuthContext, } from './AuthContext';
+import { AuthContext } from './AuthContext';
 import { apiGetMe } from '../api/users-api-utils';
 
 interface UserContextType {
@@ -34,7 +34,7 @@ const UserProvider = ({ children }: UserProviderProps) => {
         }
 
         callWithAuth(apiGetMe)
-            .then((user) => setUser(user))
+            .then(user => setUser(user))
             .finally(() => setIsLoading(false));
     }, [jwt]);
 
@@ -47,7 +47,7 @@ const UserProvider = ({ children }: UserProviderProps) => {
         <UserContext.Provider value={contextValue}>
             {children}
         </UserContext.Provider>
-    )
-}
+    );
+};
 
-export { UserContext, UserProvider }
+export { UserContext, UserProvider };

@@ -1,4 +1,4 @@
-import { apiPost, returnDataFrom, } from './api-utils';
+import { apiPost, returnDataFrom } from './api-utils';
 
 const baseEndpoint = '/auth';
 

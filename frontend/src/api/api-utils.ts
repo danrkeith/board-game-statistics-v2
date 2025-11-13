@@ -9,10 +9,10 @@ const getHeaders = (jwt?: string) => {
     return {
         'Content-Type': 'application/json',
         ...(jwt && {
-            'Authorization': `Bearer ${jwt}`,
+            Authorization: `Bearer ${jwt}`,
         }),
     };
-}
+};
 
 const isErrorResponse = (data: object) => 'error' in data && 'message' in data;
 

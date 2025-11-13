@@ -30,7 +30,10 @@ const Header = () => {
                                 <Nav.Link onClick={() => {
                                     logout();
                                     navigate(HOME_PATH);
-                                }}>Logout</Nav.Link>
+                                }}
+                                >
+                                    Logout
+                                </Nav.Link>
                             </Nav.Item>
                         )}
                 </Nav>

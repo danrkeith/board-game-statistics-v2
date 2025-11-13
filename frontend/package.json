@@ -8,7 +8,6 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "lint-fix": "eslint . --fix",
-    "lint-gh": "eslint . --format github",
     "preview": "vite preview",
     "test": "vitest"
   },

@@ -25,12 +25,12 @@ jobs:
         
       - name: Install dependencies
         run: npm ci
-
-      - name: Lint
-        run: npm run lint-gh
       
       - name: Build
         run: npm run build
 
       - name: Test
         run: npm test
+
+      - name: Lint
+        run: npm run lint
