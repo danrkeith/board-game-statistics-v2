@@ -2,7 +2,7 @@ import type React from 'react';
 import type { User } from '../model';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { AuthContext, } from './AuthContext';
-import { apiMe } from '../api/users-api-utils';
+import { apiGetMe } from '../api/users-api-utils';
 
 interface UserContextType {
     isLoading: boolean;
@@ -25,7 +25,6 @@ const UserProvider = ({ children }: UserProviderProps) => {
     const [user, setUser] = useState<User | null>(null);
 
     useEffect(() => {
-        console.log("Here");
         setIsLoading(true);
 
         if (jwt === null) {
@@ -34,7 +33,7 @@ const UserProvider = ({ children }: UserProviderProps) => {
             return;
         }
 
-        callWithAuth(apiMe)
+        callWithAuth(apiGetMe)
             .then((user) => setUser(user))
             .finally(() => setIsLoading(false));
     }, [jwt]);

@@ -3,7 +3,7 @@ import { apiGet, returnDataFrom } from './api-utils';
 
 const baseEndpoint = '/users';
 
-const apiMe = (jwt: string) =>
+const apiGetMe = (jwt: string) =>
     returnDataFrom<User>(() => apiGet(baseEndpoint + "/me", jwt));
 
-export { apiMe };
+export { apiGetMe };
