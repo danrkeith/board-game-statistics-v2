@@ -8,6 +8,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      BGSV2_DB_URL: ''
+      BGSV2_DB_USERNAME: ''
+      BGSV2_DB_PASSWORD: ''
+      BGSV2_FRONTEND_URL: ''
+      BGSV2_JWT_SECRET: ''
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
