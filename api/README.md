@@ -66,10 +66,12 @@ Returns: `200 OK`
 ```json
 [
   {
+    "id": 1,
     "email": "adam@example.com",
     "authorities": []
   },
   {
+    "id": 2,
     "email": "bob@example.com",
     "authorities": []
   }
@@ -85,6 +87,7 @@ No body required
 Returns: `200 OK`
 ```json
 {
+  "id": 1,
   "email": "adam@example.com",
   "authorities": []
 }
@@ -101,9 +104,9 @@ No body required
 Returns: `200 OK`
 ```json
 {
-"id": 1,
-"email": "adam@example.com",
-"authorities": []
+  "id": 1,
+  "email": "adam@example.com",
+  "authorities": []
 }
 ```
 
