@@ -9,10 +9,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout ./api
+    - name: Checkout repository
       uses: actions/checkout@v4
-      with:
-        path: api
       
     - name: Set up JDK 25
       uses: actions/setup-java@v4
