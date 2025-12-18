@@ -77,14 +77,6 @@
             <scope>test</scope>
         </dependency>
 	</dependencies>
-    <profiles>
-        <profile>
-            <id>ci</id>
-            <properties>
-                <spring.profiles.active>ci</spring.profiles.active>
-            </properties>
-        </profile>
-    </profiles>
     <build>
 		<plugins>
 			<plugin>
@@ -95,11 +87,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.1.2</version>
-                <configuration>
-                    <systemPropertyVariables>
-                        <spring.profiles.active>${spring.profiles.active}</spring.profiles.active>
-                    </systemPropertyVariables>
-                </configuration>
             </plugin>
 		</plugins>
 	</build>
