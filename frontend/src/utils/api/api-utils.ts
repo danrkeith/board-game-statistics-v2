@@ -1,4 +1,4 @@
-const baseUrl = 'http://localhost:8080';
+const baseUrl = String(import.meta.env.BGSV2_API_URL);
 
 interface ErrorResponse {
     error: string;
