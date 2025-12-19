@@ -1,4 +1,4 @@
-const baseUrl = 'http://localhost:8080';
+const baseUrl = import.meta.env.BGSV2_BACKEND_URL;
 
 interface ErrorResponse {
     error: string;
