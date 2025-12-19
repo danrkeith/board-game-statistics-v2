@@ -1,4 +1,4 @@
-const baseUrl = import.meta.env.BGSV2_BACKEND_URL;
+const baseUrl = String(import.meta.env.BGSV2_API_URL);
 
 interface ErrorResponse {
     error: string;
