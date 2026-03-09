@@ -28,6 +28,10 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private Set<Authority> authorities = EnumSet.noneOf(Authority.class);
 
+    public long getId() {
+        return id;
+    }
+
     @Override
     public String getUsername() {
         return email;

@@ -8,37 +8,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @ActiveProfiles("test")
 public class AuthenticationServiceTests {
-    private static final String[] TEST_EMAILS = {
-            "test1@example.com",
-            "test2@example.com",
-            "test3@example.com",
-            "test4@example.com"
-    };
-    private static final String[] TEST_PASSWORDS = {
-            "test1-password",
-            "test2-password",
-            "test3-password",
-            "test4-password"
-    };
+    private static final String TEST_EMAIL = "test@example.com";
+    private static final String TEST_PASSWORD = "test-password";
 
     @Autowired
     private AuthenticationService authenticationService;
 
     @Test
+    @Transactional
     void testRegister() {
-        User savedUser = authenticationService.register(TEST_EMAILS[0], TEST_PASSWORDS[0]);
+        User savedUser = authenticationService.register(TEST_EMAIL, TEST_PASSWORD);
 
-        Assertions.assertEquals(TEST_EMAILS[0], savedUser.getEmail());
+        Assertions.assertEquals(TEST_EMAIL, savedUser.getEmail());
     }
 
     @Test
+    @Transactional
     void testRegisterAndAuthenticateSuccessfully() {
-        User savedUser = authenticationService.register(TEST_EMAILS[1], TEST_PASSWORDS[1]);
-        User authenticatedUser = authenticationService.authenticate(TEST_EMAILS[1], TEST_PASSWORDS[1]);
+        User savedUser = authenticationService.register(TEST_EMAIL, TEST_PASSWORD);
+        User authenticatedUser = authenticationService.authenticate(TEST_EMAIL, TEST_PASSWORD);
 
         Assertions.assertEquals(savedUser, authenticatedUser);
     }
@@ -46,16 +39,17 @@ public class AuthenticationServiceTests {
     @Test
     void testAuthenticateUnsuccessfully() {
         Assertions.assertThrows(BadCredentialsException.class, () ->
-                authenticationService.authenticate(TEST_EMAILS[2], TEST_PASSWORDS[2])
+                authenticationService.authenticate(TEST_EMAIL, TEST_PASSWORD)
         );
     }
 
     @Test
+    @Transactional
     void testRegisterTwice() {
-        authenticationService.register(TEST_EMAILS[3], TEST_PASSWORDS[3]);
+        authenticationService.register(TEST_EMAIL, TEST_PASSWORD);
 
         Assertions.assertThrows(UserAlreadyExistsException.class, () ->
-                authenticationService.register(TEST_EMAILS[3], TEST_PASSWORDS[3])
+                authenticationService.register(TEST_EMAIL, TEST_PASSWORD)
         );
     }
 }
