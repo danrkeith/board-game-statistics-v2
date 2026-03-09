@@ -60,4 +60,18 @@ public class User implements UserDetails {
     public UserResponse asResponse() {
         return new UserResponse(id, email, authorities);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        User user = (User) o;
+        return id == user.id
+                && email.equals(user.email)
+                && password.equals(user.password);
+    }
 }

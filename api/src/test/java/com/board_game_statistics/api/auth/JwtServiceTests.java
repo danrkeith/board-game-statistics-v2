@@ -50,6 +50,8 @@ public class JwtServiceTests {
         String token = jwtService.generateToken(TEST_USER_1);
         Thread.sleep(jwtExpiration);
 
-        Assertions.assertThrows(ExpiredJwtException.class, () -> jwtService.isTokenValid(token, TEST_USER_1));
+        Assertions.assertThrows(ExpiredJwtException.class, () ->
+                jwtService.isTokenValid(token, TEST_USER_1)
+        );
     }
 }
