@@ -52,7 +52,7 @@ const LoginPage = () => {
                 </Form.Group>
                 <Form.Group>
                     <p className="text-muted">
-                        Don't have an account? Register
+                        Don't have an account? Register{' '}
                         <Link to={REGISTER_PATH}>here</Link>
                     </p>
                 </Form.Group>

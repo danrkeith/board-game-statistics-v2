@@ -58,7 +58,7 @@ const RegisterPage = () => {
                 </Form.Group>
                 <Form.Group className="mb-3">
                     <Form.Label>
-                        Email address
+                        Email address{' '}
                         <span className="text-info">*</span>
                     </Form.Label>
                     <Form.Control
@@ -73,7 +73,7 @@ const RegisterPage = () => {
                 </Form.Group>
                 <Form.Group className="mb-3">
                     <Form.Label>
-                        Password
+                        Password{' '}
                         <span className="text-info">*</span>
                     </Form.Label>
                     <Form.Control
