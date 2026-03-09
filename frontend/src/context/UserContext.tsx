@@ -19,13 +19,17 @@ const UserContext = createContext<UserContextType>({
 });
 
 const UserProvider = ({ children }: UserProviderProps) => {
-    const { jwt, callWithAuth } = useContext(AuthContext);
+    const { isLoading: authIsLoading, jwt, callWithAuth, logout } = useContext(AuthContext);
 
     const [isLoading, setIsLoading] = useState(true);
     const [user, setUser] = useState<User | null>(null);
 
     useEffect(() => {
         setIsLoading(true);
+
+        if (authIsLoading) {
+            return;
+        }
 
         if (jwt === null) {
             setUser(null);
@@ -35,8 +39,14 @@ const UserProvider = ({ children }: UserProviderProps) => {
 
         void callWithAuth(apiGetMe)
             .then(user => setUser(user))
+            .catch(({ cause }: Error) => {
+                if (cause === 'ExpiredJwtException') {
+                    console.log('JWT expired, logging out');
+                    logout();
+                }
+            })
             .finally(() => setIsLoading(false));
-    }, [jwt, callWithAuth]);
+    }, [authIsLoading, callWithAuth, logout, jwt]);
 
     const contextValue = {
         isLoading,

@@ -23,6 +23,9 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password;
 
+    private String firstName;
+    private String lastName;
+
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -56,13 +59,23 @@ public class User implements UserDetails {
         return this;
     }
 
+    public User setFirstName(String firstName) {
+        this.firstName = firstName;
+        return this;
+    }
+
+    public User setLastName(String lastName) {
+        this.lastName = lastName;
+        return this;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities != null ? authorities : Collections.emptySet();
     }
 
     public UserResponse asResponse() {
-        return new UserResponse(id, email, authorities);
+        return new UserResponse(id, email, firstName, lastName, authorities);
     }
 
     @Override

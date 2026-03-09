@@ -1,5 +1,5 @@
 import { Container, Nav, Navbar } from 'react-bootstrap';
-import { HOME_PATH, LOGIN_PATH } from '../App';
+import { HOME_PATH, LOGIN_PATH, MANAGE_USERS_PATH } from '../App';
 import { Link, useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
@@ -7,7 +7,7 @@ import { UserContext } from '../context/UserContext';
 
 const Header = () => {
     const { logout } = useContext(AuthContext);
-    const { user } = useContext(UserContext);
+    const { isLoading, user } = useContext(UserContext);
 
     const navigate = useNavigate();
 
@@ -19,23 +19,32 @@ const Header = () => {
                     <Nav.Item>
                         <Nav.Link as={Link} to={HOME_PATH}>Home</Nav.Link>
                     </Nav.Item>
-                    {user === null
+                    {isLoading || (user === null
                         ? (
                             <Nav.Item>
                                 <Nav.Link as={Link} to={LOGIN_PATH}>Login</Nav.Link>
                             </Nav.Item>
                         )
                         : (
-                            <Nav.Item>
-                                <Nav.Link onClick={() => {
-                                    logout();
-                                    void navigate(HOME_PATH);
-                                }}
-                                >
-                                    Logout
-                                </Nav.Link>
-                            </Nav.Item>
-                        )}
+                            <>
+                                {user.authorities.includes('MANAGE_USERS') && (
+                                    <Nav.Item>
+                                        <Nav.Link as={Link} to={MANAGE_USERS_PATH}>
+                                            Manage users
+                                        </Nav.Link>
+                                    </Nav.Item>
+                                )}
+                                <Nav.Item>
+                                    <Nav.Link onClick={() => {
+                                        logout();
+                                        void navigate(HOME_PATH);
+                                    }}
+                                    >
+                                        Logout
+                                    </Nav.Link>
+                                </Nav.Item>
+                            </>
+                        ))}
                 </Nav>
             </Container>
         </Navbar>

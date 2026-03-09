@@ -39,6 +39,13 @@ public class GlobalExceptionHandler {
                 .body(bodyFrom(e));
     }
 
+    @ExceptionHandler(ForbiddenOperationException.class)
+    public ResponseEntity<Map<String, String>> handleForbiddenOperationException(ForbiddenOperationException e) {
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(bodyFrom(e));
+    }
+
     private static Map<String, String> bodyFrom(Exception e) {
         return Map.of(
                 "error", e.getClass().getSimpleName(),

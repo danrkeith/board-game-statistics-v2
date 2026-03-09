@@ -32,9 +32,9 @@ public class UserServiceTests {
 
     @BeforeEach
     void beforeEach() {
-        authenticationService.register(TEST_EMAILS[0], TEST_PASSWORDS[0]);
-        authenticationService.register(TEST_EMAILS[1], TEST_PASSWORDS[1]);
-        authenticationService.register(TEST_EMAILS[2], TEST_PASSWORDS[2]);
+        authenticationService.register(null, null, TEST_EMAILS[0], TEST_PASSWORDS[0]);
+        authenticationService.register(null, null, TEST_EMAILS[1], TEST_PASSWORDS[1]);
+        authenticationService.register(null, null, TEST_EMAILS[2], TEST_PASSWORDS[2]);
     }
 
     @Test

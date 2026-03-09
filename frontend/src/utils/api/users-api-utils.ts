@@ -1,9 +1,15 @@
 import type { User } from '../types';
-import { apiGet, returnDataFrom } from './api-utils';
+import { apiDelete, apiGet, returnDataFrom } from './api-utils';
 
 const baseEndpoint = '/users';
 
 const apiGetMe = (jwt: string) =>
-    returnDataFrom<User>(() => apiGet(baseEndpoint + '/me', jwt));
+    returnDataFrom<User>(() => apiGet({ endpoint: `${baseEndpoint}/me`, jwt }));
 
-export { apiGetMe };
+const apiGetUsers = (jwt: string) =>
+    returnDataFrom<User[]>(() => apiGet({ endpoint: baseEndpoint, jwt }));
+
+const apiDeleteUser = (jwt: string, id: number) =>
+    apiDelete({ endpoint: `${baseEndpoint}/${id}`, jwt });
+
+export { apiGetMe, apiGetUsers, apiDeleteUser };
