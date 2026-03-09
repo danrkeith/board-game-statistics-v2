@@ -1,8 +1,11 @@
 package com.board_game_statistics.api.auth;
 
+import com.board_game_statistics.api.auth.exceptions.InvalidEmailException;
+import com.board_game_statistics.api.auth.exceptions.InvalidPasswordException;
 import com.board_game_statistics.api.auth.exceptions.UserAlreadyExistsException;
 import com.board_game_statistics.api.users.User;
 import com.board_game_statistics.api.users.UserRepository;
+import com.board_game_statistics.api.util.Validator;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,6 +31,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public User register(String firstName, String lastName, String email, String password) {
         if (userRepository.existsByEmail(email)) {
             throw new UserAlreadyExistsException();
+        }
+
+        if (!Validator.isEmail(email)) {
+            throw new InvalidEmailException();
+        }
+
+        if (!Validator.isValidPassword(password)) {
+            throw new InvalidPasswordException();
         }
 
         User user = new User()
