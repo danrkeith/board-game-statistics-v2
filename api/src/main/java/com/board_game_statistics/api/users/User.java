@@ -23,6 +23,9 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password;
 
+    private String firstName;
+    private String lastName;
+
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -62,7 +65,7 @@ public class User implements UserDetails {
     }
 
     public UserResponse asResponse() {
-        return new UserResponse(id, email, authorities);
+        return new UserResponse(id, email, firstName, lastName, authorities);
     }
 
     @Override
