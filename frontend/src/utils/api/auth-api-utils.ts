@@ -13,6 +13,6 @@ interface LoginResponse {
 }
 
 const apiLogin = (credentials: LoginRequest): Promise<LoginResponse> =>
-    returnDataFrom<LoginResponse>(() => apiPost({endpoint: `${baseEndpoint}/login`, body: credentials}));
+    returnDataFrom<LoginResponse>(() => apiPost({ endpoint: `${baseEndpoint}/login`, body: credentials }));
 
 export { apiLogin };

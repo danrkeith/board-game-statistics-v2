@@ -47,11 +47,12 @@ const returnDataFrom = <ResT extends object>(apiFunc: () => Promise<Response>) =
         .then((res: Response) => res.json())
         .then((data: ResT | ErrorResponse) => {
             if (isErrorResponse(data)) {
-                throw data;
+                const error = new Error(data.message);
+                error.cause = data.error;
+                throw error;
             }
 
             return data;
         });
 
-export type { ErrorResponse };
 export { returnDataFrom, apiGet, apiPost, apiDelete };

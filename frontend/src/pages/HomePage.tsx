@@ -8,15 +8,17 @@ const HomePage = () => {
     return (
         <>
             <h1>Home</h1>
-            {isLoading ? (
-                <Spinner size="sm" />
-            ) : (
-                <p>
-                    Welcome
-                    {user && ` ${user.email}`}
-                    !
-                </p>
-            )}
+            {isLoading
+                ? (
+                    <Spinner size="sm" />
+                )
+                : (
+                    <p>
+                        Welcome
+                        {user && ` ${user.email}`}
+                        !
+                    </p>
+                )}
         </>
     );
 };

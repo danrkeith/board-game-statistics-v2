@@ -15,18 +15,20 @@ const ManageUsersPage = () => {
             return;
         }
 
-        callWithAuth(apiGetUsers)
+        void callWithAuth(apiGetUsers)
             .then(users => setUsers(users));
-    }, [isLoading]);
+    }, [isLoading, callWithAuth]);
 
     return (
         <>
             <h1>Manage Users</h1>
-            {users === undefined ? (
-                <Spinner />
-            ) : (
-                <UsersTable users={users} />
-            )}
+            {users === undefined
+                ? (
+                    <Spinner />
+                )
+                : (
+                    <UsersTable users={users} />
+                )}
         </>
     );
 };

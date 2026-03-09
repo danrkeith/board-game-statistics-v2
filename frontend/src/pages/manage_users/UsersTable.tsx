@@ -17,7 +17,7 @@ const UsersTable = ({ users }: UsersTableProps) => {
     const dropdownOnSelect = (user: User, eventKey: string | null) => {
         switch (eventKey) {
             case 'delete':
-                callWithAuth(apiDeleteUser, user.id);
+                void callWithAuth(apiDeleteUser, user.id);
                 break;
             default:
         }
@@ -38,14 +38,14 @@ const UsersTable = ({ users }: UsersTableProps) => {
                         <td>Placeholder Name</td>
                         <td>{user.email}</td>
                         <td>
-                            <Dropdown onSelect={(eventKey) => dropdownOnSelect(user, eventKey)}>
+                            <Dropdown onSelect={eventKey => dropdownOnSelect(user, eventKey)}>
                                 <Dropdown.Toggle as={KebabDropdownToggle} />
                                 <Dropdown.Menu>
-                                    <Dropdown.Item eventKey='edit' disabled>
+                                    <Dropdown.Item eventKey="edit" disabled>
                                         Edit
                                     </Dropdown.Item>
                                     {currentUser?.id !== user.id && (
-                                        <Dropdown.Item eventKey='delete' className="text-danger">
+                                        <Dropdown.Item eventKey="delete" className="text-danger">
                                             Delete
                                         </Dropdown.Item>
                                     )}
@@ -57,6 +57,6 @@ const UsersTable = ({ users }: UsersTableProps) => {
             </tbody>
         </Table>
     );
-}
+};
 
 export default UsersTable;

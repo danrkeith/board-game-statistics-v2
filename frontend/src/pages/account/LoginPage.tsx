@@ -3,7 +3,6 @@ import { Button, Form, Spinner } from 'react-bootstrap';
 import { AuthContext } from '../../context/AuthContext';
 import { HOME_PATH } from '../../App';
 import { useNavigate } from 'react-router-dom';
-import type { ErrorResponse } from '../../utils/api/api-utils';
 
 const LoginPage = () => {
     const [email, setEmail] = useState('');
@@ -18,8 +17,8 @@ const LoginPage = () => {
         event.preventDefault();
         login({ email, password })
             .then(() => void navigate(HOME_PATH))
-            .catch((err: ErrorResponse) => {
-                setError(err.message);
+            .catch(({ message }: Error) => {
+                setError(message);
                 setPassword('');
             });
     };
