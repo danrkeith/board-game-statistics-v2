@@ -57,7 +57,10 @@ const RegisterPage = () => {
                     />
                 </Form.Group>
                 <Form.Group className="mb-3">
-                    <Form.Label>Email address <span className="text-info">*</span></Form.Label>
+                    <Form.Label>
+                        Email address
+                        <span className="text-info">*</span>
+                    </Form.Label>
                     <Form.Control
                         type="email"
                         placeholder="jane@citizen.com"
@@ -69,7 +72,10 @@ const RegisterPage = () => {
                     />
                 </Form.Group>
                 <Form.Group className="mb-3">
-                    <Form.Label>Password <span className="text-info">*</span></Form.Label>
+                    <Form.Label>
+                        Password
+                        <span className="text-info">*</span>
+                    </Form.Label>
                     <Form.Control
                         type="password"
                         value={password}
@@ -98,6 +104,6 @@ const RegisterPage = () => {
             </Form>
         </>
     );
-}
+};
 
 export default RegisterPage;

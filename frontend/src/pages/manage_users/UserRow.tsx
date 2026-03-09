@@ -45,7 +45,7 @@ const UserRow = ({ user, isLoggedIn, setUsers }: UserRowProps) => {
                 </Dropdown>
             </td>
         </tr>
-    )
-}
+    );
+};
 
 export default UserRow;
