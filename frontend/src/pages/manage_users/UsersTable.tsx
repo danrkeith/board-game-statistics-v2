@@ -8,16 +8,18 @@ import { UserContext } from '../../context/UserContext';
 
 interface UsersTableProps {
     users: User[];
+    setUsers: React.Dispatch<React.SetStateAction<User[] | undefined>>;
 }
 
-const UsersTable = ({ users }: UsersTableProps) => {
+const UsersTable = ({ users, setUsers }: UsersTableProps) => {
     const { callWithAuth } = useContext(AuthContext);
     const { user: currentUser } = useContext(UserContext);
 
     const dropdownOnSelect = (user: User, eventKey: string | null) => {
         switch (eventKey) {
             case 'delete':
-                void callWithAuth(apiDeleteUser, user.id);
+                void callWithAuth(apiDeleteUser, user.id)
+                    .then(() => setUsers(users => users?.filter(u => u.id !== user.id)));
                 break;
             default:
         }

@@ -27,7 +27,7 @@ const ManageUsersPage = () => {
                     <Spinner />
                 )
                 : (
-                    <UsersTable users={users} />
+                    <UsersTable users={users} setUsers={setUsers} />
                 )}
         </>
     );
