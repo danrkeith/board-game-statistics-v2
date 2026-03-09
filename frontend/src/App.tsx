@@ -6,9 +6,11 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import { UserProvider } from './context/UserContext';
 import ManageUsersPage from './pages/manage_users/ManageUsersPage';
+import RegisterPage from './pages/account/RegisterPage';
 
 export const HOME_PATH = '/';
 export const LOGIN_PATH = '/login';
+export const REGISTER_PATH = '/register';
 export const MANAGE_USERS_PATH = '/manage-users';
 
 const App = () => {
@@ -21,6 +23,7 @@ const App = () => {
                         <Routes>
                             <Route path={HOME_PATH} element={<HomePage />} />
                             <Route path={LOGIN_PATH} element={<LoginPage />} />
+                            <Route path={REGISTER_PATH} element={<RegisterPage />} />
                             <Route path={MANAGE_USERS_PATH} element={<ManageUsersPage />} />
                         </Routes>
                     </Container>

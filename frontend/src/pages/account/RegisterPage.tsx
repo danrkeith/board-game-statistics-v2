@@ -1,21 +1,26 @@
 import { useContext, useState } from 'react';
 import { Button, Form, Spinner } from 'react-bootstrap';
+import { apiRegister } from '../../utils/api/auth-api-utils';
 import { AuthContext } from '../../context/AuthContext';
-import { HOME_PATH, REGISTER_PATH } from '../../App';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
+import { HOME_PATH } from '../../App';
 
-const LoginPage = () => {
+const RegisterPage = () => {
+    const { login } = useContext(AuthContext);
+
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState<string | null>(null);
+    const isLoading = false;
 
     const navigate = useNavigate();
 
-    const { isLoading, login } = useContext(AuthContext);
-
     const handleSubmission = (event: React.FormEvent) => {
         event.preventDefault();
-        login({ email, password })
+        apiRegister({ firstName, lastName, email, password })
+            .then(() => login({ email, password }))
             .then(() => void navigate(HOME_PATH))
             .catch(({ message }: Error) => {
                 setError(message);
@@ -25,10 +30,34 @@ const LoginPage = () => {
 
     return (
         <>
-            <h1 className="mb-3">Login</h1>
+            <h1 className="mb-3">Register</h1>
             <Form onSubmit={handleSubmission}>
                 <Form.Group className="mb-3">
-                    <Form.Label>Email address</Form.Label>
+                    <Form.Label>First name</Form.Label>
+                    <Form.Control
+                        type="text"
+                        placeholder="Jane"
+                        value={firstName}
+                        onChange={(e) => {
+                            setError(null);
+                            setFirstName(e.target.value);
+                        }}
+                    />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                    <Form.Label>Last name</Form.Label>
+                    <Form.Control
+                        type="text"
+                        placeholder="Doe"
+                        value={lastName}
+                        onChange={(e) => {
+                            setError(null);
+                            setLastName(e.target.value);
+                        }}
+                    />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                    <Form.Label>Email address <span className="text-info">*</span></Form.Label>
                     <Form.Control
                         type="email"
                         placeholder="jane@citizen.com"
@@ -40,7 +69,7 @@ const LoginPage = () => {
                     />
                 </Form.Group>
                 <Form.Group className="mb-3">
-                    <Form.Label>Password</Form.Label>
+                    <Form.Label>Password <span className="text-info">*</span></Form.Label>
                     <Form.Control
                         type="password"
                         value={password}
@@ -51,7 +80,7 @@ const LoginPage = () => {
                     />
                 </Form.Group>
                 <Form.Group>
-                    <p className="text-muted">Don't have an account? Register <Link to={REGISTER_PATH}>here</Link></p>
+                    <p className="text-info">* Required fields</p>
                 </Form.Group>
                 {error && (
                     <Form.Group>
@@ -60,7 +89,7 @@ const LoginPage = () => {
                 )}
                 <Form.Group className="d-flex align-items-center">
                     <Button variant="primary" type="submit" disabled={isLoading}>
-                        Login
+                        Register
                     </Button>
                     {isLoading && (
                         <Spinner as="span" className="ms-3" />
@@ -69,6 +98,6 @@ const LoginPage = () => {
             </Form>
         </>
     );
-};
+}
 
-export default LoginPage;
+export default RegisterPage;

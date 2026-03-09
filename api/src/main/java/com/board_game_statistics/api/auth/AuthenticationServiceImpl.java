@@ -25,14 +25,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public User register(String email, String password) {
+    public User register(String firstName, String lastName, String email, String password) {
         if (userRepository.existsByEmail(email)) {
             throw new UserAlreadyExistsException();
         }
 
         User user = new User()
                 .setEmail(email)
-                .setPassword(passwordEncoder.encode(password));
+                .setPassword(passwordEncoder.encode(password))
+                .setFirstName(firstName)
+                .setLastName(lastName);
 
         return userRepository.save(user);
     }

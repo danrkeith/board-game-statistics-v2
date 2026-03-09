@@ -22,7 +22,7 @@ public class AuthenticationServiceTests {
     @Test
     @Transactional
     void testRegister() {
-        User savedUser = authenticationService.register(TEST_EMAIL, TEST_PASSWORD);
+        User savedUser = authenticationService.register(null, null, TEST_EMAIL, TEST_PASSWORD);
 
         Assertions.assertEquals(TEST_EMAIL, savedUser.getEmail());
     }
@@ -30,7 +30,7 @@ public class AuthenticationServiceTests {
     @Test
     @Transactional
     void testRegisterAndAuthenticateSuccessfully() {
-        User savedUser = authenticationService.register(TEST_EMAIL, TEST_PASSWORD);
+        User savedUser = authenticationService.register(null, null, TEST_EMAIL, TEST_PASSWORD);
         User authenticatedUser = authenticationService.authenticate(TEST_EMAIL, TEST_PASSWORD);
 
         Assertions.assertEquals(savedUser, authenticatedUser);
@@ -46,10 +46,10 @@ public class AuthenticationServiceTests {
     @Test
     @Transactional
     void testRegisterTwice() {
-        authenticationService.register(TEST_EMAIL, TEST_PASSWORD);
+        authenticationService.register(null, null, TEST_EMAIL, TEST_PASSWORD);
 
         Assertions.assertThrows(UserAlreadyExistsException.class, () ->
-                authenticationService.register(TEST_EMAIL, TEST_PASSWORD)
+                authenticationService.register(null, null, TEST_EMAIL, TEST_PASSWORD)
         );
     }
 }

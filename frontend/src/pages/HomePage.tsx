@@ -15,7 +15,7 @@ const HomePage = () => {
                 : (
                     <p>
                         Welcome
-                        {user && ` ${user.email}`}
+                        {user?.firstName && ` ${user.firstName}`}
                         !
                     </p>
                 )}
