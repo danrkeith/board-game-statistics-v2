@@ -19,13 +19,17 @@ const UserContext = createContext<UserContextType>({
 });
 
 const UserProvider = ({ children }: UserProviderProps) => {
-    const { jwt, callWithAuth } = useContext(AuthContext);
+    const { isLoading: authIsLoading, jwt, callWithAuth } = useContext(AuthContext);
 
     const [isLoading, setIsLoading] = useState(true);
     const [user, setUser] = useState<User | null>(null);
 
     useEffect(() => {
         setIsLoading(true);
+
+        if (authIsLoading) {
+            return;
+        }
 
         if (jwt === null) {
             setUser(null);
@@ -36,7 +40,7 @@ const UserProvider = ({ children }: UserProviderProps) => {
         void callWithAuth(apiGetMe)
             .then(user => setUser(user))
             .finally(() => setIsLoading(false));
-    }, [jwt, callWithAuth]);
+    }, [authIsLoading, jwt]);
 
     const contextValue = {
         isLoading,

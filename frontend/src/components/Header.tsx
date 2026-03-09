@@ -7,7 +7,7 @@ import { UserContext } from '../context/UserContext';
 
 const Header = () => {
     const { logout } = useContext(AuthContext);
-    const { user } = useContext(UserContext);
+    const { isLoading, user } = useContext(UserContext);
 
     const navigate = useNavigate();
 
@@ -19,7 +19,7 @@ const Header = () => {
                     <Nav.Item>
                         <Nav.Link as={Link} to={HOME_PATH}>Home</Nav.Link>
                     </Nav.Item>
-                    {user === null
+                    {isLoading || (user === null
                         ? (
                             <Nav.Item>
                                 <Nav.Link as={Link} to={LOGIN_PATH}>Login</Nav.Link>
@@ -44,7 +44,7 @@ const Header = () => {
                                     </Nav.Link>
                                 </Nav.Item>
                             </>
-                        )}
+                        ))}
                 </Nav>
             </Container>
         </Navbar>

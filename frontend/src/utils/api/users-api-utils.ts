@@ -6,4 +6,7 @@ const baseEndpoint = '/users';
 const apiGetMe = (jwt: string) =>
     returnDataFrom<User>(() => apiGet(baseEndpoint + '/me', jwt));
 
-export { apiGetMe };
+const apiGetUsers = (jwt: string) =>
+    returnDataFrom<User[]>(() => apiGet(baseEndpoint, jwt));
+
+export { apiGetMe, apiGetUsers };
