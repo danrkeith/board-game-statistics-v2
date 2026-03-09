@@ -2,9 +2,7 @@ package com.board_game_statistics.api.util;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
 public class ValidatorTests {
     private static final String VALID_EMAIL = "email@example.com";
     private static final String INVALID_EMAIL = "not-an-email";
