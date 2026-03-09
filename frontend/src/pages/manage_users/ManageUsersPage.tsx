@@ -1,9 +1,9 @@
-import type { User } from '../../utils/types';
 import { useContext, useEffect, useState } from 'react';
-import { apiGetUsers } from '../../utils/api/users-api-utils';
-import { AuthContext } from '../../context/AuthContext';
-import UsersTable from './UsersTable';
 import { Spinner } from 'react-bootstrap';
+import { AuthContext } from '../../context/AuthContext';
+import { apiGetUsers } from '../../utils/api/users-api-utils';
+import type { User } from '../../utils/types';
+import UsersTable from './UsersTable';
 
 const ManageUsersPage = () => {
     const { isLoading, callWithAuth } = useContext(AuthContext);

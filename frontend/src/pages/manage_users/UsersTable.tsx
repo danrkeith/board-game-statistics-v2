@@ -1,10 +1,8 @@
-import { Dropdown, Table } from 'react-bootstrap';
-import type { User } from '../../utils/types';
-import KebabDropdownToggle from '../../components/KebabDropdownToggle';
 import { useContext } from 'react';
-import { AuthContext } from '../../context/AuthContext';
-import { apiDeleteUser } from '../../utils/api/users-api-utils';
+import { Table } from 'react-bootstrap';
 import { UserContext } from '../../context/UserContext';
+import type { User } from '../../utils/types';
+import UserRow from './UserRow';
 
 interface UsersTableProps {
     users: User[];
@@ -12,18 +10,7 @@ interface UsersTableProps {
 }
 
 const UsersTable = ({ users, setUsers }: UsersTableProps) => {
-    const { callWithAuth } = useContext(AuthContext);
     const { user: currentUser } = useContext(UserContext);
-
-    const dropdownOnSelect = (user: User, eventKey: string | null) => {
-        switch (eventKey) {
-            case 'delete':
-                void callWithAuth(apiDeleteUser, user.id)
-                    .then(() => setUsers(users => users?.filter(u => u.id !== user.id)));
-                break;
-            default:
-        }
-    };
 
     return (
         <Table striped>
@@ -36,25 +23,7 @@ const UsersTable = ({ users, setUsers }: UsersTableProps) => {
             </thead>
             <tbody>
                 {users.map((user: User) => (
-                    <tr key={user.id}>
-                        <td>Placeholder Name</td>
-                        <td>{user.email}</td>
-                        <td>
-                            <Dropdown onSelect={eventKey => dropdownOnSelect(user, eventKey)}>
-                                <Dropdown.Toggle as={KebabDropdownToggle} />
-                                <Dropdown.Menu>
-                                    <Dropdown.Item eventKey="edit" disabled>
-                                        Edit
-                                    </Dropdown.Item>
-                                    {currentUser?.id !== user.id && (
-                                        <Dropdown.Item eventKey="delete" className="text-danger">
-                                            Delete
-                                        </Dropdown.Item>
-                                    )}
-                                </Dropdown.Menu>
-                            </Dropdown>
-                        </td>
-                    </tr>
+                    <UserRow user={user} isLoggedIn={currentUser?.id === user.id} setUsers={setUsers} key={user.id} />
                 ))}
             </tbody>
         </Table>
