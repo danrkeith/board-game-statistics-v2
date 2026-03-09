@@ -3,6 +3,7 @@ import type { User } from '../utils/types';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { AuthContext } from './AuthContext';
 import { apiGetMe } from '../utils/api/users-api-utils';
+import type { ErrorResponse } from '../utils/api/api-utils';
 
 interface UserContextType {
     isLoading: boolean;
@@ -19,7 +20,7 @@ const UserContext = createContext<UserContextType>({
 });
 
 const UserProvider = ({ children }: UserProviderProps) => {
-    const { isLoading: authIsLoading, jwt, callWithAuth } = useContext(AuthContext);
+    const { isLoading: authIsLoading, jwt, callWithAuth, logout } = useContext(AuthContext);
 
     const [isLoading, setIsLoading] = useState(true);
     const [user, setUser] = useState<User | null>(null);
@@ -39,6 +40,12 @@ const UserProvider = ({ children }: UserProviderProps) => {
 
         void callWithAuth(apiGetMe)
             .then(user => setUser(user))
+            .catch(({ error }: ErrorResponse) => {
+                if (error === 'ExpiredJwtException') {
+                    console.log('JWT expired, logging out');
+                    logout();
+                }
+            })
             .finally(() => setIsLoading(false));
     }, [authIsLoading, jwt]);
 

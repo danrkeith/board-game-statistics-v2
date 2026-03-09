@@ -4,6 +4,7 @@ import KebabDropdownToggle from '../../components/KebabDropdownToggle';
 import { useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import { apiDeleteUser } from '../../utils/api/users-api-utils';
+import { UserContext } from '../../context/UserContext';
 
 interface UsersTableProps {
     users: User[];
@@ -11,6 +12,7 @@ interface UsersTableProps {
 
 const UsersTable = ({ users }: UsersTableProps) => {
     const { callWithAuth } = useContext(AuthContext);
+    const { user: currentUser } = useContext(UserContext);
 
     const dropdownOnSelect = (user: User, eventKey: string | null) => {
         switch (eventKey) {
@@ -39,9 +41,14 @@ const UsersTable = ({ users }: UsersTableProps) => {
                             <Dropdown onSelect={(eventKey) => dropdownOnSelect(user, eventKey)}>
                                 <Dropdown.Toggle as={KebabDropdownToggle} />
                                 <Dropdown.Menu>
-                                    <Dropdown.Item eventKey='delete' className="text-danger">
-                                        Delete
+                                    <Dropdown.Item eventKey='edit' disabled>
+                                        Edit
                                     </Dropdown.Item>
+                                    {currentUser?.id !== user.id && (
+                                        <Dropdown.Item eventKey='delete' className="text-danger">
+                                            Delete
+                                        </Dropdown.Item>
+                                    )}
                                 </Dropdown.Menu>
                             </Dropdown>
                         </td>

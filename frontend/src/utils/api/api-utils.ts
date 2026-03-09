@@ -5,6 +5,12 @@ interface ErrorResponse {
     message: string;
 }
 
+interface apiParameters {
+    endpoint: string;
+    jwt?: string;
+    body?: object;
+}
+
 const getHeaders = (jwt?: string) => {
     return {
         'Content-Type': 'application/json',
@@ -16,20 +22,20 @@ const getHeaders = (jwt?: string) => {
 
 const isErrorResponse = (data: object) => 'error' in data && 'message' in data;
 
-const apiGet = (endpoint: string, jwt?: string) =>
+const apiGet = ({ endpoint, jwt }: apiParameters) =>
     fetch(baseUrl + endpoint, {
         method: 'GET',
         headers: getHeaders(jwt),
     });
 
-const apiPost = (endpoint: string, jwt?: string, body?: object) =>
+const apiPost = ({ endpoint, jwt, body }: apiParameters) =>
     fetch(baseUrl + endpoint, {
         method: 'POST',
         body: JSON.stringify(body),
         headers: getHeaders(jwt),
     });
 
-const apiDelete = (endpoint: string, jwt?: string, body?: object) =>
+const apiDelete = ({ endpoint, jwt, body }: apiParameters) =>
     fetch(baseUrl + endpoint, {
         method: 'DELETE',
         body: JSON.stringify(body),
@@ -41,7 +47,7 @@ const returnDataFrom = <ResT extends object>(apiFunc: () => Promise<Response>) =
         .then((res: Response) => res.json())
         .then((data: ResT | ErrorResponse) => {
             if (isErrorResponse(data)) {
-                throw new Error(data.message);
+                throw data;
             }
 
             return data;

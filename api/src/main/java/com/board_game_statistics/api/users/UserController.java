@@ -1,6 +1,7 @@
 package com.board_game_statistics.api.users;
 
 import com.board_game_statistics.api.users.dto.UserResponse;
+import com.board_game_statistics.api.users.exceptions.DeleteSelfException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -46,7 +47,11 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('MANAGE_USERS')")
-    public ResponseEntity<?> deleteUser(@PathVariable long id) {
+    public ResponseEntity<?> deleteUser(@AuthenticationPrincipal User user, @PathVariable long id) {
+        if (user.getId() == id) {
+            throw new DeleteSelfException();
+        }
+
         userService.deleteUser(id);
 
         return ResponseEntity

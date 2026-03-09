@@ -4,12 +4,12 @@ import { apiDelete, apiGet, returnDataFrom } from './api-utils';
 const baseEndpoint = '/users';
 
 const apiGetMe = (jwt: string) =>
-    returnDataFrom<User>(() => apiGet(`${baseEndpoint}/me`, jwt));
+    returnDataFrom<User>(() => apiGet({endpoint: `${baseEndpoint}/me`, jwt}));
 
 const apiGetUsers = (jwt: string) =>
-    returnDataFrom<User[]>(() => apiGet(baseEndpoint, jwt));
+    returnDataFrom<User[]>(() => apiGet({endpoint: baseEndpoint, jwt}));
 
 const apiDeleteUser = (jwt: string, id: number) =>
-    apiDelete(`${baseEndpoint}/${id}`, jwt);
+    apiDelete({endpoint: `${baseEndpoint}/${id}`, jwt});
 
 export { apiGetMe, apiGetUsers, apiDeleteUser };
