@@ -6,14 +6,18 @@ import UsersTable from './UsersTable';
 import { Spinner } from 'react-bootstrap';
 
 const ManageUsersPage = () => {
-    const { callWithAuth } = useContext(AuthContext);
+    const { isLoading, callWithAuth } = useContext(AuthContext);
 
     const [users, setUsers] = useState<User[]>();
 
     useEffect(() => {
+        if (isLoading) {
+            return;
+        }
+
         callWithAuth(apiGetUsers)
             .then(users => setUsers(users));
-    }, []);
+    }, [isLoading]);
 
     return (
         <>

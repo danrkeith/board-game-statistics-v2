@@ -6,7 +6,8 @@ interface AuthContextType {
     jwt: string | null;
     login: (credentials: Credentials) => Promise<void>;
     logout: () => void;
-    callWithAuth: <ReqT, ResT>(apiFunc: (jwt: string, body?: ReqT) => Promise<ResT>, body?: ReqT) => Promise<ResT>;
+    callWithAuth<ResT>(apiFunc: (jwt: string) => Promise<ResT>): Promise<ResT>;
+    callWithAuth<ReqT, ResT>(apiFunc: (jwt: string, body: ReqT) => Promise<ResT>, body: ReqT): Promise<ResT>;
 }
 
 interface Credentials {
@@ -53,15 +54,20 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         setJwt(null);
     };
 
-    const callWithAuth = <ReqT, ResT>(apiFunc: (jwt: string, body?: ReqT) => Promise<ResT>, body?: ReqT): Promise<ResT> => {
+    // Implementation
+    const callWithAuth =<ReqT, ResT>(apiFunc: (jwt: string, body?: ReqT) => Promise<ResT>, body?: ReqT): Promise<ResT> => {
         if (jwt === null) {
             const error = new Error(`Api call to ${apiFunc.name} requires auth`);
             console.error(error);
             return Promise.reject(error);
         }
 
-        return apiFunc(jwt, body);
-    };
+        if (body === undefined) {
+            return (apiFunc as (jwt: string) => Promise<ResT>)(jwt);
+        } else {
+            return (apiFunc as (jwt: string, body: ReqT) => Promise<ResT>)(jwt, body);
+        }
+    }
 
     const contextValue: AuthContextType = {
         isLoading,

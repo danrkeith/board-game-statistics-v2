@@ -22,9 +22,16 @@ const apiGet = (endpoint: string, jwt?: string) =>
         headers: getHeaders(jwt),
     });
 
-const apiPost = (endpoint: string, body?: object, jwt?: string) =>
+const apiPost = (endpoint: string, jwt?: string, body?: object) =>
     fetch(baseUrl + endpoint, {
         method: 'POST',
+        body: JSON.stringify(body),
+        headers: getHeaders(jwt),
+    });
+
+const apiDelete = (endpoint: string, jwt?: string, body?: object) =>
+    fetch(baseUrl + endpoint, {
+        method: 'DELETE',
         body: JSON.stringify(body),
         headers: getHeaders(jwt),
     });
@@ -41,4 +48,4 @@ const returnDataFrom = <ResT extends object>(apiFunc: () => Promise<Response>) =
         });
 
 export type { ErrorResponse };
-export { returnDataFrom, apiGet, apiPost };
+export { returnDataFrom, apiGet, apiPost, apiDelete };
