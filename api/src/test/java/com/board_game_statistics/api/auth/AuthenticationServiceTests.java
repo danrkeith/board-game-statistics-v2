@@ -1,5 +1,7 @@
 package com.board_game_statistics.api.auth;
 
+import com.board_game_statistics.api.auth.exceptions.InvalidEmailException;
+import com.board_game_statistics.api.auth.exceptions.InvalidPasswordException;
 import com.board_game_statistics.api.auth.exceptions.UserAlreadyExistsException;
 import com.board_game_statistics.api.users.User;
 import org.junit.jupiter.api.Assertions;
@@ -15,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthenticationServiceTests {
     private static final String TEST_EMAIL = "test@example.com";
     private static final String TEST_PASSWORD = "test-password";
+    private static final String INVALID_EMAIL = "not-an-email";
+    private static final String INVALID_PASSWORD = "abc";
 
     @Autowired
     private AuthenticationService authenticationService;
@@ -50,6 +54,22 @@ public class AuthenticationServiceTests {
 
         Assertions.assertThrows(UserAlreadyExistsException.class, () ->
                 authenticationService.register(null, null, TEST_EMAIL, TEST_PASSWORD)
+        );
+    }
+
+    @Test
+    @Transactional
+    void testRegisterInvalidEmail() {
+        Assertions.assertThrows(InvalidEmailException.class, () ->
+                authenticationService.register(null, null, INVALID_EMAIL, TEST_PASSWORD)
+        );
+    }
+
+    @Test
+    @Transactional
+    void testRegisterInvalidPassword() {
+        Assertions.assertThrows(InvalidPasswordException.class, () ->
+                authenticationService.register(null, null, TEST_EMAIL, INVALID_PASSWORD)
         );
     }
 }
