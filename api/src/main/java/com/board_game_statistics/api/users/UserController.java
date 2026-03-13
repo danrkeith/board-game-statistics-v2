@@ -40,8 +40,6 @@ public class UserController {
     public ResponseEntity<UserResponse> editMe(@AuthenticationPrincipal User user, @RequestBody EditUserRequest editUserRequest) {
         User newUser = userService.editUser(user.getId(), editUserRequest.firstName(), editUserRequest.lastName());
 
-        // TODO - possibly requires issuing new JWT
-
         return ResponseEntity.ok(newUser.asResponse());
     }
 
@@ -50,9 +48,7 @@ public class UserController {
     public ResponseEntity<UserResponse> getUser(@PathVariable long id) {
         User user = userService.getUser(id);
 
-        UserResponse userResponse = user.asResponse();
-
-        return ResponseEntity.ok(userResponse);
+        return ResponseEntity.ok(user.asResponse());
     }
 
     @PutMapping("/{id}")
@@ -72,8 +68,6 @@ public class UserController {
 
         userService.deleteUser(id);
 
-        return ResponseEntity
-                .status(HttpStatus.NO_CONTENT)
-                .build();
+        return ResponseEntity.noContent().build();
     }
 }
