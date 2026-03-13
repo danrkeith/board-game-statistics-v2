@@ -3,7 +3,6 @@ package com.board_game_statistics.api.users;
 import com.board_game_statistics.api.users.dto.EditUserRequest;
 import com.board_game_statistics.api.users.dto.UserResponse;
 import com.board_game_statistics.api.users.exceptions.DeleteSelfException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -15,7 +14,7 @@ import java.util.List;
 @RestController
 public class UserController {
     private final UserService userService;
-
+    
     public UserController(UserService userService) {
         this.userService = userService;
     }
