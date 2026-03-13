@@ -1,5 +1,6 @@
 package com.board_game_statistics.api.users;
 
+import com.board_game_statistics.api.users.dto.EditUserRequest;
 import com.board_game_statistics.api.users.dto.UserResponse;
 import com.board_game_statistics.api.users.exceptions.DeleteSelfException;
 import org.springframework.http.HttpStatus;
@@ -35,6 +36,15 @@ public class UserController {
         return ResponseEntity.ok(userResponse);
     }
 
+    @PutMapping("/me")
+    public ResponseEntity<UserResponse> editMe(@AuthenticationPrincipal User user, @RequestBody EditUserRequest editUserRequest) {
+        User newUser = userService.editUser(user.getId(), editUserRequest.firstName(), editUserRequest.lastName());
+
+        // TODO - possibly requires issuing new JWT
+
+        return ResponseEntity.ok(newUser.asResponse());
+    }
+
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('MANAGE_USERS')")
     public ResponseEntity<UserResponse> getUser(@PathVariable long id) {
@@ -43,6 +53,14 @@ public class UserController {
         UserResponse userResponse = user.asResponse();
 
         return ResponseEntity.ok(userResponse);
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('MANAGE_USERS')")
+    public ResponseEntity<UserResponse> editUser(@PathVariable long id, @RequestBody EditUserRequest editUserRequest) {
+        User newUser = userService.editUser(id, editUserRequest.firstName(), editUserRequest.lastName());
+
+        return ResponseEntity.ok(newUser.asResponse());
     }
 
     @DeleteMapping("/{id}")

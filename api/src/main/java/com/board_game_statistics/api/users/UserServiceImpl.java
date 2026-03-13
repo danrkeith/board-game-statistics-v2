@@ -25,6 +25,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User editUser(long id, String firstName, String lastName) {
+        // TODO - edit user
+        return getUser(id);
+    }
+
+    @Override
     public void deleteUser(long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User does not exist"));
