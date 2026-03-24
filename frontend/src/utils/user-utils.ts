@@ -5,6 +5,6 @@ const fullName = (user: User) =>
         ? user.lastName
             ? user.firstName + ' ' + user.lastName
             : user.firstName
-        : '';
+        : null;
 
 export { fullName };

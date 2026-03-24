@@ -24,7 +24,7 @@ const ManageUsersPage = () => {
             <h1>Manage users</h1>
             {users === undefined
                 ? (
-                    <Spinner />
+                    <Spinner className="d-block mx-auto" />
                 )
                 : (
                     <UsersTable users={users} setUsers={setUsers} />

@@ -7,6 +7,8 @@ import { AuthContext } from '../../context/AuthContext';
 import { apiDeleteUser } from '../../utils/api/users-api-utils';
 import EditUserModal from './EditUserModal';
 
+type UserAction = 'edit' | 'delete';
+
 interface UsersTableProps {
     users: User[];
     setUsers: React.Dispatch<React.SetStateAction<User[] | undefined>>;
@@ -16,18 +18,19 @@ const UsersTable = ({ users, setUsers }: UsersTableProps) => {
     const { callWithAuth } = useContext(AuthContext);
     const { user: currentUser } = useContext(UserContext);
 
-    const [editUser, setEditUser] = useState<User | null>(null);
+    const [action, setAction] = useState<UserAction | null>(null);
+    const [actionedUser, setActionedUser] = useState<User | null>(null);
 
-    const handleDropdownSelect = (eventKey: string, user: User) => {
-        switch (eventKey) {
-            case 'edit':
-                setEditUser(user);
-                break;
+    const handleUserAction = (action: UserAction, user: User) => {
+        switch (action) {
             case 'delete':
                 void callWithAuth(apiDeleteUser, user.id)
                     .then(() => setUsers(users => users?.filter(u => u.id !== user.id)));
                 break;
             default:
+                setActionedUser(user);
+                setAction(action);
+                break;
         }
     };
 
@@ -44,13 +47,14 @@ const UsersTable = ({ users, setUsers }: UsersTableProps) => {
                 </thead>
                 <tbody>
                     {users.map((user: User) => (
-                        <UserRow user={user} isLoggedIn={currentUser?.id === user.id} handleDropdownSelect={handleDropdownSelect} key={user.id} />
+                        <UserRow user={user} isLoggedIn={currentUser?.id === user.id} handleUserAction={handleUserAction} key={user.id} />
                     ))}
                 </tbody>
             </Table>
-            <EditUserModal show={!!editUser} onHide={() => setEditUser(null)} user={editUser} />
+            <EditUserModal show={action === 'edit'} handleClose={() => setAction(null)} user={actionedUser} />
         </>
     );
 };
 
 export default UsersTable;
+export type { UserAction };

@@ -10,7 +10,7 @@ const HomePage = () => {
             <h1>Home</h1>
             {isLoading
                 ? (
-                    <Spinner size="sm" />
+                    <Spinner className="d-block mx-auto" />
                 )
                 : (
                     <p>
