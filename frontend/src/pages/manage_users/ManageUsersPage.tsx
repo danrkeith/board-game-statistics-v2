@@ -21,7 +21,7 @@ const ManageUsersPage = () => {
 
     return (
         <>
-            <h1>Manage Users</h1>
+            <h1>Manage users</h1>
             {users === undefined
                 ? (
                     <Spinner />

@@ -17,7 +17,7 @@ const UsersTable = ({ users, setUsers }: UsersTableProps) => {
     const { user: currentUser } = useContext(UserContext);
 
     const [editUser, setEditUser] = useState<User | null>(null);
-    
+
     const handleDropdownSelect = (eventKey: string, user: User) => {
         switch (eventKey) {
             case 'edit':

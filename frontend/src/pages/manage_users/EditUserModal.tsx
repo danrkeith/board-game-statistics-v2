@@ -11,18 +11,23 @@ interface EditUserModalProps {
 const EditUserModal = ({ show, onHide, user }: EditUserModalProps) => {
     return (
         <Modal show={show} onHide={onHide}>
-            {user ? (
-                <>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Edit User {user.id}</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        {fullName(user)}
-                    </Modal.Body>
-                </>
-            ) : <Spinner />}
+            {user
+                ? (
+                    <>
+                        <Modal.Header closeButton>
+                            <Modal.Title>
+                                Edit
+                                {user.firstName ? ` ${fullName(user)}` : ` User ${user.id}`}
+                            </Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            {fullName(user)}
+                        </Modal.Body>
+                    </>
+                )
+                : <Spinner />}
         </Modal>
-    )
+    );
 };
 
 export default EditUserModal;
