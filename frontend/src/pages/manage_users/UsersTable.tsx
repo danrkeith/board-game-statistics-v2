@@ -3,10 +3,9 @@ import { Table } from 'react-bootstrap';
 import { UserContext } from '../../context/UserContext';
 import type { User } from '../../utils/types';
 import UserRow from './UserRow';
-import { AuthContext } from '../../context/AuthContext';
-import { apiDeleteUser } from '../../utils/api/users-api-utils';
 import EditUserModal from './EditUserModal';
 import type { UsersAction } from './ManageUsersPage';
+import DeleteUserConfirmationModal from './DeleteUserConfirmationModal';
 
 type UserAction = 'edit' | 'delete';
 
@@ -16,24 +15,14 @@ interface UsersTableProps {
 }
 
 const UsersTable = ({ users, usersDispatch }: UsersTableProps) => {
-    const { callWithAuth } = useContext(AuthContext);
     const { user: currentUser } = useContext(UserContext);
 
     const [action, setAction] = useState<UserAction | null>(null);
     const [actionedUser, setActionedUser] = useState<User | null>(null);
 
     const handleUserAction = (action: UserAction, user: User) => {
-        switch (action) {
-            case 'delete':
-                // TODO - confirmation dialog
-                void callWithAuth(apiDeleteUser, user.id)
-                    .then(() => usersDispatch({ type: 'REMOVE', userId: user.id }));
-                break;
-            default:
-                setActionedUser(user);
-                setAction(action);
-                break;
-        }
+        setActionedUser(user);
+        setAction(action);
     };
 
     return (
@@ -53,7 +42,8 @@ const UsersTable = ({ users, usersDispatch }: UsersTableProps) => {
                     ))}
                 </tbody>
             </Table>
-            <EditUserModal show={action === 'edit'} handleClose={() => setAction(null)} user={actionedUser} updateUser={user => usersDispatch({ type: 'UPDATE', user })} />
+            <EditUserModal show={action === 'edit'} user={actionedUser} submitCallback={user => usersDispatch({ type: 'UPDATE', user })} handleClose={() => setAction(null)}  />
+            <DeleteUserConfirmationModal show={action === 'delete'} user={actionedUser} confirmCallback={userId => usersDispatch({ type: 'REMOVE', userId })} handleClose={() => setAction(null)} />
         </>
     );
 };
