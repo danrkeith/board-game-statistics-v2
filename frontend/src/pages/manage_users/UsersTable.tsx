@@ -35,12 +35,27 @@ const UsersTable = ({ users, usersDispatch }: UsersTableProps) => {
                 </thead>
                 <tbody>
                     {users.map((user: User) => (
-                        <UserRow user={user} isLoggedIn={currentUser?.id === user.id} handleUserAction={setUserAction} key={user.id} />
+                        <UserRow
+                            user={user}
+                            isLoggedIn={currentUser?.id === user.id}
+                            handleUserAction={setUserAction}
+                            key={user.id}
+                        />
                     ))}
                 </tbody>
             </Table>
-            <EditUserModal show={userAction?.action === 'EDIT'} user={userAction?.user} submitCallback={user => usersDispatch({ type: 'UPDATE', user })} handleClose={() => setUserAction(null)} />
-            <DeleteUserConfirmationModal show={userAction?.action === 'DELETE'} user={userAction?.user} confirmCallback={userId => usersDispatch({ type: 'REMOVE', userId })} handleClose={() => setUserAction(null)} />
+            <EditUserModal
+                show={userAction?.action === 'EDIT'}
+                user={userAction?.user}
+                submitCallback={user => usersDispatch({ type: 'UPDATE', user })}
+                handleClose={() => setUserAction(null)}
+            />
+            <DeleteUserConfirmationModal
+                show={userAction?.action === 'DELETE'}
+                user={userAction?.user}
+                confirmCallback={userId => usersDispatch({ type: 'REMOVE', userId })}
+                handleClose={() => setUserAction(null)}
+            />
         </>
     );
 };
