@@ -7,5 +7,7 @@ public interface UserService {
 
     User getUser(long id);
 
+    User editUser(long id, String firstName, String lastName);
+
     void deleteUser(long id);
 }

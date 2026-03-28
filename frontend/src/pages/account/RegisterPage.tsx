@@ -13,19 +13,21 @@ const RegisterPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState<string | null>(null);
-    const isLoading = false;
+    const [isLoading, setIsLoading] = useState(false);
 
     const navigate = useNavigate();
 
     const handleSubmission = (event: React.FormEvent) => {
         event.preventDefault();
+        setIsLoading(true);
         apiRegister({ firstName, lastName, email, password })
             .then(() => login({ email, password }))
             .then(() => void navigate(HOME_PATH))
             .catch(({ message }: Error) => {
                 setError(message);
                 setPassword('');
-            });
+            })
+            .finally(() => setIsLoading(false));
     };
 
     return (

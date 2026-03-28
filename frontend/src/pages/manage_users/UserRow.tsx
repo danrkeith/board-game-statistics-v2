@@ -1,43 +1,30 @@
-import { useContext } from 'react';
 import { Dropdown } from 'react-bootstrap';
 import KebabDropdownToggle from '../../components/KebabDropdownToggle';
-import { AuthContext } from '../../context/AuthContext';
-import { apiDeleteUser } from '../../utils/api/users-api-utils';
 import type { User } from '../../utils/types';
 import { fullName } from '../../utils/user-utils';
+import type { UserAction } from './UsersTable';
 
 interface UserRowProps {
     user: User;
     isLoggedIn: boolean;
-    setUsers: React.Dispatch<React.SetStateAction<User[] | undefined>>;
+    handleUserAction: (userAction: UserAction) => void;
 }
 
-const UserRow = ({ user, isLoggedIn, setUsers }: UserRowProps) => {
-    const { callWithAuth } = useContext(AuthContext);
-
-    const dropdownOnSelect = (eventKey: string | null) => {
-        switch (eventKey) {
-            case 'delete':
-                void callWithAuth(apiDeleteUser, user.id)
-                    .then(() => setUsers(users => users?.filter(u => u.id !== user.id)));
-                break;
-            default:
-        }
-    };
-
+const UserRow = ({ user, isLoggedIn, handleUserAction }: UserRowProps) => {
     return (
         <tr key={user.id}>
+            <td>{user.id}</td>
             <td>{fullName(user)}</td>
             <td>{user.email}</td>
             <td>
-                <Dropdown onSelect={eventKey => dropdownOnSelect(eventKey)}>
+                <Dropdown onSelect={eventKey => handleUserAction({ user, action: eventKey as UserAction['action'] })}>
                     <Dropdown.Toggle as={KebabDropdownToggle} />
                     <Dropdown.Menu>
-                        <Dropdown.Item eventKey="edit" disabled>
+                        <Dropdown.Item eventKey="EDIT">
                             Edit
                         </Dropdown.Item>
                         {!isLoggedIn && (
-                            <Dropdown.Item eventKey="delete" className="text-danger">
+                            <Dropdown.Item eventKey="DELETE" className="text-danger">
                                 Delete
                             </Dropdown.Item>
                         )}

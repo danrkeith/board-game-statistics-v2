@@ -59,9 +59,17 @@ public class User implements UserDetails {
         return this;
     }
 
+    public String getFirstName() {
+        return firstName;
+    }
+
     public User setFirstName(String firstName) {
         this.firstName = firstName;
         return this;
+    }
+
+    public String getLastName() {
+        return lastName;
     }
 
     public User setLastName(String lastName) {
@@ -89,6 +97,9 @@ public class User implements UserDetails {
         User user = (User) o;
         return id == user.id
                 && email.equals(user.email)
-                && password.equals(user.password);
+                && password.equals(user.password)
+                && firstName.equals(user.firstName)
+                && lastName.equals(user.lastName)
+                && authorities.equals(user.authorities);
     }
 }

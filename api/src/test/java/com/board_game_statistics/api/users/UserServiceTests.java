@@ -61,6 +61,25 @@ public class UserServiceTests {
 
     @Test
     @Transactional
+    void editUser() {
+        final long id = 1;
+        final String firstName = "John";
+        final String lastName = "Smith";
+
+        User beforeUser = userService.getUser(id);
+        Assertions.assertNull(beforeUser.getFirstName());
+        Assertions.assertNull(beforeUser.getLastName());
+
+        User afterUser = userService.editUser(id, firstName, lastName);
+        User verifyAfterUser = userService.getUser(id);
+
+        Assertions.assertEquals(firstName, afterUser.getFirstName());
+        Assertions.assertEquals(lastName, afterUser.getLastName());
+        Assertions.assertEquals(afterUser, verifyAfterUser);
+    }
+
+    @Test
+    @Transactional
     void deleteUser() {
         List<User> usersBeforeDelete = userService.getUsers();
 

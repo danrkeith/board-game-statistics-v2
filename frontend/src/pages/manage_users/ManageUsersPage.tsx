@@ -1,14 +1,44 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useReducer } from 'react';
 import { Spinner } from 'react-bootstrap';
 import { AuthContext } from '../../context/AuthContext';
 import { apiGetUsers } from '../../utils/api/users-api-utils';
 import type { User } from '../../utils/types';
 import UsersTable from './UsersTable';
 
+interface UsersReducerActionSetAll {
+    type: 'SET_ALL';
+    users: User[];
+}
+
+interface UsersReducerActionUpdate {
+    type: 'UPDATE';
+    user: User;
+}
+
+interface UsersReducerActionRemove {
+    type: 'REMOVE';
+    userId: number;
+}
+
+type UsersReducerAction = UsersReducerActionSetAll | UsersReducerActionUpdate | UsersReducerActionRemove;
+
 const ManageUsersPage = () => {
     const { isLoading, callWithAuth } = useContext(AuthContext);
 
-    const [users, setUsers] = useState<User[]>();
+    const usersReducer = (state: User[] | undefined, action: UsersReducerAction) => {
+        switch (action.type) {
+            case 'SET_ALL':
+                return action.users;
+            case 'UPDATE':
+                return state?.map(u => u.id === action.user.id ? action.user : u);
+            case 'REMOVE':
+                return state?.filter(u => u.id !== action.userId);
+            default:
+                return state;
+        }
+    };
+
+    const [users, usersDispatch] = useReducer(usersReducer, undefined);
 
     useEffect(() => {
         if (isLoading) {
@@ -16,21 +46,22 @@ const ManageUsersPage = () => {
         }
 
         void callWithAuth(apiGetUsers)
-            .then(users => setUsers(users));
+            .then(users => usersDispatch({ type: 'SET_ALL', users: users }));
     }, [isLoading, callWithAuth]);
 
     return (
         <>
-            <h1>Manage Users</h1>
+            <h1>Manage users</h1>
             {users === undefined
                 ? (
-                    <Spinner />
+                    <Spinner className="d-block mx-auto" />
                 )
                 : (
-                    <UsersTable users={users} setUsers={setUsers} />
+                    <UsersTable users={users} usersDispatch={usersDispatch} />
                 )}
         </>
     );
 };
 
 export default ManageUsersPage;
+export type { UsersReducerAction };

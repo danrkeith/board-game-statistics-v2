@@ -15,13 +15,22 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> getUsers() {
-        return userRepository.findAll();
+        return userRepository.findAllByOrderById();
     }
 
     @Override
     public User getUser(long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User does not exist"));
+    }
+
+    @Override
+    public User editUser(long id, String firstName, String lastName) {
+        User user = getUser(id)
+                .setFirstName(firstName)
+                .setLastName(lastName);
+
+        return userRepository.save(user);
     }
 
     @Override
