@@ -4,26 +4,23 @@ import { UserContext } from '../../context/UserContext';
 import type { User } from '../../utils/types';
 import UserRow from './UserRow';
 import EditUserModal from './EditUserModal';
-import type { UsersAction } from './ManageUsersPage';
+import type { UsersReducerAction } from './ManageUsersPage';
 import DeleteUserConfirmationModal from './DeleteUserConfirmationModal';
 
-type UserAction = 'edit' | 'delete';
+interface UserAction {
+    user: User;
+    action: 'EDIT' | 'DELETE';
+}
 
 interface UsersTableProps {
     users: User[];
-    usersDispatch: React.Dispatch<UsersAction>;
+    usersDispatch: React.Dispatch<UsersReducerAction>;
 }
 
 const UsersTable = ({ users, usersDispatch }: UsersTableProps) => {
     const { user: currentUser } = useContext(UserContext);
 
-    const [action, setAction] = useState<UserAction | null>(null);
-    const [actionedUser, setActionedUser] = useState<User | null>(null);
-
-    const handleUserAction = (action: UserAction, user: User) => {
-        setActionedUser(user);
-        setAction(action);
-    };
+    const [userAction, setUserAction] = useState<UserAction | null>(null);
 
     return (
         <>
@@ -38,12 +35,12 @@ const UsersTable = ({ users, usersDispatch }: UsersTableProps) => {
                 </thead>
                 <tbody>
                     {users.map((user: User) => (
-                        <UserRow user={user} isLoggedIn={currentUser?.id === user.id} handleUserAction={handleUserAction} key={user.id} />
+                        <UserRow user={user} isLoggedIn={currentUser?.id === user.id} handleUserAction={setUserAction} key={user.id} />
                     ))}
                 </tbody>
             </Table>
-            <EditUserModal show={action === 'edit'} user={actionedUser} submitCallback={user => usersDispatch({ type: 'UPDATE', user })} handleClose={() => setAction(null)} />
-            <DeleteUserConfirmationModal show={action === 'delete'} user={actionedUser} confirmCallback={userId => usersDispatch({ type: 'REMOVE', userId })} handleClose={() => setAction(null)} />
+            <EditUserModal show={userAction?.action === 'EDIT'} user={userAction?.user} submitCallback={user => usersDispatch({ type: 'UPDATE', user })} handleClose={() => setUserAction(null)} />
+            <DeleteUserConfirmationModal show={userAction?.action === 'DELETE'} user={userAction?.user} confirmCallback={userId => usersDispatch({ type: 'REMOVE', userId })} handleClose={() => setUserAction(null)} />
         </>
     );
 };

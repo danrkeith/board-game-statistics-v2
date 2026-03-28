@@ -7,7 +7,7 @@ import { apiEditUser } from '../../utils/api/users-api-utils';
 
 interface EditUserModalProps {
     show: boolean;
-    user: User | null;
+    user?: User;
     submitCallback: (user: User) => void;
     handleClose: () => void;
 }

@@ -5,27 +5,27 @@ import { apiGetUsers } from '../../utils/api/users-api-utils';
 import type { User } from '../../utils/types';
 import UsersTable from './UsersTable';
 
-interface UsersActionSetAll {
+interface UsersReducerActionSetAll {
     type: 'SET_ALL';
     users: User[];
 }
 
-interface UsersActionUpdate {
+interface UsersReducerActionUpdate {
     type: 'UPDATE';
     user: User;
 }
 
-interface UsersActionRemove {
+interface UsersReducerActionRemove {
     type: 'REMOVE';
     userId: number;
 }
 
-type UsersAction = UsersActionSetAll | UsersActionUpdate | UsersActionRemove;
+type UsersReducerAction = UsersReducerActionSetAll | UsersReducerActionUpdate | UsersReducerActionRemove;
 
 const ManageUsersPage = () => {
     const { isLoading, callWithAuth } = useContext(AuthContext);
 
-    const usersReducer = (state: User[] | undefined, action: UsersAction) => {
+    const usersReducer = (state: User[] | undefined, action: UsersReducerAction) => {
         switch (action.type) {
             case 'SET_ALL':
                 return action.users;
@@ -64,4 +64,4 @@ const ManageUsersPage = () => {
 };
 
 export default ManageUsersPage;
-export type { UsersAction };
+export type { UsersReducerAction };

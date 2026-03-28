@@ -7,7 +7,7 @@ import { title } from '../../utils/user-utils';
 
 interface DeleteUserConfirmationModalProps {
     show: boolean;
-    user: User | null;
+    user?: User;
     confirmCallback: (userId: number) => void;
     handleClose: () => void;
 }
