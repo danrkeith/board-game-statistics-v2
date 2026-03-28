@@ -35,6 +35,13 @@ const apiPost = ({ endpoint, jwt, body }: apiParameters) =>
         headers: getHeaders(jwt),
     });
 
+const apiPut = ({ endpoint, jwt, body }: apiParameters) =>
+    fetch(baseUrl + endpoint, {
+        method: 'PUT',
+        body: JSON.stringify(body),
+        headers: getHeaders(jwt),
+    });
+
 const apiDelete = ({ endpoint, jwt, body }: apiParameters) =>
     fetch(baseUrl + endpoint, {
         method: 'DELETE',
@@ -55,4 +62,4 @@ const returnDataFrom = <ResT extends object>(apiFunc: () => Promise<Response>) =
             return data;
         });
 
-export { returnDataFrom, apiGet, apiPost, apiDelete };
+export { returnDataFrom, apiGet, apiPost, apiPut, apiDelete };

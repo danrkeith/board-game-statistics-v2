@@ -1,22 +1,44 @@
 import { Button, Form, Modal, Spinner } from 'react-bootstrap';
 import type { User } from '../../utils/types';
 import { fullName } from '../../utils/user-utils';
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { AuthContext } from '../../context/AuthContext';
+import { apiEditUser } from '../../utils/api/users-api-utils';
 
 interface EditUserModalProps {
     show: boolean;
     handleClose: () => void;
     user: User | null;
+    updateUser: (updatedUser: User) => void;
 }
 
-const EditUserModal = ({ show, handleClose, user }: EditUserModalProps) => {
+const EditUserModal = ({ show, handleClose, user, updateUser }: EditUserModalProps) => {
     const [firstName, setFirstName] = useState(user?.firstName ?? '');
     const [lastName, setLastName] = useState(user?.lastName ?? '');
     const [error, setError] = useState<string | null>();
+    const [isLoading, setIsLoading] = useState(false);
+
+    const { callWithAuth } = useContext(AuthContext);
+
+    useEffect(() => {
+        if (user) {
+            setFirstName(user.firstName);
+            setLastName(user.lastName);
+        }
+    }, [user]);
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        handleClose();
+        setIsLoading(true);
+        callWithAuth(apiEditUser, {
+            id: user!.id,
+            firstName,
+            lastName
+        })
+            .then(updateUser)
+            .then(handleClose)
+            .catch(({ message }: Error) => setError(message))
+            .finally(() => setIsLoading(false));
     };
 
     return (
@@ -63,10 +85,13 @@ const EditUserModal = ({ show, handleClose, user }: EditUserModalProps) => {
                     ) : <Spinner className="d-block mx-auto" />}
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose} disabled={!user}>
+                    {isLoading && (
+                        <Spinner as="span" className="ms-3" />
+                    )}
+                    <Button variant="secondary" onClick={handleClose}>
                         Close
                     </Button>
-                    <Button variant="primary" type="submit" disabled={!user}>
+                    <Button variant="primary" type="submit" disabled={isLoading}>
                         Save Changes
                     </Button>
                 </Modal.Footer>

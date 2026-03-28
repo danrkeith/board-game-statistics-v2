@@ -35,6 +35,10 @@ const UsersTable = ({ users, setUsers }: UsersTableProps) => {
         }
     };
 
+    const updateUser = (updatedUser: User) => {
+        setUsers(users => users?.map(u => u.id === updatedUser.id ? updatedUser : u));
+    }
+
     return (
         <>
             <Table striped>
@@ -52,7 +56,7 @@ const UsersTable = ({ users, setUsers }: UsersTableProps) => {
                     ))}
                 </tbody>
             </Table>
-            <EditUserModal show={action === 'edit'} handleClose={() => setAction(null)} user={actionedUser} />
+            <EditUserModal show={action === 'edit'} handleClose={() => setAction(null)} user={actionedUser} updateUser={updateUser} />
         </>
     );
 };
