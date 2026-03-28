@@ -42,7 +42,7 @@ const UsersTable = ({ users, usersDispatch }: UsersTableProps) => {
                     ))}
                 </tbody>
             </Table>
-            <EditUserModal show={action === 'edit'} user={actionedUser} submitCallback={user => usersDispatch({ type: 'UPDATE', user })} handleClose={() => setAction(null)}  />
+            <EditUserModal show={action === 'edit'} user={actionedUser} submitCallback={user => usersDispatch({ type: 'UPDATE', user })} handleClose={() => setAction(null)} />
             <DeleteUserConfirmationModal show={action === 'delete'} user={actionedUser} confirmCallback={userId => usersDispatch({ type: 'REMOVE', userId })} handleClose={() => setAction(null)} />
         </>
     );

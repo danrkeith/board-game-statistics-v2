@@ -1,4 +1,4 @@
-import { Button, Modal, Spinner } from 'react-bootstrap'
+import { Button, Modal, Spinner } from 'react-bootstrap';
 import { AuthContext } from '../../context/AuthContext';
 import { useContext, useState } from 'react';
 import { apiDeleteUser } from '../../utils/api/users-api-utils';
@@ -51,7 +51,7 @@ const DeleteUserConfirmationModal = ({ show, user, confirmCallback, handleClose 
                 </Button>
             </Modal.Footer>
         </Modal>
-    )
-}
+    );
+};
 
 export default DeleteUserConfirmationModal;

@@ -18,7 +18,7 @@ const apiGetUsers = (jwt: string) =>
 const apiEditUser = (jwt: string, body: EditUserRequest) =>
     returnDataFrom<User>(() => apiPut({ endpoint: `${baseEndpoint}/${body.id}`, jwt, body: {
         firstName: body.firstName,
-        lastName: body.lastName
+        lastName: body.lastName,
     } }));
 
 const apiDeleteUser = (jwt: string, id: number) =>

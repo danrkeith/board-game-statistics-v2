@@ -33,7 +33,7 @@ const EditUserModal = ({ show, user, submitCallback, handleClose }: EditUserModa
         callWithAuth(apiEditUser, {
             id: user!.id,
             firstName,
-            lastName
+            lastName,
         })
             .then(submitCallback)
             .then(handleClose)
@@ -50,39 +50,41 @@ const EditUserModal = ({ show, user, submitCallback, handleClose }: EditUserModa
             </Modal.Header>
             <Form onSubmit={handleSubmit}>
                 <Modal.Body>
-                    {user ? (
-                        <>
-                            <Form.Group className="mb-3">
-                                <Form.Label>First name</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    placeholder="Jane"
-                                    value={firstName}
-                                    onChange={(e) => {
-                                        setError(null);
-                                        setFirstName(e.target.value);
-                                    }}
-                                />
-                            </Form.Group>
-                            <Form.Group className="mb-3">
-                                <Form.Label>Last name</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    placeholder="Doe"
-                                    value={lastName}
-                                    onChange={(e) => {
-                                        setError(null);
-                                        setLastName(e.target.value);
-                                    }}
-                                />
-                            </Form.Group>
-                            {error && (
-                                <Form.Group>
-                                    <p className="text-danger">{error}</p>
+                    {user
+                        ? (
+                            <>
+                                <Form.Group className="mb-3">
+                                    <Form.Label>First name</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        placeholder="Jane"
+                                        value={firstName}
+                                        onChange={(e) => {
+                                            setError(null);
+                                            setFirstName(e.target.value);
+                                        }}
+                                    />
                                 </Form.Group>
-                            )}
-                        </>
-                    ) : <Spinner className="d-block mx-auto" />}
+                                <Form.Group className="mb-3">
+                                    <Form.Label>Last name</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        placeholder="Doe"
+                                        value={lastName}
+                                        onChange={(e) => {
+                                            setError(null);
+                                            setLastName(e.target.value);
+                                        }}
+                                    />
+                                </Form.Group>
+                                {error && (
+                                    <Form.Group>
+                                        <p className="text-danger">{error}</p>
+                                    </Form.Group>
+                                )}
+                            </>
+                        )
+                        : <Spinner className="d-block mx-auto" />}
                 </Modal.Body>
                 <Modal.Footer>
                     {isLoading && (

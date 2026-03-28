@@ -28,18 +28,15 @@ const ManageUsersPage = () => {
     const usersReducer = (state: User[] | undefined, action: UsersAction) => {
         switch (action.type) {
             case 'SET_ALL':
-                const setAllAction = action as UsersActionSetAll;
-                return setAllAction.users;
+                return action.users;
             case 'UPDATE':
-                const updateAction = action as UsersActionUpdate;
-                return state?.map(u => u.id === updateAction.user.id ? updateAction.user : u);
+                return state?.map(u => u.id === action.user.id ? action.user : u);
             case 'REMOVE':
-                const removeAction = action as UsersActionRemove;
-                return state?.filter(u => u.id !== removeAction.userId);
+                return state?.filter(u => u.id !== action.userId);
             default:
                 return state;
         }
-    }
+    };
 
     const [users, usersDispatch] = useReducer(usersReducer, undefined);
 
