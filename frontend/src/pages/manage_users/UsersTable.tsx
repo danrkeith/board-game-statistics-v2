@@ -24,6 +24,7 @@ const UsersTable = ({ users, setUsers }: UsersTableProps) => {
     const handleUserAction = (action: UserAction, user: User) => {
         switch (action) {
             case 'delete':
+                // TODO - confirmation dialog
                 void callWithAuth(apiDeleteUser, user.id)
                     .then(() => setUsers(users => users?.filter(u => u.id !== user.id)));
                 break;
