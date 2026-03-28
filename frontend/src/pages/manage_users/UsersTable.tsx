@@ -6,15 +6,16 @@ import UserRow from './UserRow';
 import { AuthContext } from '../../context/AuthContext';
 import { apiDeleteUser } from '../../utils/api/users-api-utils';
 import EditUserModal from './EditUserModal';
+import type { UsersAction } from './ManageUsersPage';
 
 type UserAction = 'edit' | 'delete';
 
 interface UsersTableProps {
     users: User[];
-    setUsers: React.Dispatch<React.SetStateAction<User[] | undefined>>;
+    usersDispatch: React.Dispatch<UsersAction>;
 }
 
-const UsersTable = ({ users, setUsers }: UsersTableProps) => {
+const UsersTable = ({ users, usersDispatch }: UsersTableProps) => {
     const { callWithAuth } = useContext(AuthContext);
     const { user: currentUser } = useContext(UserContext);
 
@@ -26,7 +27,7 @@ const UsersTable = ({ users, setUsers }: UsersTableProps) => {
             case 'delete':
                 // TODO - confirmation dialog
                 void callWithAuth(apiDeleteUser, user.id)
-                    .then(() => setUsers(users => users?.filter(u => u.id !== user.id)));
+                    .then(() => usersDispatch({ type: 'REMOVE', userId: user.id }));
                 break;
             default:
                 setActionedUser(user);
@@ -34,10 +35,6 @@ const UsersTable = ({ users, setUsers }: UsersTableProps) => {
                 break;
         }
     };
-
-    const updateUser = (updatedUser: User) => {
-        setUsers(users => users?.map(u => u.id === updatedUser.id ? updatedUser : u));
-    }
 
     return (
         <>
@@ -56,7 +53,7 @@ const UsersTable = ({ users, setUsers }: UsersTableProps) => {
                     ))}
                 </tbody>
             </Table>
-            <EditUserModal show={action === 'edit'} handleClose={() => setAction(null)} user={actionedUser} updateUser={updateUser} />
+            <EditUserModal show={action === 'edit'} handleClose={() => setAction(null)} user={actionedUser} updateUser={user => usersDispatch({ type: 'UPDATE', user })} />
         </>
     );
 };

@@ -9,7 +9,7 @@ interface EditUserModalProps {
     show: boolean;
     handleClose: () => void;
     user: User | null;
-    updateUser: (updatedUser: User) => void;
+    updateUser: (user: User) => void;
 }
 
 const EditUserModal = ({ show, handleClose, user, updateUser }: EditUserModalProps) => {
