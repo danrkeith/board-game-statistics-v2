@@ -1,5 +1,5 @@
-import { Dropdown } from 'react-bootstrap';
-import KebabDropdownToggle from '../../components/KebabDropdownToggle';
+import { Badge, Dropdown } from 'react-bootstrap';
+import KebabDropdownToggle from '../../components/dropdowns/KebabDropdownToggle';
 import type { User } from '../../utils/types';
 import { fullName } from '../../utils/user-utils';
 import type { UserAction } from './UsersTable';
@@ -15,7 +15,10 @@ const UserRow = ({ user, isLoggedIn, handleUserAction }: UserRowProps) => {
         <tr key={user.id}>
             <td>{user.id}</td>
             <td>{fullName(user)}</td>
-            <td>{user.email}</td>
+            <td>
+                {user.email}
+                {isLoggedIn && <Badge bg="secondary" className="mx-3">You</Badge>}
+            </td>
             <td>
                 <Dropdown onSelect={eventKey => handleUserAction({ user, action: eventKey as UserAction['action'] })}>
                     <Dropdown.Toggle as={KebabDropdownToggle} />
