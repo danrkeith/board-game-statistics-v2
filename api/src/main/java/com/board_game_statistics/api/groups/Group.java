@@ -1,5 +1,6 @@
 package com.board_game_statistics.api.groups;
 
+import com.board_game_statistics.api.groups.dto.GroupResponse;
 import com.board_game_statistics.api.users.User;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -21,4 +22,8 @@ public class Group {
 
     @ManyToMany
     private Set<User> users;
+
+    public GroupResponse asResponse() {
+        return new GroupResponse(id, name);
+    }
 }
