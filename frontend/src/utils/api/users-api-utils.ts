@@ -21,13 +21,13 @@ const apiGetUsers = (jwt: string) =>
     returnDataFrom<User[]>(() => apiGet({ endpoint: baseEndpoint, jwt }));
 
 const apiEditMe = (jwt: string, body: EditMeRequest) =>
-    returnDataFrom<User>(() => apiPut({ endpoint: `${baseEndpoint}/me`, jwt, body}));
+    returnDataFrom<User>(() => apiPut({ endpoint: `${baseEndpoint}/me`, jwt, body }));
 
 const apiEditUser = (jwt: string, body: EditUserRequest) =>
     returnDataFrom<User>(() => apiPut({ endpoint: `${baseEndpoint}/${body.id}`, jwt, body: {
         firstName: body.firstName,
         lastName: body.lastName,
-    }}));
+    } }));
 
 const apiDeleteUser = (jwt: string, id: number) =>
     apiDelete({ endpoint: `${baseEndpoint}/${id}`, jwt });

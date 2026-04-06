@@ -11,7 +11,7 @@ const AccountPage = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
 
-    const { user } = useContext(UserContext);
+    const { user, setUser } = useContext(UserContext);
     const { callWithAuth } = useContext(AuthContext);
 
     useEffect(() => {
@@ -26,16 +26,20 @@ const AccountPage = () => {
     const onInputChange = () => {
         setError(null);
         setShowSuccess(false);
-    }
+    };
 
     const handleSubmission = (event: React.FormEvent) => {
         event.preventDefault();
         setIsLoading(true);
         callWithAuth(apiEditMe, {
             firstName,
-            lastName
+            lastName,
         })
-            .then(() => setShowSuccess(true))
+            .then((user) => {
+                setUser(user);
+                setShowSuccess(true);
+                setError(null);
+            })
             .catch(({ message }: Error) => setError(message))
             .finally(() => setIsLoading(false));
     };
@@ -43,60 +47,62 @@ const AccountPage = () => {
     return (
         <div>
             <h1>Account</h1>
-            {user ? (
-                <Form onSubmit={handleSubmission}>
-                    <Form.Group className="mb-3">
-                        <Form.Label>First name</Form.Label>
-                        <Form.Control
-                            type="text"
-                            value={firstName}
-                            onChange={(e) => {
-                                onInputChange();
-                                setFirstName(e.target.value);
-                            }}
-                        />
-                    </Form.Group>
-                    <Form.Group className="mb-3">
-                        <Form.Label>Last name</Form.Label>
-                        <Form.Control
-                            type="text"
-                            value={lastName}
-                            onChange={(e) => {
-                                onInputChange();
-                                setLastName(e.target.value);
-                            }}
-                        />
-                    </Form.Group>
-                    <Form.Group className="mb-3">
-                        <Form.Label>
-                            Email address
-                        </Form.Label>
-                        <Form.Control
-                            type="email"
-                            disabled
-                            value={user.email}
-                        />
-                    </Form.Group>
-                    {error && (
-                        <Form.Group>
-                            <p className="text-danger">{error}</p>
+            {user
+                ? (
+                    <Form onSubmit={handleSubmission}>
+                        <Form.Group className="mb-3">
+                            <Form.Label>First name</Form.Label>
+                            <Form.Control
+                                type="text"
+                                value={firstName}
+                                onChange={(e) => {
+                                    onInputChange();
+                                    setFirstName(e.target.value);
+                                }}
+                            />
                         </Form.Group>
-                    )}
-                    {showSuccess && (
-                        <Form.Group>
-                            <p className="text-success">Account updated successfully</p>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Last name</Form.Label>
+                            <Form.Control
+                                type="text"
+                                value={lastName}
+                                onChange={(e) => {
+                                    onInputChange();
+                                    setLastName(e.target.value);
+                                }}
+                            />
                         </Form.Group>
-                    )}
-                    <Form.Group className="d-flex align-items-center">
-                        <Button variant="primary" type="submit" disabled={isLoading || !hasChanges}>
-                            Save changes
-                        </Button>
-                        {isLoading && (
-                            <Spinner as="span" className="ms-3" />
+                        <Form.Group className="mb-3">
+                            <Form.Label>
+                                Email address
+                            </Form.Label>
+                            <Form.Control
+                                type="email"
+                                disabled
+                                value={user.email}
+                            />
+                        </Form.Group>
+                        {error && (
+                            <Form.Group>
+                                <p className="text-danger">{error}</p>
+                            </Form.Group>
                         )}
-                    </Form.Group>
-                </Form>
-            ) : <Spinner className="d-block mx-auto" />}
+                        {showSuccess && (
+                            <Form.Group>
+                                <p className="text-success">Account updated successfully</p>
+                            </Form.Group>
+                        )}
+                        <Form.Group className="d-flex align-items-center">
+                            <Button variant="primary" type="submit" disabled={isLoading || !hasChanges}>
+                                Save changes
+                            </Button>
+                            {isLoading && (
+                                <Spinner as="span" className="ms-3" />
+                            )}
+                        </Form.Group>
+                    </Form>
+                )
+                : <Spinner className="d-block mx-auto" />}
         </div>
     );
 };

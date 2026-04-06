@@ -35,8 +35,10 @@ const EditUserModal = ({ show, user, submitCallback, handleClose }: EditUserModa
             firstName,
             lastName,
         })
-            .then(submitCallback)
-            .then(handleClose)
+            .then((user) => {
+                submitCallback(user);
+                handleClose();
+            })
             .catch(({ message }: Error) => setError(message))
             .finally(() => setIsLoading(false));
     };
