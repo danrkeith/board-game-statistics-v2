@@ -4,7 +4,7 @@ import { UserContext } from '../../context/UserContext';
 import { AuthContext } from '../../context/AuthContext';
 import { apiEditMe } from '../../utils/api/users-api-utils';
 
-const AccountPage = () => {
+const AccountSettingsPage = () => {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [error, setError] = useState<string | null>(null);
@@ -46,7 +46,7 @@ const AccountPage = () => {
 
     return (
         <div>
-            <h1>Account</h1>
+            <h1>Account settings</h1>
             {user
                 ? (
                     <Form onSubmit={handleSubmission}>
@@ -107,4 +107,4 @@ const AccountPage = () => {
     );
 };
 
-export default AccountPage;
+export default AccountSettingsPage;

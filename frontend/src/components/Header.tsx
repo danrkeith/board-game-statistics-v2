@@ -1,5 +1,5 @@
 import { Container, Dropdown, Nav, Navbar } from 'react-bootstrap';
-import { ACCOUNT_PATH, HOME_PATH, LOGIN_PATH, MANAGE_USERS_PATH } from '../App';
+import { SETTINGS_PATH, HOME_PATH, LOGIN_PATH, MANAGE_USERS_PATH } from '../App';
 import { Link, useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
@@ -46,8 +46,8 @@ const Header = () => {
                             <Dropdown align="end">
                                 <Dropdown.Toggle as={PersonDropdownToggle} />
                                 <Dropdown.Menu>
-                                    <Dropdown.Item as={Link} to={ACCOUNT_PATH}>
-                                        Account
+                                    <Dropdown.Item as={Link} to={SETTINGS_PATH}>
+                                        Settings
                                     </Dropdown.Item>
                                     <Dropdown.Item eventKey="LOGOUT" className="text-warning" onClick={handleLogout}>
                                         Logout
