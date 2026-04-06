@@ -7,6 +7,7 @@ import { apiGetMe } from '../utils/api/users-api-utils';
 interface UserContextType {
     isLoading: boolean;
     user: User | null;
+    setUser: React.Dispatch<React.SetStateAction<User | null>>;
 }
 
 interface UserProviderProps {
@@ -16,6 +17,7 @@ interface UserProviderProps {
 const UserContext = createContext<UserContextType>({
     isLoading: true,
     user: null,
+    setUser: () => console.error('UserContext.updateUser function not attached'),
 });
 
 const UserProvider = ({ children }: UserProviderProps) => {
@@ -51,6 +53,7 @@ const UserProvider = ({ children }: UserProviderProps) => {
     const contextValue = {
         isLoading,
         user,
+        setUser,
     };
 
     return (

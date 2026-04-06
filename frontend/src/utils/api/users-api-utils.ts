@@ -9,11 +9,19 @@ interface EditUserRequest {
     lastName: string;
 }
 
+interface EditMeRequest {
+    firstName: string;
+    lastName: string;
+}
+
 const apiGetMe = (jwt: string) =>
     returnDataFrom<User>(() => apiGet({ endpoint: `${baseEndpoint}/me`, jwt }));
 
 const apiGetUsers = (jwt: string) =>
     returnDataFrom<User[]>(() => apiGet({ endpoint: baseEndpoint, jwt }));
+
+const apiEditMe = (jwt: string, body: EditMeRequest) =>
+    returnDataFrom<User>(() => apiPut({ endpoint: `${baseEndpoint}/me`, jwt, body }));
 
 const apiEditUser = (jwt: string, body: EditUserRequest) =>
     returnDataFrom<User>(() => apiPut({ endpoint: `${baseEndpoint}/${body.id}`, jwt, body: {
@@ -24,4 +32,4 @@ const apiEditUser = (jwt: string, body: EditUserRequest) =>
 const apiDeleteUser = (jwt: string, id: number) =>
     apiDelete({ endpoint: `${baseEndpoint}/${id}`, jwt });
 
-export { apiGetMe, apiGetUsers, apiEditUser, apiDeleteUser };
+export { apiGetMe, apiGetUsers, apiEditMe, apiEditUser, apiDeleteUser };

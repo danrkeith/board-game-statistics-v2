@@ -35,8 +35,10 @@ const EditUserModal = ({ show, user, submitCallback, handleClose }: EditUserModa
             firstName,
             lastName,
         })
-            .then(submitCallback)
-            .then(handleClose)
+            .then((user) => {
+                submitCallback(user);
+                handleClose();
+            })
             .catch(({ message }: Error) => setError(message))
             .finally(() => setIsLoading(false));
     };
@@ -57,7 +59,6 @@ const EditUserModal = ({ show, user, submitCallback, handleClose }: EditUserModa
                                     <Form.Label>First name</Form.Label>
                                     <Form.Control
                                         type="text"
-                                        placeholder="Jane"
                                         value={firstName}
                                         onChange={(e) => {
                                             setError(null);
@@ -69,7 +70,6 @@ const EditUserModal = ({ show, user, submitCallback, handleClose }: EditUserModa
                                     <Form.Label>Last name</Form.Label>
                                     <Form.Control
                                         type="text"
-                                        placeholder="Doe"
                                         value={lastName}
                                         onChange={(e) => {
                                             setError(null);

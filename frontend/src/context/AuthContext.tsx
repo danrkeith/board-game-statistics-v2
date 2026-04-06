@@ -54,7 +54,6 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         setJwt(null);
     };
 
-    // Implementation
     const callWithAuth = <ReqT, ResT>(apiFunc: (jwt: string, body?: ReqT) => Promise<ResT>, body?: ReqT): Promise<ResT> => {
         if (jwt === null) {
             const error = new Error(`Api call to ${apiFunc.name} requires auth`);

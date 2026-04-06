@@ -18,7 +18,7 @@ interface UsersTableProps {
 }
 
 const UsersTable = ({ users, usersDispatch }: UsersTableProps) => {
-    const { user: currentUser } = useContext(UserContext);
+    const { user: currentUser, setUser: setCurrentUser } = useContext(UserContext);
 
     const [userAction, setUserAction] = useState<UserAction | null>(null);
 
@@ -47,7 +47,12 @@ const UsersTable = ({ users, usersDispatch }: UsersTableProps) => {
             <EditUserModal
                 show={userAction?.action === 'EDIT'}
                 user={userAction?.user}
-                submitCallback={user => usersDispatch({ type: 'UPDATE', user })}
+                submitCallback={(user) => {
+                    usersDispatch({ type: 'UPDATE', user });
+                    if (currentUser?.id === user.id) {
+                        setCurrentUser(user);
+                    }
+                }}
                 handleClose={() => setUserAction(null)}
             />
             <DeleteUserConfirmationModal

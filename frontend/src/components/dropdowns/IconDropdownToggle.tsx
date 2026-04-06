@@ -1,11 +1,10 @@
 import React from 'react';
-import { ThreeDotsVertical } from 'react-bootstrap-icons';
 
 interface CustomToggleProps {
     onClick: (e: React.MouseEvent<HTMLSpanElement>) => void;
 }
 
-const KebabDropdownToggle = React.forwardRef<
+const dropdownToggleFromIcon = (icon: React.ReactNode) => React.forwardRef<
     HTMLSpanElement,
     CustomToggleProps
 >(({ onClick }, ref) => (
@@ -19,8 +18,8 @@ const KebabDropdownToggle = React.forwardRef<
         }}
         style={{ cursor: 'pointer' }}
     >
-        <ThreeDotsVertical />
+        {icon}
     </span>
 ));
 
-export default KebabDropdownToggle;
+export { dropdownToggleFromIcon };
