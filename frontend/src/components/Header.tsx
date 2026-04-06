@@ -1,5 +1,5 @@
 import { Container, Dropdown, Nav, Navbar } from 'react-bootstrap';
-import { HOME_PATH, LOGIN_PATH, MANAGE_USERS_PATH } from '../App';
+import { ACCOUNT_PATH, HOME_PATH, LOGIN_PATH, MANAGE_USERS_PATH } from '../App';
 import { Link, useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
@@ -12,13 +12,9 @@ const Header = () => {
 
     const navigate = useNavigate();
 
-    const userDropdownHandleSelect = (eventKey: string | null) => {
-        switch (eventKey) {
-            case 'LOGOUT':
-                logout();
-                void navigate(HOME_PATH);
-                break;
-        }
+    const handleLogout = () => {
+        logout();
+        void navigate(HOME_PATH);
     };
 
     return (
@@ -47,13 +43,13 @@ const Header = () => {
                 {user !== null && (
                     <Nav>
                         <Nav.Item>
-                            <Dropdown align="end" onSelect={userDropdownHandleSelect}>
+                            <Dropdown align="end">
                                 <Dropdown.Toggle as={PersonDropdownToggle} />
                                 <Dropdown.Menu>
-                                    <Dropdown.Item>
-                                        Manage account
+                                    <Dropdown.Item as={Link} to={ACCOUNT_PATH}>
+                                        Account
                                     </Dropdown.Item>
-                                    <Dropdown.Item eventKey="LOGOUT" className="text-warning">
+                                    <Dropdown.Item eventKey="LOGOUT" className="text-warning" onClick={handleLogout}>
                                         Logout
                                     </Dropdown.Item>
                                 </Dropdown.Menu>
