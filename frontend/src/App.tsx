@@ -38,7 +38,7 @@ const App = () => {
                                     <Route path={MANAGE_USERS_PATH} element={<ManageUsersPage />} />
                                 </Route>
                             </Route>
-                            
+
                             <Route path="*" element={<Navigate to={HOME_PATH} />} />
                         </Routes>
                     </Container>
