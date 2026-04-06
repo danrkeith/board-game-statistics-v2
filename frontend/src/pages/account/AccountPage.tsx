@@ -5,6 +5,6 @@ const AccountPage = () => {
             {/* TODO - add form for updating account details */}
         </div>
     );
-}
+};
 
 export default AccountPage;

@@ -8,4 +8,4 @@ interface User {
     authorities: Authority[];
 }
 
-export type { User };
+export type { Authority, User };
