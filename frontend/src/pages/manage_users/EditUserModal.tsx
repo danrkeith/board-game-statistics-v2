@@ -57,7 +57,6 @@ const EditUserModal = ({ show, user, submitCallback, handleClose }: EditUserModa
                                     <Form.Label>First name</Form.Label>
                                     <Form.Control
                                         type="text"
-                                        placeholder="Jane"
                                         value={firstName}
                                         onChange={(e) => {
                                             setError(null);
@@ -69,7 +68,6 @@ const EditUserModal = ({ show, user, submitCallback, handleClose }: EditUserModa
                                     <Form.Label>Last name</Form.Label>
                                     <Form.Control
                                         type="text"
-                                        placeholder="Doe"
                                         value={lastName}
                                         onChange={(e) => {
                                             setError(null);
