@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Set;
 
 @RequestMapping("/users")
 @RestController
@@ -74,5 +75,12 @@ public class UserController {
         userService.deleteUser(id);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}/authorities")
+    public ResponseEntity<UserResponse> setAuthorities(@PathVariable long id, @RequestBody Set<Authority> authorities) {
+        User user = userService.setAuthorities(id, authorities);
+
+        return ResponseEntity.ok(user.asResponse());
     }
 }

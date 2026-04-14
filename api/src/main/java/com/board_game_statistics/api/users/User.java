@@ -37,7 +37,7 @@ public class User implements UserDetails {
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "authority", nullable = false)
     private Set<Authority> authorities = EnumSet.noneOf(Authority.class);
 
     public long getId() {
@@ -87,8 +87,13 @@ public class User implements UserDetails {
     }
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
+    public Set<Authority> getAuthorities() {
         return authorities != null ? authorities : Collections.emptySet();
+    }
+
+    public User setAuthorities(Set<Authority> authorities) {
+        this.authorities = authorities;
+        return this;
     }
 
     public UserResponse asResponse() {

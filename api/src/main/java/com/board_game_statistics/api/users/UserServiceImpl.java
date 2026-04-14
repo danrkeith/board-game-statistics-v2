@@ -4,6 +4,7 @@ import com.board_game_statistics.api.exceptions.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -39,5 +40,13 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("User does not exist"));
 
         userRepository.delete(user);
+    }
+
+    @Override
+    public User setAuthorities(long id, Set<Authority> authorities) {
+        User user = getUser(id)
+                .setAuthorities(authorities);
+
+        return userRepository.save(user);
     }
 }
