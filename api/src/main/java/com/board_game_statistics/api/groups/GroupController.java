@@ -1,12 +1,15 @@
 package com.board_game_statistics.api.groups;
 
 import com.board_game_statistics.api.groups.dto.CreateGroupRequest;
+import com.board_game_statistics.api.groups.dto.EditGroupRequest;
 import com.board_game_statistics.api.groups.dto.GroupResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -55,5 +58,21 @@ public class GroupController {
         Group group = groupService.getGroup(id);
 
         return ResponseEntity.ok(group.asResponse());
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('MANAGE_GROUPS')")
+    public ResponseEntity<GroupResponse> updateGroup(@PathVariable long id, @RequestBody EditGroupRequest editGroupRequest) {
+        Group newGroup = groupService.editGroup(id, editGroupRequest.name());
+
+        return ResponseEntity.ok(newGroup.asResponse());
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('MANAGE_GROUPS')")
+    public ResponseEntity<?> deleteGroup(@PathVariable long id) {
+        groupService.deleteGroup(id);
+
+        return ResponseEntity.noContent().build();
     }
 }

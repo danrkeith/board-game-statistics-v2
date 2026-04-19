@@ -19,15 +19,29 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
+    public Group createGroup(String name) {
+        Group group = new Group().setName(name);
+
+        return groupRepository.save(group);
+    }
+
+    @Override
     public Group getGroup(long id) {
         return groupRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Group does not exist"));
     }
 
     @Override
-    public Group createGroup(String name) {
-        Group group = new Group().setName(name);
+    public Group editGroup(long id, String name) {
+        Group group = getGroup(id).setName(name);
 
         return groupRepository.save(group);
+    }
+
+    @Override
+    public void deleteGroup(long id) {
+        Group group = getGroup(id);
+
+        groupRepository.delete(group);
     }
 }

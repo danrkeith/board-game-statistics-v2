@@ -5,7 +5,11 @@ import java.util.List;
 public interface GroupService {
     List<Group> getGroups();
 
+    Group createGroup(String name);
+
     Group getGroup(long id);
 
-    Group createGroup(String name);
+    Group editGroup(long id, String name);
+
+    void deleteGroup(long id);
 }
