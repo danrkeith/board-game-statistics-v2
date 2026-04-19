@@ -1,11 +1,20 @@
 package com.board_game_statistics.api.users;
 
+import com.board_game_statistics.api.group_memberships.GroupMembership;
 import com.board_game_statistics.api.users.dto.UserResponse;
-import jakarta.persistence.*;
-import org.springframework.security.core.GrantedAuthority;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
@@ -28,8 +37,11 @@ public class User implements UserDetails {
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "authority", nullable = false)
     private Set<Authority> authorities = EnumSet.noneOf(Authority.class);
+
+    @OneToMany(mappedBy = "user")
+    private Set<GroupMembership> groupMemberships;
 
     public long getId() {
         return id;
@@ -78,8 +90,13 @@ public class User implements UserDetails {
     }
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
+    public Set<Authority> getAuthorities() {
         return authorities != null ? authorities : Collections.emptySet();
+    }
+
+    public User setAuthorities(Set<Authority> authorities) {
+        this.authorities = authorities;
+        return this;
     }
 
     public UserResponse asResponse() {

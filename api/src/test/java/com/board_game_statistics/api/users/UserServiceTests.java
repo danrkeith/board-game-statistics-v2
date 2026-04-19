@@ -13,6 +13,7 @@ import java.util.List;
 
 @SpringBootTest
 @ActiveProfiles("test")
+@Transactional
 public class UserServiceTests {
     private static final String[] TEST_EMAILS = {
             "test0@example.com",
@@ -32,24 +33,22 @@ public class UserServiceTests {
 
     @BeforeEach
     void beforeEach() {
-        authenticationService.register(null, null, TEST_EMAILS[0], TEST_PASSWORDS[0]);
-        authenticationService.register(null, null, TEST_EMAILS[1], TEST_PASSWORDS[1]);
-        authenticationService.register(null, null, TEST_EMAILS[2], TEST_PASSWORDS[2]);
+        for (int i = 0; i < TEST_EMAILS.length; i++) {
+            authenticationService.register(null, null, TEST_EMAILS[i], TEST_PASSWORDS[i]);
+        }
     }
 
     @Test
-    @Transactional
     void getUsers() {
         List<User> users = userService.getUsers();
 
-        Assertions.assertEquals(3, users.size());
-        Assertions.assertEquals(TEST_EMAILS[0], users.get(0).getEmail());
-        Assertions.assertEquals(TEST_EMAILS[1], users.get(1).getEmail());
-        Assertions.assertEquals(TEST_EMAILS[2], users.get(2).getEmail());
+        Assertions.assertEquals(TEST_EMAILS.length, users.size());
+        for (int i = 0; i < TEST_EMAILS.length; i++) {
+            Assertions.assertEquals(TEST_EMAILS[i], users.get(i).getEmail());
+        }
     }
 
     @Test
-    @Transactional
     void getUserById() {
         List<User> users = userService.getUsers();
         User expectedUser = users.getFirst();
@@ -60,7 +59,6 @@ public class UserServiceTests {
     }
 
     @Test
-    @Transactional
     void editUser() {
         final long id = 1;
         final String firstName = "John";
@@ -79,15 +77,14 @@ public class UserServiceTests {
     }
 
     @Test
-    @Transactional
     void deleteUser() {
         List<User> usersBeforeDelete = userService.getUsers();
 
-        Assertions.assertEquals(3, usersBeforeDelete.size());
+        Assertions.assertEquals(TEST_EMAILS.length, usersBeforeDelete.size());
 
         userService.deleteUser(usersBeforeDelete.getFirst().getId());
         List<User> usersAfterDelete = userService.getUsers();
 
-        Assertions.assertEquals(2, usersAfterDelete.size());
+        Assertions.assertEquals(TEST_EMAILS.length - 1, usersAfterDelete.size());
     }
 }
