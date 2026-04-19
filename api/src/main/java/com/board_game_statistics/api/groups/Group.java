@@ -18,7 +18,7 @@ import java.util.Set;
 public class Group {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
 
     private String name;
 
@@ -29,6 +29,15 @@ public class Group {
             inverseJoinColumns = @JoinColumn(name = "group_id")
     )
     private Set<User> users;
+
+    public long getId() {
+        return id;
+    }
+
+    public Group setName(String name) {
+        this.name = name;
+        return this;
+    }
 
     public GroupResponse asResponse() {
         return new GroupResponse(id, name);
