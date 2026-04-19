@@ -1,14 +1,12 @@
 package com.board_game_statistics.api.groups;
 
+import com.board_game_statistics.api.group_memberships.GroupMembership;
 import com.board_game_statistics.api.groups.dto.GroupResponse;
-import com.board_game_statistics.api.users.User;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 import java.util.Set;
@@ -22,13 +20,8 @@ public class Group {
 
     private String name;
 
-    @ManyToMany
-    @JoinTable(
-            name = "group_user",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "group_id")
-    )
-    private Set<User> users;
+    @OneToMany(mappedBy = "group")
+    private Set<GroupMembership> groupMemberships;
 
     public long getId() {
         return id;
