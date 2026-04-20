@@ -5,4 +5,4 @@ import com.board_game_statistics.api.users.dto.UserResponse;
 
 import java.util.Set;
 
-public record GroupMembershipResponse(UserResponse user, Set<Permission> permissions) { }
+public record GroupMembershipResponse(long userId, String email, String firstName, String lastName, Set<Permission> permissions) { }
