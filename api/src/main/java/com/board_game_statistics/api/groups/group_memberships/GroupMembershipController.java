@@ -24,6 +24,8 @@ public class GroupMembershipController {
     @GetMapping("/groups/{groupId}/members")
     @PreAuthorize("hasAuthority('MANAGE_GROUP_MEMBERSHIPS')")
     public ResponseEntity<List<GroupMembershipResponse>> getGroupMembershipByGroup(@PathVariable long groupId) {
+        // TODO - authority check for groups outside own
+
         List<GroupMembership> groupMemberships = groupMembershipService.getGroupMembershipsByGroup(groupId);
         List<GroupMembershipResponse> responses = groupMemberships.stream().map(GroupMembership::asResponse).toList();
 
@@ -33,6 +35,8 @@ public class GroupMembershipController {
     @GetMapping("/groups/{groupId}/members/{userId}")
     @PreAuthorize("hasAuthority('MANAGE_GROUP_MEMBERSHIPS')")
     public ResponseEntity<GroupMembershipResponse> getGroupMembership(@PathVariable long groupId, @PathVariable long userId) {
+        // TODO - authority check for groups outside own
+
         GroupMembership groupMembership = groupMembershipService.getGroupMembership(groupId, userId);
 
         return ResponseEntity.ok(groupMembership.asResponse());
@@ -45,6 +49,8 @@ public class GroupMembershipController {
             @PathVariable long userId,
             @RequestBody EditGroupMembershipRequest editGroupMembershipRequest
     ) {
+        // TODO - authority check for groups outside own
+
         GroupMembership newGroupMembership = groupMembershipService.createOrEditGroupMembership(groupId, userId, editGroupMembershipRequest.permissions());
 
         return ResponseEntity.ok(newGroupMembership.asResponse());
@@ -53,6 +59,8 @@ public class GroupMembershipController {
     @DeleteMapping("/groups/{groupId}/members/{userId}")
     @PreAuthorize("hasAuthority('MANAGE_GROUP_MEMBERSHIPS')")
     public ResponseEntity<?> deleteGroupMembership(@PathVariable long groupId, @PathVariable long userId) {
+        // TODO - authority check for groups outside own
+
         groupMembershipService.deleteGroupMembership(groupId, userId);
 
         return ResponseEntity.noContent().build();

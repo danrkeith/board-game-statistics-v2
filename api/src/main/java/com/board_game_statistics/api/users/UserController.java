@@ -83,6 +83,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}/authorities")
+    @PreAuthorize("hasAuthority('MANAGE_USERS')")
     public ResponseEntity<UserResponse> setAuthorities(@PathVariable long id, @RequestBody Set<Authority> authorities) {
         User user = userService.setAuthorities(id, authorities);
 
@@ -90,7 +91,8 @@ public class UserController {
     }
 
     @GetMapping("/{id}/groups")
-    @PreAuthorize("hasAuthority('MANAGE_GROUP_MEMBERSHIPS')")
+    // TODO - more granular authorities for viewing as compared to editing
+    @PreAuthorize("hasAuthority('MANAGE_USERS') and hasAuthority('MANAGE_GROUPS') and hasAuthority('MANAGE_GROUP_MEMBERSHIPS')")
     public ResponseEntity<List<GroupResponse>> getGroupMembershipsByUserId(@PathVariable long id) {
         List<Group> groups = groupMembershipService.getGroupsOfUser(id);
         List<GroupResponse> groupResponses = groups.stream().map(Group::asResponse).toList();
