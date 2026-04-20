@@ -29,7 +29,7 @@ public class GroupController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('MANAGE_GROUPS')")
-    public ResponseEntity<List<GroupResponse>> getAllGroups() {
+    public ResponseEntity<List<GroupResponse>> getGroups() {
         List<Group> groups = groupService.getGroups();
         List<GroupResponse> groupsResponses = groups.stream().map(Group::asResponse).toList();
 

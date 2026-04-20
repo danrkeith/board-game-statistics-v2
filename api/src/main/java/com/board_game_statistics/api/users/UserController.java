@@ -1,5 +1,8 @@
 package com.board_game_statistics.api.users;
 
+import com.board_game_statistics.api.groups.Group;
+import com.board_game_statistics.api.groups.dto.GroupResponse;
+import com.board_game_statistics.api.groups.group_memberships.GroupMembershipService;
 import com.board_game_statistics.api.users.dto.EditUserRequest;
 import com.board_game_statistics.api.users.dto.UserResponse;
 import com.board_game_statistics.api.users.exceptions.DeleteSelfException;
@@ -21,9 +24,11 @@ import java.util.Set;
 @RestController
 public class UserController {
     private final UserService userService;
-    
-    public UserController(UserService userService) {
+    private final GroupMembershipService groupMembershipService;
+
+    public UserController(UserService userService, GroupMembershipService groupMembershipService) {
         this.userService = userService;
+        this.groupMembershipService = groupMembershipService;
     }
 
     @GetMapping
@@ -82,5 +87,14 @@ public class UserController {
         User user = userService.setAuthorities(id, authorities);
 
         return ResponseEntity.ok(user.asResponse());
+    }
+
+    @GetMapping("/{id}/groups")
+    @PreAuthorize("hasAuthority('MANAGE_GROUP_MEMBERSHIPS')")
+    public ResponseEntity<List<GroupResponse>> getGroupMembershipsByUserId(@PathVariable long id) {
+        List<Group> groups = groupMembershipService.getGroupsOfUser(id);
+        List<GroupResponse> groupResponses = groups.stream().map(Group::asResponse).toList();
+
+        return ResponseEntity.ok(groupResponses);
     }
 }
