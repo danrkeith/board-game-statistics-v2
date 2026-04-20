@@ -1,5 +1,8 @@
 package com.board_game_statistics.api.users;
 
+import com.board_game_statistics.api.groups.Group;
+import com.board_game_statistics.api.groups.dto.GroupResponse;
+import com.board_game_statistics.api.groups.group_memberships.GroupMembershipService;
 import com.board_game_statistics.api.users.dto.EditUserRequest;
 import com.board_game_statistics.api.users.dto.UserResponse;
 import com.board_game_statistics.api.users.exceptions.DeleteSelfException;
@@ -21,24 +24,25 @@ import java.util.Set;
 @RestController
 public class UserController {
     private final UserService userService;
-    
-    public UserController(UserService userService) {
+    private final GroupMembershipService groupMembershipService;
+
+    public UserController(UserService userService, GroupMembershipService groupMembershipService) {
         this.userService = userService;
+        this.groupMembershipService = groupMembershipService;
     }
 
     @GetMapping
     @PreAuthorize("hasAuthority('MANAGE_USERS')")
     public ResponseEntity<List<UserResponse>> getUsers() {
         List<User> users = userService.getUsers();
-        List<UserResponse> userResponses = users.stream().map(User::asResponse).toList();
 
+        List<UserResponse> userResponses = users.stream().map(User::asResponse).toList();
         return ResponseEntity.ok(userResponses);
     }
 
     @GetMapping("/me")
     public ResponseEntity<UserResponse> getMe(@AuthenticationPrincipal User user) {
         UserResponse userResponse = user.asResponse();
-
         return ResponseEntity.ok(userResponse);
     }
 
@@ -47,6 +51,14 @@ public class UserController {
         User newUser = userService.editUser(user.getId(), editUserRequest.firstName(), editUserRequest.lastName());
 
         return ResponseEntity.ok(newUser.asResponse());
+    }
+
+    @GetMapping("/me/groups")
+    public ResponseEntity<List<GroupResponse>> getMyGroups(@AuthenticationPrincipal User user) {
+        List<Group> groups = groupMembershipService.getGroupsOfUser(user.getId());
+
+        List<GroupResponse> groupResponses = groups.stream().map(Group::asResponse).toList();
+        return ResponseEntity.ok(groupResponses);
     }
 
     @GetMapping("/{id}")
@@ -78,9 +90,20 @@ public class UserController {
     }
 
     @PutMapping("/{id}/authorities")
+    @PreAuthorize("hasAuthority('MANAGE_USERS')")
     public ResponseEntity<UserResponse> setAuthorities(@PathVariable long id, @RequestBody Set<Authority> authorities) {
         User user = userService.setAuthorities(id, authorities);
 
         return ResponseEntity.ok(user.asResponse());
+    }
+
+    @GetMapping("/{id}/groups")
+    // TODO - more granular authorities for viewing as compared to editing
+    @PreAuthorize("hasAuthority('MANAGE_USERS') and hasAuthority('MANAGE_GROUPS') and hasAuthority('MANAGE_GROUP_MEMBERSHIPS')")
+    public ResponseEntity<List<GroupResponse>> getUserGroups(@PathVariable long id) {
+        List<Group> groups = groupMembershipService.getGroupsOfUser(id);
+
+        List<GroupResponse> groupResponses = groups.stream().map(Group::asResponse).toList();
+        return ResponseEntity.ok(groupResponses);
     }
 }

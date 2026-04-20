@@ -1,6 +1,7 @@
-package com.board_game_statistics.api.group_memberships;
+package com.board_game_statistics.api.groups.group_memberships;
 
 import com.board_game_statistics.api.groups.Group;
+import com.board_game_statistics.api.groups.group_memberships.dto.GroupMembershipResponse;
 import com.board_game_statistics.api.users.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -37,4 +38,31 @@ public class GroupMembership {
     @Enumerated(EnumType.STRING)
     @Column(name = "permission", nullable = false)
     private Set<Permission> permissions = EnumSet.noneOf(Permission.class);
+
+    public User getUser() {
+        return user;
+    }
+
+    public GroupMembership setUser(User user) {
+        this.user = user;
+        return this;
+    }
+
+    public Group getGroup() {
+        return group;
+    }
+
+    public GroupMembership setGroup(Group group) {
+        this.group = group;
+        return this;
+    }
+
+    public GroupMembership setPermissions(Set<Permission> permissions) {
+        this.permissions = permissions;
+        return this;
+    }
+
+    public GroupMembershipResponse asResponse() {
+        return new GroupMembershipResponse(user.getId(), user.getEmail(), user.getFirstName(), user.getLastName(), permissions);
+    }
 }

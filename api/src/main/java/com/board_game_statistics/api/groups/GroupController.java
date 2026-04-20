@@ -29,16 +29,16 @@ public class GroupController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('MANAGE_GROUPS')")
-    public ResponseEntity<List<GroupResponse>> getAllGroups() {
+    public ResponseEntity<List<GroupResponse>> getGroups() {
         List<Group> groups = groupService.getGroups();
-        List<GroupResponse> groupsResponses = groups.stream().map(Group::asResponse).toList();
 
+        List<GroupResponse> groupsResponses = groups.stream().map(Group::asResponse).toList();
         return ResponseEntity.ok(groupsResponses);
     }
 
     @PostMapping
     @PreAuthorize("hasAuthority('MANAGE_GROUPS')")
-    public ResponseEntity<?> createGroup(@RequestBody CreateGroupRequest createGroupRequest) {
+    public ResponseEntity<GroupResponse> createGroup(@RequestBody CreateGroupRequest createGroupRequest) {
         Group group = groupService.createGroup(createGroupRequest.name());
 
         URI location = ServletUriComponentsBuilder
@@ -62,7 +62,7 @@ public class GroupController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('MANAGE_GROUPS')")
-    public ResponseEntity<GroupResponse> updateGroup(@PathVariable long id, @RequestBody EditGroupRequest editGroupRequest) {
+    public ResponseEntity<GroupResponse> editGroup(@PathVariable long id, @RequestBody EditGroupRequest editGroupRequest) {
         Group newGroup = groupService.editGroup(id, editGroupRequest.name());
 
         return ResponseEntity.ok(newGroup.asResponse());
