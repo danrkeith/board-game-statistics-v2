@@ -1,5 +1,6 @@
 package com.board_game_statistics.api.groups;
 
+import com.board_game_statistics.api.groups.dto.CreateGroupRequest;
 import com.board_game_statistics.api.groups.dto.EditGroupRequest;
 import com.board_game_statistics.api.groups.dto.GroupResponse;
 import org.springframework.http.ResponseEntity;
@@ -37,8 +38,8 @@ public class GroupController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('MANAGE_GROUPS')")
-    public ResponseEntity<GroupResponse> createGroup(@RequestBody String name) {
-        Group group = groupService.createGroup(name);
+    public ResponseEntity<GroupResponse> createGroup(@RequestBody CreateGroupRequest createGroupRequest) {
+        Group group = groupService.createGroup(createGroupRequest.name());
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentContextPath()
@@ -61,7 +62,7 @@ public class GroupController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('MANAGE_GROUPS')")
-    public ResponseEntity<GroupResponse> updateGroup(@PathVariable long id, @RequestBody EditGroupRequest editGroupRequest) {
+    public ResponseEntity<GroupResponse> editGroup(@PathVariable long id, @RequestBody EditGroupRequest editGroupRequest) {
         Group newGroup = groupService.editGroup(id, editGroupRequest.name());
 
         return ResponseEntity.ok(newGroup.asResponse());

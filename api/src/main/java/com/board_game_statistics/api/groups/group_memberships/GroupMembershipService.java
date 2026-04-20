@@ -8,9 +8,11 @@ import java.util.Set;
 public interface GroupMembershipService {
     List<GroupMembership> getGroupMembershipsByGroup(long groupId);
 
-    GroupMembership getGroupMembership(long groupId, long userId);
-
     List<Group> getGroupsOfUser(long userId);
 
-    GroupMembership createMembership(long groupId, long userId, Set<Permission> permissions);
+    GroupMembership getGroupMembership(long groupId, long userId);
+
+    GroupMembership createOrEditGroupMembership(long groupId, long userId, Set<Permission> permissions);
+
+    void deleteGroupMembership(long groupId, long userId);
 }

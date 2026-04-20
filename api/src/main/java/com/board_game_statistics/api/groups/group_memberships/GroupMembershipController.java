@@ -1,17 +1,16 @@
 package com.board_game_statistics.api.groups.group_memberships;
 
-import com.board_game_statistics.api.groups.group_memberships.dto.CreateMemberRequest;
+import com.board_game_statistics.api.groups.group_memberships.dto.EditGroupMembershipRequest;
 import com.board_game_statistics.api.groups.group_memberships.dto.GroupMembershipResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -24,7 +23,7 @@ public class GroupMembershipController {
 
     @GetMapping("/groups/{groupId}/members")
     @PreAuthorize("hasAuthority('MANAGE_GROUP_MEMBERSHIPS')")
-    public ResponseEntity<List<GroupMembershipResponse>> getGroupMembersByGroup(@PathVariable long groupId) {
+    public ResponseEntity<List<GroupMembershipResponse>> getGroupMembershipByGroup(@PathVariable long groupId) {
         List<GroupMembership> groupMemberships = groupMembershipService.getGroupMembershipsByGroup(groupId);
         List<GroupMembershipResponse> responses = groupMemberships.stream().map(GroupMembership::asResponse).toList();
 
@@ -33,25 +32,29 @@ public class GroupMembershipController {
 
     @GetMapping("/groups/{groupId}/members/{userId}")
     @PreAuthorize("hasAuthority('MANAGE_GROUP_MEMBERSHIPS')")
-    public ResponseEntity<GroupMembershipResponse> getMember(@PathVariable long groupId, @PathVariable long userId) {
+    public ResponseEntity<GroupMembershipResponse> getGroupMembership(@PathVariable long groupId, @PathVariable long userId) {
         GroupMembership groupMembership = groupMembershipService.getGroupMembership(groupId, userId);
 
         return ResponseEntity.ok(groupMembership.asResponse());
     }
 
-    @PostMapping("/groups/{groupId}/members")
+    @PutMapping("/groups/{groupId}/members/{userId}")
     @PreAuthorize("hasAuthority('MANAGE_GROUP_MEMBERSHIPS')")
-    public ResponseEntity<GroupMembershipResponse> createMember(@PathVariable long groupId, @RequestBody CreateMemberRequest createMemberRequest) {
-        GroupMembership groupMembership = groupMembershipService.createMembership(groupId, createMemberRequest.userId(), createMemberRequest.permissions());
+    public ResponseEntity<GroupMembershipResponse> createOrEditGroupMembership(
+            @PathVariable long groupId,
+            @PathVariable long userId,
+            @RequestBody EditGroupMembershipRequest editGroupMembershipRequest
+    ) {
+        GroupMembership newGroupMembership = groupMembershipService.createOrEditGroupMembership(groupId, userId, editGroupMembershipRequest.permissions());
 
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentContextPath()
-                .path("/groups/{groupId}/members/{userId}")
-                .buildAndExpand(groupMembership.getGroup().getId(), groupMembership.getUser().getId())
-                .toUri();
+        return ResponseEntity.ok(newGroupMembership.asResponse());
+    }
 
-        return ResponseEntity
-                .created(location)
-                .body(groupMembership.asResponse());
+    @DeleteMapping("/groups/{groupId}/members/{userId}")
+    @PreAuthorize("hasAuthority('MANAGE_GROUP_MEMBERSHIPS')")
+    public ResponseEntity<?> deleteGroupMembership(@PathVariable long groupId, @PathVariable long userId) {
+        groupMembershipService.deleteGroupMembership(groupId, userId);
+
+        return ResponseEntity.noContent().build();
     }
 }
