@@ -15,11 +15,11 @@ public class GroupMembershipServiceImpl implements GroupMembershipService {
 
     @Override
     public List<GroupMembership> getGroupMembershipsByGroupId(long groupId) {
-        return groupMembershipRepository.findAllByGroupId(groupId);
+        return groupMembershipRepository.findByGroupIdOrderByUserId(groupId);
     }
 
     @Override
     public List<Group> getGroupsOfUser(long userId) {
-        return groupMembershipRepository.findAllByUserId(userId).stream().map(GroupMembership::getGroup).toList();
+        return groupMembershipRepository.findByUserIdOrderByGroupId(userId).stream().map(GroupMembership::getGroup).toList();
     }
 }

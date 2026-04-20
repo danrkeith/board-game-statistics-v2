@@ -15,7 +15,7 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public List<Group> getGroups() {
-        return groupRepository.findAllByOrderById();
+        return groupRepository.findByOrderById();
     }
 
     @Override
