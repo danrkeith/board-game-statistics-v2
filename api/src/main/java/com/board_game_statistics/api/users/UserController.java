@@ -35,15 +35,14 @@ public class UserController {
     @PreAuthorize("hasAuthority('MANAGE_USERS')")
     public ResponseEntity<List<UserResponse>> getUsers() {
         List<User> users = userService.getUsers();
-        List<UserResponse> userResponses = users.stream().map(User::asResponse).toList();
 
+        List<UserResponse> userResponses = users.stream().map(User::asResponse).toList();
         return ResponseEntity.ok(userResponses);
     }
 
     @GetMapping("/me")
     public ResponseEntity<UserResponse> getMe(@AuthenticationPrincipal User user) {
         UserResponse userResponse = user.asResponse();
-
         return ResponseEntity.ok(userResponse);
     }
 
@@ -52,6 +51,14 @@ public class UserController {
         User newUser = userService.editUser(user.getId(), editUserRequest.firstName(), editUserRequest.lastName());
 
         return ResponseEntity.ok(newUser.asResponse());
+    }
+
+    @GetMapping("/me/groups")
+    public ResponseEntity<List<GroupResponse>> getMyGroups(@AuthenticationPrincipal User user) {
+        List<Group> groups = groupMembershipService.getGroupsOfUser(user.getId());
+
+        List<GroupResponse> groupResponses = groups.stream().map(Group::asResponse).toList();
+        return ResponseEntity.ok(groupResponses);
     }
 
     @GetMapping("/{id}")
@@ -93,10 +100,10 @@ public class UserController {
     @GetMapping("/{id}/groups")
     // TODO - more granular authorities for viewing as compared to editing
     @PreAuthorize("hasAuthority('MANAGE_USERS') and hasAuthority('MANAGE_GROUPS') and hasAuthority('MANAGE_GROUP_MEMBERSHIPS')")
-    public ResponseEntity<List<GroupResponse>> getGroupMembershipsByUserId(@PathVariable long id) {
+    public ResponseEntity<List<GroupResponse>> getUserGroups(@PathVariable long id) {
         List<Group> groups = groupMembershipService.getGroupsOfUser(id);
-        List<GroupResponse> groupResponses = groups.stream().map(Group::asResponse).toList();
 
+        List<GroupResponse> groupResponses = groups.stream().map(Group::asResponse).toList();
         return ResponseEntity.ok(groupResponses);
     }
 }

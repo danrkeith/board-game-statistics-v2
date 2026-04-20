@@ -23,12 +23,12 @@ public class GroupMembershipController {
 
     @GetMapping("/groups/{groupId}/members")
     @PreAuthorize("hasAuthority('MANAGE_GROUP_MEMBERSHIPS')")
-    public ResponseEntity<List<GroupMembershipResponse>> getGroupMembershipByGroup(@PathVariable long groupId) {
+    public ResponseEntity<List<GroupMembershipResponse>> getGroupMemberships(@PathVariable long groupId) {
         // TODO - authority check for groups outside own
 
         List<GroupMembership> groupMemberships = groupMembershipService.getGroupMembershipsByGroup(groupId);
-        List<GroupMembershipResponse> responses = groupMemberships.stream().map(GroupMembership::asResponse).toList();
 
+        List<GroupMembershipResponse> responses = groupMemberships.stream().map(GroupMembership::asResponse).toList();
         return ResponseEntity.ok(responses);
     }
 
