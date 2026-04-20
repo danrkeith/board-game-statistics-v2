@@ -1,5 +1,6 @@
 package com.board_game_statistics.api.groups.group_memberships;
 
+import com.board_game_statistics.api.exceptions.ResourceNotFoundException;
 import com.board_game_statistics.api.groups.Group;
 import com.board_game_statistics.api.groups.GroupService;
 import com.board_game_statistics.api.users.User;
@@ -27,6 +28,12 @@ public class GroupMembershipServiceImpl implements GroupMembershipService {
     @Override
     public List<GroupMembership> getGroupMembershipsByGroup(long groupId) {
         return groupMembershipRepository.findByGroupIdOrderByUserId(groupId);
+    }
+
+    @Override
+    public GroupMembership getGroupMembership(long groupId, long userId) {
+        return groupMembershipRepository.findByGroupIdAndUserId(groupId, userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Group membership does not exist"));
     }
 
     @Override

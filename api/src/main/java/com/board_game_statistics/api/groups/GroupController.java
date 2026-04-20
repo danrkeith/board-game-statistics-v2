@@ -37,7 +37,7 @@ public class GroupController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('MANAGE_GROUPS')")
-    public ResponseEntity<?> createGroup(@RequestBody String name) {
+    public ResponseEntity<GroupResponse> createGroup(@RequestBody String name) {
         Group group = groupService.createGroup(name);
 
         URI location = ServletUriComponentsBuilder

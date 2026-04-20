@@ -31,9 +31,17 @@ public class GroupMembershipController {
         return ResponseEntity.ok(responses);
     }
 
+    @GetMapping("/groups/{groupId}/members/{userId}")
+    @PreAuthorize("hasAuthority('MANAGE_GROUP_MEMBERSHIPS')")
+    public ResponseEntity<GroupMembershipResponse> getMember(@PathVariable long groupId, @PathVariable long userId) {
+        GroupMembership groupMembership = groupMembershipService.getGroupMembership(groupId, userId);
+
+        return ResponseEntity.ok(groupMembership.asResponse());
+    }
+
     @PostMapping("/groups/{groupId}/members")
     @PreAuthorize("hasAuthority('MANAGE_GROUP_MEMBERSHIPS')")
-    public ResponseEntity<?> createMember(@PathVariable long groupId, @RequestBody CreateMemberRequest createMemberRequest) {
+    public ResponseEntity<GroupMembershipResponse> createMember(@PathVariable long groupId, @RequestBody CreateMemberRequest createMemberRequest) {
         GroupMembership groupMembership = groupMembershipService.createMembership(groupId, createMemberRequest.userId(), createMemberRequest.permissions());
 
         URI location = ServletUriComponentsBuilder
