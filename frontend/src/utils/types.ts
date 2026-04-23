@@ -1,4 +1,4 @@
-type Authority = 'MANAGE_USERS';
+type Authority = 'GRANT_AUTHORITIES' | 'MANAGE_USERS' | 'MANAGE_GROUPS' | 'MANAGE_GROUP_MEMBERSHIPS';
 
 interface User {
     id: number;

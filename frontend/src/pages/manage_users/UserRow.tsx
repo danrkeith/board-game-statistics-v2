@@ -20,7 +20,7 @@ const UserRow = ({ user, isLoggedIn, handleUserAction }: UserRowProps) => {
                 {isLoggedIn && <Badge bg="secondary" className="mx-3">You</Badge>}
             </td>
             <td>
-                <Dropdown onSelect={eventKey => handleUserAction({ user, action: eventKey as UserAction['action'] })}>
+                <Dropdown onSelect={eventKey => handleUserAction({ user, action: eventKey as UserAction['action'] })} align="end">
                     <Dropdown.Toggle as={KebabDropdownToggle} />
                     <Dropdown.Menu>
                         <Dropdown.Item eventKey="EDIT">

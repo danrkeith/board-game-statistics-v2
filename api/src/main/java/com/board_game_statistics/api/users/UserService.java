@@ -6,6 +6,8 @@ import java.util.Set;
 public interface UserService {
     List<User> getUsers();
 
+    User createUser(String email, String password, String firstName, String lastName);
+
     User getUser(long id);
 
     User editUser(long id, String firstName, String lastName);

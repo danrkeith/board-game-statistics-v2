@@ -1,11 +1,14 @@
 package com.board_game_statistics.api.users;
 
-import com.board_game_statistics.api.auth.AuthenticationService;
+import com.board_game_statistics.api.users.exceptions.InvalidEmailException;
+import com.board_game_statistics.api.users.exceptions.InvalidPasswordException;
+import com.board_game_statistics.api.users.exceptions.UserAlreadyExistsException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,16 +28,25 @@ public class UserServiceTests {
             "test1-password",
             "test2-password"
     };
+    private static final String TEST_EMAIL_FOR_CREATE = "test-create@example.com";
+    private static final String TEST_PASSWORD_FOR_CREATE = "test-create-password";
+    private static final String INVALID_EMAIL = "not-an-email";
+    private static final String INVALID_PASSWORD = "abc";
 
     @Autowired
     private UserService userService;
     @Autowired
-    private AuthenticationService authenticationService;
+    private UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @BeforeEach
     void beforeEach() {
         for (int i = 0; i < TEST_EMAILS.length; i++) {
-            authenticationService.register(null, null, TEST_EMAILS[i], TEST_PASSWORDS[i]);
+            userRepository.save(new User()
+                    .setEmail(TEST_EMAILS[i])
+                    .setPassword(passwordEncoder.encode(TEST_PASSWORDS[i]))
+            );
         }
     }
 
@@ -49,6 +61,40 @@ public class UserServiceTests {
     }
 
     @Test
+    @Transactional
+    void testCreateUser() {
+        User savedUser = userService.createUser(TEST_EMAIL_FOR_CREATE, TEST_PASSWORD_FOR_CREATE, null, null);
+
+        Assertions.assertEquals(TEST_EMAIL_FOR_CREATE, savedUser.getEmail());
+    }
+
+    @Test
+    @Transactional
+    void testCreateUserTwice() {
+        userService.createUser(TEST_EMAIL_FOR_CREATE, TEST_PASSWORD_FOR_CREATE, null, null);
+
+        Assertions.assertThrows(UserAlreadyExistsException.class, () ->
+                userService.createUser(TEST_EMAIL_FOR_CREATE, TEST_PASSWORD_FOR_CREATE, null, null)
+        );
+    }
+
+    @Test
+    @Transactional
+    void testCreateUserInvalidEmail() {
+        Assertions.assertThrows(InvalidEmailException.class, () ->
+                userService.createUser(INVALID_EMAIL, TEST_PASSWORD_FOR_CREATE, null, null)
+        );
+    }
+
+    @Test
+    @Transactional
+    void testCreateUserInvalidPassword() {
+        Assertions.assertThrows(InvalidPasswordException.class, () ->
+                userService.createUser(TEST_EMAIL_FOR_CREATE, INVALID_PASSWORD, null, null)
+        );
+    }
+
+    @Test
     void getUserById() {
         List<User> users = userService.getUsers();
         User expectedUser = users.getFirst();
@@ -60,7 +106,7 @@ public class UserServiceTests {
 
     @Test
     void editUser() {
-        final long id = 1;
+        final long id = userService.createUser(TEST_EMAIL_FOR_CREATE, TEST_PASSWORD_FOR_CREATE, null, null).getId();
         final String firstName = "John";
         final String lastName = "Smith";
 
