@@ -13,33 +13,38 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(JwtException.class)
-    public ResponseEntity<?> handleJwtException(JwtException e) {
+    public ResponseEntity<Map<String, String>> handleJwtException(JwtException e) {
         return errorResponse(e, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<?> handleBadCredentialsException(BadCredentialsException e) {
+    public ResponseEntity<Map<String, String>> handleBadCredentialsException(BadCredentialsException e) {
         return errorResponse(e, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<?> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
+    public ResponseEntity<Map<String, String>> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
         return errorResponse(e, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(InvalidInputException.class)
-    public ResponseEntity<?> handleInvalidInputException(InvalidInputException e) {
+    public ResponseEntity<Map<String, String>> handleInvalidInputException(InvalidInputException e) {
         return errorResponse(e, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<?> handleResourceNotFoundException(ResourceNotFoundException e) {
+    public ResponseEntity<Map<String, String>> handleResourceNotFoundException(ResourceNotFoundException e) {
         return errorResponse(e, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(ForbiddenOperationException.class)
-    public ResponseEntity<?> handleForbiddenOperationException(ForbiddenOperationException e) {
+    public ResponseEntity<Map<String, String>> handleForbiddenOperationException(ForbiddenOperationException e) {
         return errorResponse(e, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(ResourceConflictException.class)
+    public ResponseEntity<Map<String, String>> handleResourceConflictException(ResourceConflictException e) {
+        return errorResponse(e, HttpStatus.CONFLICT);
     }
 
     private ResponseEntity<Map<String, String>> errorResponse(Exception e, HttpStatus status) {
