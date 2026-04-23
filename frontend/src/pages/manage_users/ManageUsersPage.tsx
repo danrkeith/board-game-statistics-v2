@@ -60,7 +60,7 @@ const ManageUsersPage = () => {
     }, [isLoading, callWithAuth]);
 
     return (
-        <>
+        <div className="mb-5">
             <h1>Manage users</h1>
             {users === undefined
                 ? (
@@ -73,7 +73,7 @@ const ManageUsersPage = () => {
                     </>
                 )}
             <CreateUserModal show={action === 'CREATE_USER'} submitCallback={user => usersDispatch({ type: 'ADD', user })} handleClose={() => setAction(null)} />
-        </>
+        </div>
     );
 };
 
