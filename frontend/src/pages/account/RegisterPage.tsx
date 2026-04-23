@@ -1,9 +1,9 @@
 import { useContext, useState } from 'react';
 import { Button, Form, Spinner } from 'react-bootstrap';
-import { apiRegister } from '../../utils/api/auth-api-utils';
 import { AuthContext } from '../../context/AuthContext';
 import { useNavigate } from 'react-router';
 import { HOME_PATH } from '../../App';
+import { apiCreateUser } from '../../utils/api/users-api-utils';
 
 const RegisterPage = () => {
     const { login } = useContext(AuthContext);
@@ -12,15 +12,19 @@ const RegisterPage = () => {
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [passwordConfirmation, setPasswordConfirmation] = useState('');
+    const [passwordConfirmationError, setPasswordConfirmationError] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+
+    const formIsValid = email !== '' && password !== '' && passwordConfirmation !== '' && password === passwordConfirmation;
 
     const navigate = useNavigate();
 
     const handleSubmission = (event: React.FormEvent) => {
         event.preventDefault();
         setIsLoading(true);
-        apiRegister({ firstName, lastName, email, password })
+        apiCreateUser({ firstName, lastName, email, password })
             .then(() => login({ email, password }))
             .then(() => void navigate(HOME_PATH))
             .catch(({ message }: Error) => {
@@ -89,6 +93,30 @@ const RegisterPage = () => {
                         }}
                     />
                 </Form.Group>
+                <Form.Group className="mb-3">
+                    <Form.Label>
+                        Confirm password
+                        {' '}
+                        <span className="text-info">*</span>
+                    </Form.Label>
+                    <Form.Control
+                        type="password"
+                        value={passwordConfirmation}
+                        onChange={(e) => {
+                            setError(null);
+                            setPasswordConfirmationError(null);
+                            setPasswordConfirmation(e.target.value);
+                        }}
+                        onBlur={() => {
+                            if (password !== passwordConfirmation) {
+                                setPasswordConfirmationError('Passwords do not match');
+                            }
+                        }}
+                    />
+                    {passwordConfirmationError && (
+                        <p className="text-danger mt-2">{passwordConfirmationError}</p>
+                    )}
+                </Form.Group>
                 <Form.Group>
                     <p className="text-info">* Required fields</p>
                 </Form.Group>
@@ -98,7 +126,7 @@ const RegisterPage = () => {
                     </Form.Group>
                 )}
                 <Form.Group className="d-flex align-items-center">
-                    <Button variant="primary" type="submit" disabled={isLoading}>
+                    <Button variant="primary" type="submit" disabled={isLoading || !formIsValid}>
                         Register
                     </Button>
                     {isLoading && (
