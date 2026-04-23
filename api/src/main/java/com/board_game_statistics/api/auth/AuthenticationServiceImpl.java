@@ -1,53 +1,19 @@
 package com.board_game_statistics.api.auth;
 
-import com.board_game_statistics.api.users.exceptions.InvalidEmailException;
-import com.board_game_statistics.api.users.exceptions.InvalidPasswordException;
-import com.board_game_statistics.api.users.exceptions.UserAlreadyExistsException;
 import com.board_game_statistics.api.users.User;
 import com.board_game_statistics.api.users.UserRepository;
-import com.board_game_statistics.api.util.Validator;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
-    public AuthenticationServiceImpl(
-            UserRepository userRepository,
-            PasswordEncoder passwordEncoder,
-            AuthenticationManager authenticationManager
-    ) {
+    public AuthenticationServiceImpl(UserRepository userRepository, AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
-    }
-
-    @Override
-    public User register(String firstName, String lastName, String email, String password) {
-        if (userRepository.existsByEmail(email)) {
-            throw new UserAlreadyExistsException();
-        }
-
-        if (!Validator.isEmail(email)) {
-            throw new InvalidEmailException();
-        }
-
-        if (!Validator.isValidPassword(password)) {
-            throw new InvalidPasswordException();
-        }
-
-        User user = new User()
-                .setEmail(email)
-                .setPassword(passwordEncoder.encode(password))
-                .setFirstName(firstName)
-                .setLastName(lastName);
-
-        return userRepository.save(user);
     }
 
     @Override

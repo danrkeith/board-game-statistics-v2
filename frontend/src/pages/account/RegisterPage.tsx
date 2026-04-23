@@ -21,6 +21,10 @@ const RegisterPage = () => {
 
     const navigate = useNavigate();
 
+    const checkPasswordConfirmation = () => {
+        setPasswordConfirmationError(passwordConfirmation !== '' && password !== passwordConfirmation ? 'Passwords do not match' : null);
+    };
+
     const handleSubmission = (event: React.FormEvent) => {
         event.preventDefault();
         setIsLoading(true);
@@ -89,8 +93,10 @@ const RegisterPage = () => {
                         value={password}
                         onChange={(e) => {
                             setError(null);
+                            setPasswordConfirmationError(null);
                             setPassword(e.target.value);
                         }}
+                        onBlur={checkPasswordConfirmation}
                     />
                 </Form.Group>
                 <Form.Group className="mb-3">
@@ -107,11 +113,7 @@ const RegisterPage = () => {
                             setPasswordConfirmationError(null);
                             setPasswordConfirmation(e.target.value);
                         }}
-                        onBlur={() => {
-                            if (password !== passwordConfirmation) {
-                                setPasswordConfirmationError('Passwords do not match');
-                            }
-                        }}
+                        onBlur={checkPasswordConfirmation}
                     />
                     {passwordConfirmationError && (
                         <p className="text-danger mt-2">{passwordConfirmationError}</p>
