@@ -1,26 +1,15 @@
 import { useState } from 'react';
-import { Button, Form, Modal, Spinner } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
+import ModalForm, { type ModalOrFormProps } from './ModalForm';
 
-interface CommonCreateUserFormProps {
+type CreateUserFormProps = {
     submitButtonText: string;
     onSubmit: (firstName: string, lastName: string, email: string, password: string) => Promise<void>;
-}
+} & ModalOrFormProps;
 
-type CreateUserFormProps = CommonCreateUserFormProps & (
-    {
-        as?: 'form';
-        title?: never;
-        show?: never;
-        handleClose?: never;
-    } | {
-        as: 'modal';
-        title: string;
-        show: boolean;
-        handleClose: () => void;
-    }
-);
+const CreateUserForm = (props: CreateUserFormProps) => {
+    const { onSubmit, handleClose } = props;
 
-const CreateUserForm = ({ submitButtonText, onSubmit, as, title, show, handleClose }: CreateUserFormProps) => {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
@@ -49,8 +38,13 @@ const CreateUserForm = ({ submitButtonText, onSubmit, as, title, show, handleClo
             .finally(() => setIsLoading(false));
     }
 
-    const formContents = (
-        <>
+    return (
+        <ModalForm
+            {...props}
+            submitButtonText="Create User"
+            isLoading={isLoading}
+            formIsValid={formIsValid}
+            handleSubmission={handleSubmission}>
             <Form.Group className="mb-3">
                 <Form.Label>First name</Form.Label>
                 <Form.Control
@@ -136,51 +130,7 @@ const CreateUserForm = ({ submitButtonText, onSubmit, as, title, show, handleClo
                     <p className="text-danger">{error}</p>
                 </Form.Group>
             )}
-        </>
-    )
-
-    const submitButton = (
-        <Button variant="primary" type="submit" disabled={isLoading || !formIsValid}>
-            {submitButtonText}
-        </Button>
-    )
-
-    return (
-        <Form onSubmit={handleSubmission}>
-            {as === 'modal' ? (
-                <Modal show={show} onHide={handleClose}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>
-                            {title}
-                        </Modal.Title>
-                    </Modal.Header>
-                    <Form onSubmit={handleSubmission}>
-                        <Modal.Body>
-                            {formContents}
-                        </Modal.Body>
-                        <Modal.Footer>
-                            {isLoading && (
-                                <Spinner as="span" className="ms-3" />
-                            )}
-                            <Button variant="secondary" onClick={handleClose}>
-                                Cancel
-                            </Button>
-                            {submitButton}
-                        </Modal.Footer>
-                    </Form>
-                </Modal>
-            ) : (
-                <Form onSubmit={handleSubmission}>
-                    {formContents}
-                    <Form.Group className="d-flex align-items-center">
-                        {submitButton}
-                        {isLoading && (
-                            <Spinner as="span" className="ms-3" />
-                        )}
-                    </Form.Group>
-                </Form>
-            )}
-        </Form>
+        </ModalForm>
     );
 }
 
