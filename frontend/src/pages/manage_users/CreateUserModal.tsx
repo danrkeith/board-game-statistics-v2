@@ -1,31 +1,31 @@
 import { useState } from 'react';
 import { Button, Modal } from 'react-bootstrap'
 
-interface NewUserModalProps {
+interface CreateUserModalProps {
     show: boolean;
     handleClose: () => void;
 }
 
-const NewUserModal = ({ show, handleClose }: NewUserModalProps) => {
+const CreateUserModal = ({ show, handleClose }: CreateUserModalProps) => {
     const [isLoading, setIsLoading] = useState(false);
 
     return (
         <Modal show={show} onHide={handleClose}>
             <Modal.Header closeButton>
                 <Modal.Title>
-                    New user
+                    Create user
                 </Modal.Title>
             </Modal.Header>
             <Modal.Footer>
                 <Button variant="secondary" onClick={handleClose}>
-                    Close
+                    Cancel
                 </Button>
                 <Button variant="primary" type="submit" disabled={isLoading}>
-                    Register user
+                    Create
                 </Button>
             </Modal.Footer>
         </Modal>
     )
 }
 
-export default NewUserModal;
+export default CreateUserModal;
