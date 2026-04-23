@@ -19,13 +19,13 @@ type ModalFormProps = {
     children: React.ReactNode;
     submitButtonText: string;
     isLoading: boolean;
-    formIsValid?: boolean;
+    isValid?: boolean;
     handleSubmission: (event: React.FormEvent) => void;
 } & ModalOrFormProps;
 
-const ModalForm = ({ children, submitButtonText, isLoading, formIsValid, handleSubmission, as, title, show, handleClose }: ModalFormProps) => {
+const FlexibleForm = ({ children, submitButtonText, isLoading, isValid, handleSubmission, as, title, show, handleClose }: ModalFormProps) => {
     const submitButton = (
-        <Button variant="primary" type="submit" disabled={isLoading || !(formIsValid ?? true)}>
+        <Button variant="primary" type="submit" disabled={isLoading || !(isValid ?? true)}>
             {submitButtonText}
         </Button>
     );
@@ -69,4 +69,4 @@ const ModalForm = ({ children, submitButtonText, isLoading, formIsValid, handleS
 
 export type { ModalOrFormProps };
 
-export default ModalForm;
+export default FlexibleForm;

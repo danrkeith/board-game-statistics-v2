@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Form } from 'react-bootstrap';
-import ModalForm, { type ModalOrFormProps } from './ModalForm';
+import FlexibleForm, { type ModalOrFormProps } from './FlexibleForm';
 
 type CreateUserFormProps = {
     submitButtonText: string;
@@ -19,7 +19,7 @@ const CreateUserForm = (props: CreateUserFormProps) => {
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
 
-    const formIsValid = email !== '' && password !== '' && passwordConfirmation !== '' && password === passwordConfirmation;
+    const isValid = email !== '' && password !== '' && passwordConfirmation !== '' && password === passwordConfirmation;
 
     const checkPasswordConfirmation = () => {
         setPasswordConfirmationError(passwordConfirmation !== '' && password !== passwordConfirmation ? 'Passwords do not match' : null);
@@ -39,11 +39,11 @@ const CreateUserForm = (props: CreateUserFormProps) => {
     };
 
     return (
-        <ModalForm
+        <FlexibleForm
             {...props}
             submitButtonText="Create User"
             isLoading={isLoading}
-            formIsValid={formIsValid}
+            isValid={isValid}
             handleSubmission={handleSubmission}
         >
             <Form.Group className="mb-3">
@@ -131,7 +131,7 @@ const CreateUserForm = (props: CreateUserFormProps) => {
                     <p className="text-danger">{error}</p>
                 </Form.Group>
             )}
-        </ModalForm>
+        </FlexibleForm>
     );
 };
 
