@@ -17,7 +17,7 @@ const EditUserForm = (props: EditUserFormProps) => {
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
-    
+
     const hasChanges = firstName !== user?.firstName || lastName !== user?.lastName;
 
     useEffect(() => {
@@ -43,7 +43,8 @@ const EditUserForm = (props: EditUserFormProps) => {
             .then(() => {
                 if (handleClose) {
                     handleClose();
-                } else {
+                }
+                else {
                     setShowSuccess(true);
                 }
             })
@@ -107,8 +108,8 @@ const EditUserForm = (props: EditUserFormProps) => {
                             </Form.Group>
                         )}
                     </>
-                ) : <Spinner className="d-block mx-auto" />
-            }
+                )
+                : <Spinner className="d-block mx-auto" />}
         </FlexibleForm>
     );
 };

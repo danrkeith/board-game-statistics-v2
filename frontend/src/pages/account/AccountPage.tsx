@@ -9,7 +9,6 @@ const AccountSettingsPage = () => {
     const { user, setUser } = useContext(UserContext);
     const { callWithAuth } = useContext(AuthContext);
 
-
     const onSubmit = (firstName: string, lastName: string) =>
         callWithAuth(apiEditMe, {
             firstName,

@@ -1,6 +1,6 @@
 import type { User } from '../../utils/types';
 import { title } from '../../utils/user-utils';
-import { useContext, } from 'react';
+import { useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import { apiEditUser } from '../../utils/api/users-api-utils';
 import EditUserForm from '../../components/forms/EditUserForm';
@@ -32,7 +32,7 @@ const EditUserModal = ({ show, user, submitCallback, handleClose }: EditUserModa
             submitCallback={submitCallback}
             handleClose={handleClose}
         />
-    )
+    );
 };
 
 export default EditUserModal;
