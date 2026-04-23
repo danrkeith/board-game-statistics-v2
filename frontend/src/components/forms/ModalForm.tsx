@@ -30,39 +30,41 @@ const ModalForm = ({ children, submitButtonText, isLoading, formIsValid, handleS
         </Button>
     );
 
-    return as === 'modal' ? (
-        <Modal show={show} onHide={handleClose}>
-            <Modal.Header closeButton>
-                <Modal.Title>
-                    {title}
-                </Modal.Title>
-            </Modal.Header>
+    return as === 'modal'
+        ? (
+            <Modal show={show} onHide={handleClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title>
+                        {title}
+                    </Modal.Title>
+                </Modal.Header>
+                <Form onSubmit={handleSubmission}>
+                    <Modal.Body>
+                        {children}
+                    </Modal.Body>
+                    <Modal.Footer>
+                        {isLoading && (
+                            <Spinner as="span" className="ms-3" />
+                        )}
+                        <Button variant="secondary" onClick={handleClose}>
+                            Cancel
+                        </Button>
+                        {submitButton}
+                    </Modal.Footer>
+                </Form>
+            </Modal>
+        )
+        : (
             <Form onSubmit={handleSubmission}>
-                <Modal.Body>
-                    {children}
-                </Modal.Body>
-                <Modal.Footer>
+                {children}
+                <Form.Group className="d-flex align-items-center">
+                    {submitButton}
                     {isLoading && (
                         <Spinner as="span" className="ms-3" />
                     )}
-                    <Button variant="secondary" onClick={handleClose}>
-                        Cancel
-                    </Button>
-                    {submitButton}
-                </Modal.Footer>
+                </Form.Group>
             </Form>
-        </Modal>
-    ) : (
-        <Form onSubmit={handleSubmission}>
-            {children}
-            <Form.Group className="d-flex align-items-center">
-                {submitButton}
-                {isLoading && (
-                    <Spinner as="span" className="ms-3" />
-                )}
-            </Form.Group>
-        </Form>
-    );
+        );
 };
 
 export type { ModalOrFormProps };

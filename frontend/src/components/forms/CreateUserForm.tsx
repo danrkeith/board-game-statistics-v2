@@ -36,7 +36,7 @@ const CreateUserForm = (props: CreateUserFormProps) => {
                 setPasswordConfirmation('');
             })
             .finally(() => setIsLoading(false));
-    }
+    };
 
     return (
         <ModalForm
@@ -44,7 +44,8 @@ const CreateUserForm = (props: CreateUserFormProps) => {
             submitButtonText="Create User"
             isLoading={isLoading}
             formIsValid={formIsValid}
-            handleSubmission={handleSubmission}>
+            handleSubmission={handleSubmission}
+        >
             <Form.Group className="mb-3">
                 <Form.Label>First name</Form.Label>
                 <Form.Control
@@ -132,6 +133,6 @@ const CreateUserForm = (props: CreateUserFormProps) => {
             )}
         </ModalForm>
     );
-}
+};
 
 export default CreateUserForm;

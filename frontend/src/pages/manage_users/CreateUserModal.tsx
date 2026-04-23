@@ -13,14 +13,16 @@ const CreateUserModal = ({ show, submitCallback, handleClose }: CreateUserModalP
         apiCreateUser({ firstName, lastName, email, password })
             .then(submitCallback);
 
-    return <CreateUserForm
-        as="modal"
-        title="Create User"
-        submitButtonText="Create"
-        show={show}
-        onSubmit={onSubmit}
-        handleClose={handleClose}
-    />;
-}
+    return (
+        <CreateUserForm
+            as="modal"
+            title="Create User"
+            submitButtonText="Create"
+            show={show}
+            onSubmit={onSubmit}
+            handleClose={handleClose}
+        />
+    );
+};
 
 export default CreateUserModal;
