@@ -1,4 +1,3 @@
-import { Modal } from 'react-bootstrap'
 import CreateUserForm from '../../components/forms/CreateUserForm';
 import { apiCreateUser } from '../../utils/api/users-api-utils';
 import type { User } from '../../utils/types';
@@ -14,16 +13,14 @@ const CreateUserModal = ({ show, submitCallback, handleClose }: CreateUserModalP
         apiCreateUser({ firstName, lastName, email, password })
             .then(submitCallback);
 
-    return (
-        <Modal show={show} onHide={handleClose}>
-            <Modal.Header closeButton>
-                <Modal.Title>
-                    Create user
-                </Modal.Title>
-            </Modal.Header>
-            <CreateUserForm isInModal submitButtonText="Create" onSubmit={onSubmit} handleClose={handleClose} />
-        </Modal>
-    )
+    return <CreateUserForm
+        as="modal"
+        title="Create User"
+        submitButtonText="Create"
+        show={show}
+        onSubmit={onSubmit}
+        handleClose={handleClose}
+    />;
 }
 
 export default CreateUserModal;

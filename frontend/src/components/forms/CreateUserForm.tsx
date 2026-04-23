@@ -8,15 +8,19 @@ interface CommonCreateUserFormProps {
 
 type CreateUserFormProps = CommonCreateUserFormProps & (
     {
-        isInModal?: false;
+        as?: 'form';
+        title?: never;
+        show?: never;
         handleClose?: never;
     } | {
-        isInModal: true;
+        as: 'modal';
+        title: string;
+        show: boolean;
         handleClose: () => void;
     }
 );
 
-const CreateUserForm = ({ submitButtonText, onSubmit, isInModal, handleClose }: CreateUserFormProps) => {
+const CreateUserForm = ({ submitButtonText, onSubmit, as, title, show, handleClose }: CreateUserFormProps) => {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
@@ -143,23 +147,30 @@ const CreateUserForm = ({ submitButtonText, onSubmit, isInModal, handleClose }: 
 
     return (
         <Form onSubmit={handleSubmission}>
-            {isInModal ? (
-                <>
-                    <Modal.Body>
-                        {formContents}
-                    </Modal.Body>
-                    <Modal.Footer>
-                        {isLoading && (
-                            <Spinner as="span" className="ms-3" />
-                        )}
-                        <Button variant="secondary" onClick={handleClose}>
-                            Cancel
-                        </Button>
-                        {submitButton}
-                    </Modal.Footer>
-                </>
+            {as === 'modal' ? (
+                <Modal show={show} onHide={handleClose}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>
+                            {title}
+                        </Modal.Title>
+                    </Modal.Header>
+                    <Form onSubmit={handleSubmission}>
+                        <Modal.Body>
+                            {formContents}
+                        </Modal.Body>
+                        <Modal.Footer>
+                            {isLoading && (
+                                <Spinner as="span" className="ms-3" />
+                            )}
+                            <Button variant="secondary" onClick={handleClose}>
+                                Cancel
+                            </Button>
+                            {submitButton}
+                        </Modal.Footer>
+                    </Form>
+                </Modal>
             ) : (
-                <>
+                <Form onSubmit={handleSubmission}>
                     {formContents}
                     <Form.Group className="d-flex align-items-center">
                         {submitButton}
@@ -167,7 +178,7 @@ const CreateUserForm = ({ submitButtonText, onSubmit, isInModal, handleClose }: 
                             <Spinner as="span" className="ms-3" />
                         )}
                     </Form.Group>
-                </>
+                </Form>
             )}
         </Form>
     );
