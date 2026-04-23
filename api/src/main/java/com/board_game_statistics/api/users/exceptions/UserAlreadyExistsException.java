@@ -1,4 +1,4 @@
-package com.board_game_statistics.api.auth.exceptions;
+package com.board_game_statistics.api.users.exceptions;
 
 import com.board_game_statistics.api.exceptions.ResourceConflictException;
 

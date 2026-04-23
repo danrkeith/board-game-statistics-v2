@@ -1,8 +1,8 @@
 package com.board_game_statistics.api.auth;
 
-import com.board_game_statistics.api.auth.exceptions.InvalidEmailException;
-import com.board_game_statistics.api.auth.exceptions.InvalidPasswordException;
-import com.board_game_statistics.api.auth.exceptions.UserAlreadyExistsException;
+import com.board_game_statistics.api.users.exceptions.InvalidEmailException;
+import com.board_game_statistics.api.users.exceptions.InvalidPasswordException;
+import com.board_game_statistics.api.users.exceptions.UserAlreadyExistsException;
 import com.board_game_statistics.api.users.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

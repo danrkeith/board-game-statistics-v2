@@ -3,6 +3,7 @@ package com.board_game_statistics.api.users;
 import com.board_game_statistics.api.groups.Group;
 import com.board_game_statistics.api.groups.dto.GroupResponse;
 import com.board_game_statistics.api.groups.group_memberships.GroupMembershipService;
+import com.board_game_statistics.api.users.dto.CreateUserRequest;
 import com.board_game_statistics.api.users.dto.EditUserRequest;
 import com.board_game_statistics.api.users.dto.UserResponse;
 import com.board_game_statistics.api.users.exceptions.DeleteSelfException;
@@ -12,11 +13,14 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Set;
 
@@ -38,6 +42,21 @@ public class UserController {
 
         List<UserResponse> userResponses = users.stream().map(User::asResponse).toList();
         return ResponseEntity.ok(userResponses);
+    }
+
+    @PostMapping
+    public ResponseEntity<UserResponse> createUser(@RequestBody CreateUserRequest createUserRequest) {
+        User user = userService.createUser(createUserRequest.email(), createUserRequest.password(), createUserRequest.firstName(), createUserRequest.lastName());
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentContextPath()
+                .path("/users/{id}")
+                .buildAndExpand(user.getId())
+                .toUri();
+
+        return ResponseEntity
+                .created(location)
+                .body(user.asResponse());
     }
 
     @GetMapping("/me")
