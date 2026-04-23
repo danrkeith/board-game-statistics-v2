@@ -1,9 +1,10 @@
-import { useContext, useEffect, useReducer } from 'react';
-import { Spinner } from 'react-bootstrap';
+import { useContext, useEffect, useReducer, useState } from 'react';
+import { Button, Spinner } from 'react-bootstrap';
 import { AuthContext } from '../../context/AuthContext';
 import { apiGetUsers } from '../../utils/api/users-api-utils';
 import type { User } from '../../utils/types';
 import UsersTable from './UsersTable';
+import NewUserModal from './NewUserModal';
 
 interface UsersReducerActionSetAll {
     type: 'SET_ALL';
@@ -40,6 +41,8 @@ const ManageUsersPage = () => {
 
     const [users, usersDispatch] = useReducer(usersReducer, undefined);
 
+    const [action, setAction] = useState<'NEW_USER' | null>(null);
+
     useEffect(() => {
         if (isLoading) {
             return;
@@ -57,8 +60,12 @@ const ManageUsersPage = () => {
                     <Spinner className="d-block mx-auto" />
                 )
                 : (
-                    <UsersTable users={users} usersDispatch={usersDispatch} />
+                    <>
+                        <UsersTable users={users} usersDispatch={usersDispatch} />
+                        <Button onClick={() => setAction('NEW_USER')}>New user</Button>
+                    </>
                 )}
+            <NewUserModal show={action === 'NEW_USER'} handleClose={() => setAction(null)} />
         </>
     );
 };

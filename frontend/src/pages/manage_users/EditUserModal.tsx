@@ -91,7 +91,7 @@ const EditUserModal = ({ show, user, submitCallback, handleClose }: EditUserModa
                         <Spinner as="span" className="ms-3" />
                     )}
                     <Button variant="secondary" onClick={handleClose}>
-                        Close
+                        Cancel
                     </Button>
                     <Button variant="primary" type="submit" disabled={isLoading}>
                         Save Changes
