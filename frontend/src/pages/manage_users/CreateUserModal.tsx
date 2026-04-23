@@ -1,13 +1,18 @@
-import { useState } from 'react';
-import { Button, Modal } from 'react-bootstrap'
+import { Modal } from 'react-bootstrap'
+import CreateUserForm from '../../components/forms/CreateUserForm';
+import { apiCreateUser } from '../../utils/api/users-api-utils';
+import type { User } from '../../utils/types';
 
 interface CreateUserModalProps {
     show: boolean;
+    submitCallback: (user: User) => void;
     handleClose: () => void;
 }
 
-const CreateUserModal = ({ show, handleClose }: CreateUserModalProps) => {
-    const [isLoading, setIsLoading] = useState(false);
+const CreateUserModal = ({ show, submitCallback, handleClose }: CreateUserModalProps) => {
+    const onSubmit = (firstName: string, lastName: string, email: string, password: string) =>
+        apiCreateUser({ firstName, lastName, email, password })
+            .then(submitCallback);
 
     return (
         <Modal show={show} onHide={handleClose}>
@@ -16,14 +21,7 @@ const CreateUserModal = ({ show, handleClose }: CreateUserModalProps) => {
                     Create user
                 </Modal.Title>
             </Modal.Header>
-            <Modal.Footer>
-                <Button variant="secondary" onClick={handleClose}>
-                    Cancel
-                </Button>
-                <Button variant="primary" type="submit" disabled={isLoading}>
-                    Create
-                </Button>
-            </Modal.Footer>
+            <CreateUserForm isInModal submitButtonText="Create" onSubmit={onSubmit} handleClose={handleClose} />
         </Modal>
     )
 }

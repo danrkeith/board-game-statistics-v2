@@ -16,12 +16,17 @@ interface UsersReducerActionUpdate {
     user: User;
 }
 
+interface UsersReducerActionAdd {
+    type: 'ADD';
+    user: User;
+}
+
 interface UsersReducerActionRemove {
     type: 'REMOVE';
     userId: number;
 }
 
-type UsersReducerAction = UsersReducerActionSetAll | UsersReducerActionUpdate | UsersReducerActionRemove;
+type UsersReducerAction = UsersReducerActionSetAll | UsersReducerActionUpdate | UsersReducerActionAdd | UsersReducerActionRemove;
 
 const ManageUsersPage = () => {
     const { isLoading, callWithAuth } = useContext(AuthContext);
@@ -30,6 +35,8 @@ const ManageUsersPage = () => {
         switch (action.type) {
             case 'SET_ALL':
                 return action.users;
+            case 'ADD':
+                return [...state ?? [], action.user];
             case 'UPDATE':
                 return state?.map(u => u.id === action.user.id ? action.user : u);
             case 'REMOVE':
@@ -65,7 +72,7 @@ const ManageUsersPage = () => {
                         <Button onClick={() => setAction('CREATE_USER')}>Create user</Button>
                     </>
                 )}
-            <CreateUserModal show={action === 'CREATE_USER'} handleClose={() => setAction(null)} />
+            <CreateUserModal show={action === 'CREATE_USER'} submitCallback={(user) => usersDispatch({ type: 'ADD', user })} handleClose={() => setAction(null)} />
         </>
     );
 };
