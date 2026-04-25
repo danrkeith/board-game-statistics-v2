@@ -6,7 +6,7 @@ import UserRow from './UserRow';
 import EditUserModal from './EditUserModal';
 import type { UsersReducerAction } from './ManageUsersPage';
 import DeleteUserConfirmationModal from './DeleteUserConfirmationModal';
-import ManageAuthoritiesModal from './manage_authorities/ManageAuthoritiesModal';
+import ManageAuthoritiesModal from './ManageAuthoritiesModal';
 
 interface UserAction {
     user: User;
