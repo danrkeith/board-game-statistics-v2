@@ -10,12 +10,12 @@ type EditUserFormProps = {
 } & ModalOrFormProps;
 
 const EditUserForm = (props: EditUserFormProps) => {
-    const { user, onSubmit, handleClose, submitCallback } = props;
+    const { user, onSubmit, submitCallback, handleClose } = props;
 
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
-    const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
     const [showSuccess, setShowSuccess] = useState(false);
 
     const hasChanges = firstName !== user?.firstName || lastName !== user?.lastName;
@@ -48,9 +48,7 @@ const EditUserForm = (props: EditUserFormProps) => {
                     setShowSuccess(true);
                 }
             })
-            .catch(({ message }: Error) => {
-                setError(message);
-            })
+            .catch(({ message }: Error) => setError(message))
             .finally(() => setIsLoading(false));
     };
 

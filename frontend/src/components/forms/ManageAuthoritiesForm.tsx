@@ -7,21 +7,22 @@ import { capitalise, screamingSnakeCaseToSentence } from '../../utils/string-uti
 
 type ManageAuthoritiesFormProps = {
     user?: User;
-    onSubmit: (firstName: string, lastName: string) => Promise<User>;
+    onSubmit: (authorities: Set<Authority>) => Promise<User>;
     submitCallback?: (user: User) => void;
 } & ModalOrFormProps;
 
 
 const ManageAuthoritiesForm = (props: ManageAuthoritiesFormProps) => {
-    const { user, handleClose, submitCallback } = props;
+    const { user, onSubmit, submitCallback, handleClose } = props;
 
     const [initialAuthorities, setInitialAuthorities] = useState<Set<Authority>>();
     const [authorities, setAuthorities] = useState<Set<Authority>>();
     const [isLoading, setIsLoading] = useState(false);
-    const [isValid, setIsValid] = useState(false);
+    const [hasChanges, setHasChanges] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        setIsValid(authorities !== undefined && initialAuthorities !== undefined && !equal(authorities, initialAuthorities));
+        setHasChanges(authorities !== undefined && initialAuthorities !== undefined && !equal(authorities, initialAuthorities));
     }, [authorities, initialAuthorities]);
 
     useEffect(() => {
@@ -45,32 +46,54 @@ const ManageAuthoritiesForm = (props: ManageAuthoritiesFormProps) => {
         });
     };
 
+    const handleSubmission = (event: React.FormEvent) => {
+        event.preventDefault();
+        setIsLoading(true);
+        onSubmit(authorities!)
+            .then((user) => {
+                submitCallback?.(user);
+                setError(null);
+            })
+            .then(() => handleClose?.())
+            .catch(({ message }: Error) => setError(message))
+            .finally(() => setIsLoading(false));
+    };
+
     return (
         <FlexibleForm
             {...props}
             submitButtonText='Save authorities'
             isLoading={isLoading}
-            isValid={isValid}
-            handleSubmission={() => {}}
+            isValid={hasChanges}
+            handleSubmission={handleSubmission}
         >
             {authorities ? (
-                <Table striped>
-                    <tbody>
-                        {Authorities.map((authority: Authority) => (
-                            <tr key={authority}>
-                                <td>
-                                    <Form.Check
-                                        type="checkbox"
-                                        id={authority}
-                                        checked={authorities.has(authority)}
-                                        onChange={(e) => toggleAuthority(authority, e.target.checked)}
-                                    />
-                                </td>
-                                <td>{capitalise(screamingSnakeCaseToSentence(authority))}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </Table>
+                <>
+                    <Form.Group>
+                        <Table striped borderless>
+                            <tbody>
+                                {Authorities.map((authority: Authority) => (
+                                    <tr key={authority}>
+                                        <td>
+                                            <Form.Check
+                                                type="checkbox"
+                                                id={authority}
+                                                checked={authorities.has(authority)}
+                                                onChange={(e) => toggleAuthority(authority, e.target.checked)}
+                                            />
+                                        </td>
+                                        <td>{capitalise(screamingSnakeCaseToSentence(authority))}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </Table>
+                    </Form.Group>
+                    {error && (
+                        <Form.Group>
+                            <p className="text-danger">{error}</p>
+                        </Form.Group>
+                    )}
+                </>
             ) : (
                 <Spinner className="d-block mx-auto" />
             )}

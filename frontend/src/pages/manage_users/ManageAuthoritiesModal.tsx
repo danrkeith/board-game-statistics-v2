@@ -9,7 +9,7 @@ interface ManageAuthoritiesModalProps {
     handleClose: () => void;
 }
 
-const ManageAuthoritiesModal = ({ show, user, handleClose }: ManageAuthoritiesModalProps) => {
+const ManageAuthoritiesModal = ({ show, user, handleClose }: ManageAuthoritiesModalProps) => {        
     return (
         <ManageAuthoritiesForm
             as="modal"
