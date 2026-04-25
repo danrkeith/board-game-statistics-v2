@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Form, Modal, Spinner } from 'react-bootstrap';
 import AuthoritiesTable from './AuthoritiesTable';
-import type { User } from '../../../utils/types';
+import type { Authority, User } from '../../../utils/types';
 import { possessive } from '../../../utils/string-utils';
 import { title } from '../../../utils/user-utils';
+import FlexibleForm from '../../../components/forms/FlexibleForm';
+import { equal } from '../../../utils/collection-utils';
 
 interface ManageAuthoritiesModalProps {
     show: boolean;
@@ -12,36 +14,39 @@ interface ManageAuthoritiesModalProps {
 }
 
 const ManageAuthoritiesModal = ({ show, user, handleClose }: ManageAuthoritiesModalProps) => {
+    const [initialAuthorities, setInitialAuthorities] = useState<Set<Authority>>();
+    const [authorities, setAuthorities] = useState<Set<Authority>>();
     const [isLoading, setIsLoading] = useState(false);
+    const [isValid, setIsValid] = useState(false);
+
+    useEffect(() => {
+        setIsValid(authorities !== undefined && initialAuthorities !== undefined && !equal(authorities, initialAuthorities));
+    }, [authorities, initialAuthorities]);
+
+    useEffect(() => {
+        if (user) {
+            setAuthorities(new Set(user.authorities));
+            setInitialAuthorities(new Set(user.authorities));
+        }
+    }, [user]);
 
     return (
-        <Modal show={show} onHide={handleClose}>
-            <Modal.Header closeButton>
-                <Modal.Title>
-                    Manage {user && possessive(title(user))} authorities
-                </Modal.Title>
-            </Modal.Header>
-            <Form onSubmit={(e) => {e.preventDefault();}}>
-                <Modal.Body>
-                    {user ? (
-                        <AuthoritiesTable selected={user.authorities} />
-                    ) : (
-                        <Spinner className="d-block mx-auto" />
-                    )}
-                </Modal.Body>
-                <Modal.Footer>
-                    {isLoading && (
-                        <Spinner as="span" className="ms-3" />
-                    )}
-                    <Button variant="secondary" onClick={handleClose}>
-                        Cancel
-                    </Button>
-                    <Button variant="primary" type="submit" disabled={isLoading}>
-                        Save authorities
-                    </Button>
-                </Modal.Footer>
-            </Form>
-        </Modal>
+        <FlexibleForm
+            as="modal"
+            title={`Manage ${user && `${possessive(title(user)) }`}authorities`}
+            submitButtonText='Save authorities'
+            isLoading={isLoading}
+            isValid={isValid}
+            show={show}
+            handleSubmission={() => {}}
+            handleClose={handleClose}
+        >
+            {authorities ? (
+                <AuthoritiesTable selected={authorities} />
+            ) : (
+                <Spinner className="d-block mx-auto" />
+            )}
+        </FlexibleForm>
     );
 };
 

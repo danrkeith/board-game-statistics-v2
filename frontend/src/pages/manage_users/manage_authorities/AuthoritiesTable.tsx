@@ -3,10 +3,11 @@ import { Authorities, type Authority } from '../../../utils/types';
 import { capitalise, screamingSnakeCaseToSentence } from '../../../utils/string-utils';
 
 interface AuthoritiesTableProps {
-    selected: Authority[];
+    selected: Set<Authority>;
 }
 
 const AuthoritiesTable = ({ selected }: AuthoritiesTableProps) => {
+
     return (
         <Table striped>
             <tbody>
@@ -16,7 +17,7 @@ const AuthoritiesTable = ({ selected }: AuthoritiesTableProps) => {
                             <Form.Check
                                 type="checkbox"
                                 id={authority}
-                                checked={selected.includes(authority)}
+                                checked={selected.has(authority)}
                             />
                         </td>
                         <td>{capitalise(screamingSnakeCaseToSentence(authority))}</td>
