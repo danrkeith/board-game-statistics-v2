@@ -41,12 +41,6 @@ const UserProvider = ({ children }: UserProviderProps) => {
 
         void callWithAuth(apiGetMe)
             .then(user => setUser(user))
-            .catch(({ cause }: Error) => {
-                if (cause === 'ExpiredJwtException') {
-                    console.log('JWT expired, logging out');
-                    logout();
-                }
-            })
             .finally(() => setIsLoading(false));
     }, [authIsLoading, callWithAuth, logout, jwt]);
 

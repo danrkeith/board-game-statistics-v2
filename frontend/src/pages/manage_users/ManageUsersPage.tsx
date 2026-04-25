@@ -5,6 +5,7 @@ import { apiGetUsers } from '../../utils/api/users-api-utils';
 import type { User } from '../../utils/types';
 import UsersTable from './UsersTable';
 import CreateUserModal from './CreateUserModal';
+import { UserContext } from '../../context/UserContext';
 
 interface UsersReducerActionSetAll {
     type: 'SET_ALL';
@@ -30,6 +31,7 @@ type UsersReducerAction = UsersReducerActionSetAll | UsersReducerActionUpdate | 
 
 const ManageUsersPage = () => {
     const { isLoading, callWithAuth } = useContext(AuthContext);
+    const { user, setUser } = useContext(UserContext);
 
     const usersReducer = (state: User[] | undefined, action: UsersReducerAction) => {
         switch (action.type) {
@@ -38,6 +40,9 @@ const ManageUsersPage = () => {
             case 'ADD':
                 return [...state ?? [], action.user];
             case 'UPDATE':
+                if (user?.id === action.user.id) {
+                    setUser(action.user);
+                }
                 return state?.map(u => u.id === action.user.id ? action.user : u);
             case 'REMOVE':
                 return state?.filter(u => u.id !== action.userId);

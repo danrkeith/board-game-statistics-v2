@@ -1,6 +1,6 @@
 import { Container, Dropdown, Nav, Navbar } from 'react-bootstrap';
 import { SETTINGS_PATH, HOME_PATH, LOGIN_PATH, MANAGE_USERS_PATH } from '../App';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { UserContext } from '../context/UserContext';
@@ -9,13 +9,6 @@ import PersonDropdownToggle from './dropdowns/PersonDropdownToggle';
 const Header = () => {
     const { logout } = useContext(AuthContext);
     const { isLoading, user } = useContext(UserContext);
-
-    const navigate = useNavigate();
-
-    const handleLogout = () => {
-        logout();
-        void navigate(HOME_PATH);
-    };
 
     return (
         <Navbar>
@@ -49,7 +42,7 @@ const Header = () => {
                                     <Dropdown.Item as={Link} to={SETTINGS_PATH}>
                                         Settings
                                     </Dropdown.Item>
-                                    <Dropdown.Item eventKey="LOGOUT" className="text-warning" onClick={handleLogout}>
+                                    <Dropdown.Item eventKey="LOGOUT" className="text-warning" onClick={logout}>
                                         Logout
                                     </Dropdown.Item>
                                 </Dropdown.Menu>

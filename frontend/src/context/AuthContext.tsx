@@ -1,5 +1,7 @@
 import { createContext, useEffect, useState } from 'react';
 import { apiLogin } from '../utils/api/auth-api-utils';
+import { useNavigate } from 'react-router-dom';
+import { HOME_PATH } from '../App';
 
 interface AuthContextType {
     isLoading: boolean;
@@ -33,6 +35,8 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     const [isLoading, setIsLoading] = useState(true);
     const [jwt, setJwt] = useState<string | null>(null);
 
+    const navigate = useNavigate();
+
     useEffect(() => {
         setJwt(sessionStorage.getItem(JWT_STORAGE_KEY));
         setIsLoading(false);
@@ -52,6 +56,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     const logout = () => {
         sessionStorage.removeItem(JWT_STORAGE_KEY);
         setJwt(null);
+        void navigate(HOME_PATH);
     };
 
     const callWithAuth = <ReqT, ResT>(apiFunc: (jwt: string, body?: ReqT) => Promise<ResT>, body?: ReqT): Promise<ResT> => {
@@ -62,7 +67,13 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         }
 
         if (body === undefined) {
-            return (apiFunc as (jwt: string) => Promise<ResT>)(jwt);
+            return (apiFunc as (jwt: string) => Promise<ResT>)(jwt)
+                .catch((error: Error) => {
+                    if (error.cause === 'ExpiredJwtException') {
+                        logout();
+                    }
+                    return Promise.reject(error);
+                });
         }
         else {
             return (apiFunc as (jwt: string, body: ReqT) => Promise<ResT>)(jwt, body);
