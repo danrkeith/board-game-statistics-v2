@@ -6,10 +6,11 @@ import UserRow from './UserRow';
 import EditUserModal from './EditUserModal';
 import type { UsersReducerAction } from './ManageUsersPage';
 import DeleteUserConfirmationModal from './DeleteUserConfirmationModal';
+import ManageAuthoritiesModal from './manage_authorities/ManageAuthoritiesModal';
 
 interface UserAction {
     user: User;
-    action: 'EDIT' | 'DELETE';
+    action: 'EDIT' | 'DELETE' | 'MANAGE_AUTHORITIES';
 }
 
 interface UsersTableProps {
@@ -37,7 +38,6 @@ const UsersTable = ({ users, usersDispatch }: UsersTableProps) => {
                     {users.map((user: User) => (
                         <UserRow
                             user={user}
-                            isLoggedIn={currentUser?.id === user.id}
                             handleUserAction={setUserAction}
                             key={user.id}
                         />
@@ -53,6 +53,11 @@ const UsersTable = ({ users, usersDispatch }: UsersTableProps) => {
                         setCurrentUser(user);
                     }
                 }}
+                handleClose={() => setUserAction(null)}
+            />
+            <ManageAuthoritiesModal
+                show={userAction?.action === 'MANAGE_AUTHORITIES'}
+                user={userAction?.user}
                 handleClose={() => setUserAction(null)}
             />
             <DeleteUserConfirmationModal
