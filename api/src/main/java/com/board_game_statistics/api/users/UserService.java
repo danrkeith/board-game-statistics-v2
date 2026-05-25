@@ -13,6 +13,4 @@ public interface UserService {
     User editUser(long id, String firstName, String lastName);
 
     void deleteUser(long id);
-
-    User setAuthorities(long id, Set<Authority> authorities);
 }

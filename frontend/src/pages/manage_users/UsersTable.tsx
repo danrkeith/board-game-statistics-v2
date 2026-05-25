@@ -1,15 +1,16 @@
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { Table } from 'react-bootstrap';
-import { UserContext } from '../../context/UserContext';
 import type { User } from '../../utils/types';
 import UserRow from './UserRow';
 import EditUserModal from './EditUserModal';
 import type { UsersReducerAction } from './ManageUsersPage';
 import DeleteUserConfirmationModal from './DeleteUserConfirmationModal';
+import ManageAuthoritiesModal from './ManageAuthoritiesModal';
+import { AuthorityPrerequisitesProvider } from '../../context/AuthoritiesContext';
 
 interface UserAction {
     user: User;
-    action: 'EDIT' | 'DELETE';
+    action: 'EDIT' | 'DELETE' | 'MANAGE_AUTHORITIES';
 }
 
 interface UsersTableProps {
@@ -18,12 +19,10 @@ interface UsersTableProps {
 }
 
 const UsersTable = ({ users, usersDispatch }: UsersTableProps) => {
-    const { user: currentUser, setUser: setCurrentUser } = useContext(UserContext);
-
     const [userAction, setUserAction] = useState<UserAction | null>(null);
 
     return (
-        <>
+        <AuthorityPrerequisitesProvider>
             <Table striped>
                 <thead>
                     <tr>
@@ -37,7 +36,6 @@ const UsersTable = ({ users, usersDispatch }: UsersTableProps) => {
                     {users.map((user: User) => (
                         <UserRow
                             user={user}
-                            isLoggedIn={currentUser?.id === user.id}
                             handleUserAction={setUserAction}
                             key={user.id}
                         />
@@ -47,12 +45,13 @@ const UsersTable = ({ users, usersDispatch }: UsersTableProps) => {
             <EditUserModal
                 show={userAction?.action === 'EDIT'}
                 user={userAction?.user}
-                submitCallback={(user) => {
-                    usersDispatch({ type: 'UPDATE', user });
-                    if (currentUser?.id === user.id) {
-                        setCurrentUser(user);
-                    }
-                }}
+                submitCallback={user => usersDispatch({ type: 'UPDATE', user })}
+                handleClose={() => setUserAction(null)}
+            />
+            <ManageAuthoritiesModal
+                show={userAction?.action === 'MANAGE_AUTHORITIES'}
+                user={userAction?.user}
+                submitCallback={user => usersDispatch({ type: 'UPDATE', user })}
                 handleClose={() => setUserAction(null)}
             />
             <DeleteUserConfirmationModal
@@ -61,7 +60,7 @@ const UsersTable = ({ users, usersDispatch }: UsersTableProps) => {
                 confirmCallback={userId => usersDispatch({ type: 'REMOVE', userId })}
                 handleClose={() => setUserAction(null)}
             />
-        </>
+        </AuthorityPrerequisitesProvider>
     );
 };
 

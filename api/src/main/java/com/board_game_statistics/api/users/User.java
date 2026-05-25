@@ -1,6 +1,7 @@
 package com.board_game_statistics.api.users;
 
 import com.board_game_statistics.api.users.dto.UserResponse;
+import com.board_game_statistics.api.users.user_authorities.Authority;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;

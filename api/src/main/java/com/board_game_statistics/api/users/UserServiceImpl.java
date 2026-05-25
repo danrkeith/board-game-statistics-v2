@@ -9,7 +9,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -69,13 +68,5 @@ public class UserServiceImpl implements UserService {
         User user = getUser(id);
 
         userRepository.delete(user);
-    }
-
-    @Override
-    public User setAuthorities(long id, Set<Authority> authorities) {
-        User user = getUser(id)
-                .setAuthorities(authorities);
-
-        return userRepository.save(user);
     }
 }

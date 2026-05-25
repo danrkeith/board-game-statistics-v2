@@ -1,5 +1,7 @@
 import { createContext, useEffect, useState } from 'react';
 import { apiLogin } from '../utils/api/auth-api-utils';
+import { useNavigate } from 'react-router-dom';
+import { HOME_PATH } from '../App';
 
 interface AuthContextType {
     isLoading: boolean;
@@ -26,12 +28,14 @@ const AuthContext = createContext<AuthContextType>({
     jwt: null,
     login: () => new Promise(() => console.error('AuthContext.login function not attached')),
     logout: () => console.error('AuthContext.logout function not attached'),
-    callWithAuth: () => new Promise(() => console.error('AuthContext.passAuthTo function not attached')),
+    callWithAuth: () => new Promise(() => console.error('AuthContext.callWithAuth function not attached')),
 });
 
 const AuthProvider = ({ children }: AuthProviderProps) => {
     const [isLoading, setIsLoading] = useState(true);
     const [jwt, setJwt] = useState<string | null>(null);
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         setJwt(sessionStorage.getItem(JWT_STORAGE_KEY));
@@ -52,21 +56,30 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     const logout = () => {
         sessionStorage.removeItem(JWT_STORAGE_KEY);
         setJwt(null);
+        void navigate(HOME_PATH);
     };
 
-    const callWithAuth = <ReqT, ResT>(apiFunc: (jwt: string, body?: ReqT) => Promise<ResT>, body?: ReqT): Promise<ResT> => {
+    const callWithAuth = <ReqT, ResT>(
+        apiFunc: (jwt: string, body?: ReqT) => Promise<ResT>,
+        body?: ReqT,
+    ): Promise<ResT> => {
         if (jwt === null) {
             const error = new Error(`Api call to ${apiFunc.name} requires auth`);
             console.error(error);
             return Promise.reject(error);
         }
 
-        if (body === undefined) {
-            return (apiFunc as (jwt: string) => Promise<ResT>)(jwt);
-        }
-        else {
-            return (apiFunc as (jwt: string, body: ReqT) => Promise<ResT>)(jwt, body);
-        }
+        const promise = body === undefined
+            ? (apiFunc as (jwt: string) => Promise<ResT>)(jwt)
+            : (apiFunc as (jwt: string, body: ReqT) => Promise<ResT>)(jwt, body);
+
+        return promise.catch((error: Error) => {
+            if (error.cause === 'ExpiredJwtException') {
+                logout();
+            }
+
+            return Promise.reject(error);
+        });
     };
 
     const contextValue: AuthContextType = {

@@ -22,7 +22,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Set;
 
 @RequestMapping("/users")
 @RestController
@@ -108,21 +107,15 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/{id}/authorities")
-    @PreAuthorize("hasAuthority('MANAGE_USERS')")
-    public ResponseEntity<UserResponse> setAuthorities(@PathVariable long id, @RequestBody Set<Authority> authorities) {
-        User user = userService.setAuthorities(id, authorities);
-
-        return ResponseEntity.ok(user.asResponse());
-    }
-
     @GetMapping("/{id}/groups")
     // TODO - more granular authorities for viewing as compared to editing
-    @PreAuthorize("hasAuthority('MANAGE_USERS') and hasAuthority('MANAGE_GROUPS') and hasAuthority('MANAGE_GROUP_MEMBERSHIPS')")
+    @PreAuthorize("hasAuthority('MANAGE_USERS') and hasAuthority('MANAGE_GROUP_MEMBERSHIPS')")
     public ResponseEntity<List<GroupResponse>> getUserGroups(@PathVariable long id) {
         List<Group> groups = groupMembershipService.getGroupsOfUser(id);
 
         List<GroupResponse> groupResponses = groups.stream().map(Group::asResponse).toList();
         return ResponseEntity.ok(groupResponses);
     }
+
+    // TODO - change password
 }

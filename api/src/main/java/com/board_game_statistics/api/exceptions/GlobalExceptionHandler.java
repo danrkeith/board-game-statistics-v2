@@ -8,55 +8,40 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.util.Map;
-
 @ControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(JwtException.class)
     public ResponseEntity<ErrorResponse> handleJwtException(JwtException e) {
-        return errorResponse(e, HttpStatus.UNAUTHORIZED);
+        return ErrorResponse.entityFrom(e, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ErrorResponse> handleBadCredentialsException(BadCredentialsException e) {
-        return errorResponse(e, HttpStatus.UNAUTHORIZED);
+        return ErrorResponse.entityFrom(e, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
-        return errorResponse(e, HttpStatus.BAD_REQUEST);
+        return ErrorResponse.entityFrom(e, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(InvalidInputException.class)
     public ResponseEntity<ErrorResponse> handleInvalidInputException(InvalidInputException e) {
-        return errorResponse(e, HttpStatus.BAD_REQUEST);
+        return ErrorResponse.entityFrom(e, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleResourceNotFoundException(ResourceNotFoundException e) {
-        return errorResponse(e, HttpStatus.NOT_FOUND);
+        return ErrorResponse.entityFrom(e, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(ForbiddenOperationException.class)
     public ResponseEntity<ErrorResponse> handleForbiddenOperationException(ForbiddenOperationException e) {
-        return errorResponse(e, HttpStatus.FORBIDDEN);
+        return ErrorResponse.entityFrom(e, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(ResourceConflictException.class)
     public ResponseEntity<ErrorResponse> handleResourceConflictException(ResourceConflictException e) {
-        return errorResponse(e, HttpStatus.CONFLICT);
-    }
-
-    private ResponseEntity<ErrorResponse> errorResponse(Exception e, HttpStatus status) {
-        return ResponseEntity
-                .status(status)
-                .body(bodyFrom(e));
-    }
-
-    private static ErrorResponse bodyFrom(Exception e) {
-        return new ErrorResponse(
-                e.getClass().getSimpleName(),
-                e.getMessage()
-        );
+        return ErrorResponse.entityFrom(e, HttpStatus.CONFLICT);
     }
 }
