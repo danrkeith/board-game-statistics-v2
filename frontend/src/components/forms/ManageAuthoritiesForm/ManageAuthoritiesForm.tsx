@@ -35,18 +35,30 @@ const ManageAuthoritiesForm = (props: ManageAuthoritiesFormProps) => {
     }, [user]);
 
     const toggleAuthority = (authority: Authority, value: boolean) => {
-        setAuthorities((prev) => {
-            const newAuthorities = new Set(prev);
+            setAuthorities((prev) => {
+        const newAuthorities = new Set(prev);
 
-            if (value) {
-                newAuthorities.add(authority);
-            }
-            else {
-                newAuthorities.delete(authority);
-            }
+        const entries = Object.entries(prerequisites ?? {}) as [Authority, Authority[]][];
 
-            return newAuthorities;
-        });
+        const removeDependents = (removed: Authority) => {
+            entries.forEach(([candidate, requiredAuthorities]) => {
+                if (requiredAuthorities.includes(removed)) {
+                    newAuthorities.delete(candidate);
+                    removeDependents(candidate);
+                }
+            });
+        };
+
+        if (value) {
+            newAuthorities.add(authority);
+        }
+        else {
+            newAuthorities.delete(authority);
+            removeDependents(authority);
+        }
+
+        return newAuthorities;
+    });
     };
 
     const handleSubmission = (event: React.FormEvent) => {

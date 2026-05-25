@@ -16,13 +16,6 @@ interface AuthorityRowProps {
 const AuthorityRow = ({ authority, authorities, disabled, toggleAuthority, setError }: AuthorityRowProps) => {
     const { prerequisites } = useContext(AuthorityPrerequisitesContext);
 
-    useEffect(() => {
-        if (disabled) {
-            toggleAuthority(authority, false);
-            setError(null);
-        }
-    }, [disabled, setError, authority, toggleAuthority]);
-
     const display = (authority: Authority) => capitalise(screamingSnakeCaseToSentence(authority));
 
     return (
