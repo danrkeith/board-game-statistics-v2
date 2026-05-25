@@ -5,8 +5,8 @@ import { Form, OverlayTrigger, Spinner, Table, Tooltip } from 'react-bootstrap';
 import { equal } from '../../../utils/collection-utils';
 import { capitalise, screamingSnakeCaseToSentence } from '../../../utils/string-utils';
 import { InfoCircle } from 'react-bootstrap-icons';
-import { AuthoritiesContext } from '../../../context/AuthoritiesContext';
 import AuthorityRow from './AuthorityRow';
+import { AuthorityPrerequisitesContext } from '../../../context/AuthoritiesContext';
 
 type ManageAuthoritiesFormProps = {
     user?: User;
@@ -17,6 +17,8 @@ type ManageAuthoritiesFormProps = {
 
 const ManageAuthoritiesForm = (props: ManageAuthoritiesFormProps) => {
     const { user, onSubmit, submitCallback, handleClose } = props;
+
+    const {prerequisites} = useContext(AuthorityPrerequisitesContext);
 
     const [initialAuthorities, setInitialAuthorities] = useState<Set<Authority>>();
     const [authorities, setAuthorities] = useState<Set<Authority>>();
@@ -83,6 +85,7 @@ const ManageAuthoritiesForm = (props: ManageAuthoritiesFormProps) => {
                                         key={authority}
                                         authority={authority}
                                         authorities={authorities}
+                                        disabled={!prerequisites?.[authority].every(prerequisite => authorities.has(prerequisite))}
                                         toggleAuthority={toggleAuthority}
                                         setError={setError}
                                     />

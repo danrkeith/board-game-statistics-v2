@@ -4,22 +4,19 @@ import { AuthContext } from './AuthContext';
 import { apiGetAuthorityPrerequisites } from '../utils/api/user-authorities-api-utils';
 
 interface AuthoritiesContextType {
-    getPrerequisites?: ((authority: Authority) => Authority[]);
+    prerequisites?: Record<Authority, Authority[]>;
 }
 
 interface AuthoritiesProviderProps {
     children?: React.ReactNode;
 }
 
-const AuthoritiesContext = React.createContext<AuthoritiesContextType>({});
+const AuthorityPrerequisitesContext = React.createContext<AuthoritiesContextType>({});
 
-const AuthoritiesProvider = ({ children }: AuthoritiesProviderProps) => {
+const AuthorityPrerequisitesProvider = ({ children }: AuthoritiesProviderProps) => {
     const {isLoading: authIsLoading, callWithAuth} = useContext(AuthContext);
 
-    const [authorityPrerequisites, setAuthorityPrerequisites] = useState<Record<Authority, Authority[]>>();
-    
-    const getPrerequisites = (authority: Authority): Authority[] => 
-        authorityPrerequisites?.[authority] || [];
+    const [prerequisites, setPrerequisites] = useState<Record<Authority, Authority[]>>();
 
     useEffect(() => {
         if (authIsLoading) {
@@ -27,18 +24,16 @@ const AuthoritiesProvider = ({ children }: AuthoritiesProviderProps) => {
         }
 
         void callWithAuth(apiGetAuthorityPrerequisites)
-            .then(setAuthorityPrerequisites);
+            .then(setPrerequisites);
     }, [authIsLoading]);
 
-    const contextValue = {
-        getPrerequisites
-    };
+    const contextValue = {prerequisites};
 
     return (
-        <AuthoritiesContext.Provider value={contextValue}>
+        <AuthorityPrerequisitesContext.Provider value={contextValue}>
             {children}
-        </AuthoritiesContext.Provider>
+        </AuthorityPrerequisitesContext.Provider>
     );
 };
 
-export { AuthoritiesContext, AuthoritiesProvider };
+export { AuthorityPrerequisitesContext, AuthorityPrerequisitesProvider };

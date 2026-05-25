@@ -1,4 +1,4 @@
-const Authorities = ['GRANT_AUTHORITIES', 'MANAGE_USERS', 'MANAGE_GROUPS', 'MANAGE_GROUP_MEMBERSHIPS'] as const;
+const Authorities = ['MANAGE_USERS', 'GRANT_AUTHORITIES', 'MANAGE_GROUPS', 'MANAGE_GROUP_MEMBERSHIPS'] as const;
 type Authority = typeof Authorities[number];
 
 interface User {
