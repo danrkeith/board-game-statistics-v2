@@ -45,13 +45,13 @@ const UsersTable = ({ users, usersDispatch }: UsersTableProps) => {
             <EditUserModal
                 show={userAction?.action === 'EDIT'}
                 user={userAction?.user}
-                submitCallback={(user) => usersDispatch({ type: 'UPDATE', user })}
+                submitCallback={user => usersDispatch({ type: 'UPDATE', user })}
                 handleClose={() => setUserAction(null)}
             />
             <ManageAuthoritiesModal
                 show={userAction?.action === 'MANAGE_AUTHORITIES'}
                 user={userAction?.user}
-                submitCallback={(user) => usersDispatch({ type: 'UPDATE', user })}
+                submitCallback={user => usersDispatch({ type: 'UPDATE', user })}
                 handleClose={() => setUserAction(null)}
             />
             <DeleteUserConfirmationModal

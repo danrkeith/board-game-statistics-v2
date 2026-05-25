@@ -14,7 +14,7 @@ interface AuthoritiesProviderProps {
 const AuthorityPrerequisitesContext = React.createContext<AuthoritiesContextType>({});
 
 const AuthorityPrerequisitesProvider = ({ children }: AuthoritiesProviderProps) => {
-    const {isLoading: authIsLoading, callWithAuth} = useContext(AuthContext);
+    const { isLoading: authIsLoading, callWithAuth } = useContext(AuthContext);
 
     const [prerequisites, setPrerequisites] = useState<Record<Authority, Authority[]>>();
 
@@ -25,9 +25,9 @@ const AuthorityPrerequisitesProvider = ({ children }: AuthoritiesProviderProps) 
 
         void callWithAuth(apiGetAuthorityPrerequisites)
             .then(setPrerequisites);
-    }, [authIsLoading]);
+    }, [authIsLoading, callWithAuth]);
 
-    const contextValue = {prerequisites};
+    const contextValue = { prerequisites };
 
     return (
         <AuthorityPrerequisitesContext.Provider value={contextValue}>

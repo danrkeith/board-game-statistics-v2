@@ -1,10 +1,8 @@
 import { useContext, useEffect, useState } from 'react';
 import { Authorities, type Authority, type User } from '../../../utils/types';
 import FlexibleForm, { type ModalOrFormProps } from '../FlexibleForm';
-import { Form, OverlayTrigger, Spinner, Table, Tooltip } from 'react-bootstrap';
+import { Form, Spinner, Table } from 'react-bootstrap';
 import { equal } from '../../../utils/collection-utils';
-import { capitalise, screamingSnakeCaseToSentence } from '../../../utils/string-utils';
-import { InfoCircle } from 'react-bootstrap-icons';
 import AuthorityRow from './AuthorityRow';
 import { AuthorityPrerequisitesContext } from '../../../context/AuthoritiesContext';
 
@@ -14,11 +12,10 @@ type ManageAuthoritiesFormProps = {
     submitCallback?: (user: User) => void;
 } & ModalOrFormProps;
 
-
 const ManageAuthoritiesForm = (props: ManageAuthoritiesFormProps) => {
     const { user, onSubmit, submitCallback, handleClose } = props;
 
-    const {prerequisites} = useContext(AuthorityPrerequisitesContext);
+    const { prerequisites } = useContext(AuthorityPrerequisitesContext);
 
     const [initialAuthorities, setInitialAuthorities] = useState<Set<Authority>>();
     const [authorities, setAuthorities] = useState<Set<Authority>>();
@@ -43,10 +40,11 @@ const ManageAuthoritiesForm = (props: ManageAuthoritiesFormProps) => {
 
             if (value) {
                 newAuthorities.add(authority);
-            } else {
+            }
+            else {
                 newAuthorities.delete(authority);
             }
-            
+
             return newAuthorities;
         });
     };
@@ -62,7 +60,7 @@ const ManageAuthoritiesForm = (props: ManageAuthoritiesFormProps) => {
             .then(() => handleClose?.())
             .catch(({ message }: Error) => {
                 setAuthorities(initialAuthorities);
-                setError(message)
+                setError(message);
             })
             .finally(() => setIsLoading(false));
     };
@@ -70,38 +68,40 @@ const ManageAuthoritiesForm = (props: ManageAuthoritiesFormProps) => {
     return (
         <FlexibleForm
             {...props}
-            submitButtonText='Save authorities'
+            submitButtonText="Save authorities"
             isLoading={isLoading}
             isValid={hasChanges}
             handleSubmission={handleSubmission}
         >
-            {authorities ? (
-                <>
-                    <Form.Group>
-                        <Table striped borderless>
-                            <tbody>
-                                {Authorities.map((authority: Authority) => (
-                                    <AuthorityRow
-                                        key={authority}
-                                        authority={authority}
-                                        authorities={authorities}
-                                        disabled={!prerequisites?.[authority].every(prerequisite => authorities.has(prerequisite))}
-                                        toggleAuthority={toggleAuthority}
-                                        setError={setError}
-                                    />
-                                ))}
-                            </tbody>
-                        </Table>
-                    </Form.Group>
-                    {error && (
+            {authorities
+                ? (
+                    <>
                         <Form.Group>
-                            <p className="text-danger">{error}</p>
+                            <Table striped borderless>
+                                <tbody>
+                                    {Authorities.map((authority: Authority) => (
+                                        <AuthorityRow
+                                            key={authority}
+                                            authority={authority}
+                                            authorities={authorities}
+                                            disabled={!prerequisites?.[authority].every(prerequisite => authorities.has(prerequisite))}
+                                            toggleAuthority={toggleAuthority}
+                                            setError={setError}
+                                        />
+                                    ))}
+                                </tbody>
+                            </Table>
                         </Form.Group>
-                    )}
-                </>
-            ) : (
-                <Spinner className="d-block mx-auto" />
-            )}
+                        {error && (
+                            <Form.Group>
+                                <p className="text-danger">{error}</p>
+                            </Form.Group>
+                        )}
+                    </>
+                )
+                : (
+                    <Spinner className="d-block mx-auto" />
+                )}
         </FlexibleForm>
     );
 };

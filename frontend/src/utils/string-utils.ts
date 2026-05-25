@@ -9,5 +9,4 @@ const screamingSnakeCaseToSentence = (str: string): string =>
 const possessive = (str: string): string =>
     str.endsWith('s') ? `${str}'` : `${str}'s`;
 
-
 export { capitalise, screamingSnakeCaseToSentence, possessive };

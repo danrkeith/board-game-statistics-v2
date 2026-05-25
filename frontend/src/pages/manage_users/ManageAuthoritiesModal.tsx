@@ -15,7 +15,7 @@ interface ManageAuthoritiesModalProps {
 
 const ManageAuthoritiesModal = ({ show, user, submitCallback, handleClose }: ManageAuthoritiesModalProps) => {
     const { callWithAuth } = useContext(AuthContext);
-    
+
     const onSubmit = (authorities: Set<Authority>) =>
         callWithAuth(apiEditUserAuthorities, {
             id: user!.id,

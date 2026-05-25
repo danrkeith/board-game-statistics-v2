@@ -2,7 +2,7 @@ import { Form, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import type { Authority } from '../../../utils/types';
 import { capitalise, screamingSnakeCaseToSentence } from '../../../utils/string-utils';
 import { InfoCircle } from 'react-bootstrap-icons';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 import { AuthorityPrerequisitesContext } from '../../../context/AuthoritiesContext';
 
 interface AuthorityRowProps {
@@ -21,9 +21,9 @@ const AuthorityRow = ({ authority, authorities, disabled, toggleAuthority, setEr
             toggleAuthority(authority, false);
             setError(null);
         }
-    }, [disabled]);
+    }, [disabled, setError, authority, toggleAuthority]);
 
-    const display = (authority : Authority) => capitalise(screamingSnakeCaseToSentence(authority));
+    const display = (authority: Authority) => capitalise(screamingSnakeCaseToSentence(authority));
 
     return (
         <tr key={authority}>
@@ -34,7 +34,7 @@ const AuthorityRow = ({ authority, authorities, disabled, toggleAuthority, setEr
                         id={authority}
                         checked={authorities.has(authority)}
                         onChange={(e) => {
-                            toggleAuthority(authority, e.target.checked)
+                            toggleAuthority(authority, e.target.checked);
                             setError(null);
                         }}
                     />
@@ -44,21 +44,25 @@ const AuthorityRow = ({ authority, authorities, disabled, toggleAuthority, setEr
                 <div className="d-flex align-items-center">
                     {display(authority)}
                     {prerequisites && prerequisites[authority].length !== 0 && (
-                        <OverlayTrigger placement="right" delay={{ show: 250, hide: 400 }} overlay={(props) =>
-                            <Tooltip {...props}>
-                                <div>Prerequisites:</div>
-                                {prerequisites[authority].map((prerequisite) => (
-                                    <div key={prerequisite}>{display(prerequisite)}</div>
-                                ))}
-                            </Tooltip>
-                        }>
+                        <OverlayTrigger
+                            placement="right"
+                            delay={{ show: 250, hide: 400 }}
+                            overlay={props => (
+                                <Tooltip {...props}>
+                                    <div>Prerequisites:</div>
+                                    {prerequisites[authority].map(prerequisite => (
+                                        <div key={prerequisite}>{display(prerequisite)}</div>
+                                    ))}
+                                </Tooltip>
+                            )}
+                        >
                             <InfoCircle size={14} className="mx-2 text-info" />
                         </OverlayTrigger>
                     )}
                 </div>
             </td>
         </tr>
-    )
-}
+    );
+};
 
 export default AuthorityRow;
