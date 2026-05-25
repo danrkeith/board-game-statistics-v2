@@ -4,7 +4,7 @@ import { title } from '../../utils/user-utils';
 import ManageAuthoritiesForm from '../../components/forms/ManageAuthoritiesForm';
 import { useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
-import { apiEditUserAuthorities } from '../../utils/api/users-api-utils';
+import { apiEditUserAuthorities } from '../../utils/api/user-authorities-api-utils';
 
 interface ManageAuthoritiesModalProps {
     show: boolean;

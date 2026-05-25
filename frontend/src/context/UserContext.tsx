@@ -40,7 +40,7 @@ const UserProvider = ({ children }: UserProviderProps) => {
         }
 
         void callWithAuth(apiGetMe)
-            .then(user => setUser(user))
+            .then(setUser)
             .finally(() => setIsLoading(false));
     }, [authIsLoading, callWithAuth, logout, jwt]);
 

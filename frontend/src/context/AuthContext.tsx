@@ -28,7 +28,7 @@ const AuthContext = createContext<AuthContextType>({
     jwt: null,
     login: () => new Promise(() => console.error('AuthContext.login function not attached')),
     logout: () => console.error('AuthContext.logout function not attached'),
-    callWithAuth: () => new Promise(() => console.error('AuthContext.passAuthTo function not attached')),
+    callWithAuth: () => new Promise(() => console.error('AuthContext.callWithAuth function not attached')),
 });
 
 const AuthProvider = ({ children }: AuthProviderProps) => {

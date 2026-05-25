@@ -21,11 +21,6 @@ interface EditUserRequest {
     lastName: string;
 }
 
-interface EditUserAuthoritiesRequest {
-    id: number;
-    authorities: Set<string>;
-}
-
 const apiGetUsers = (jwt: string) =>
     returnDataFrom<User[]>(() => apiGet({ endpoint: baseEndpoint, jwt }));
 
@@ -47,7 +42,4 @@ const apiEditUser = (jwt: string, body: EditUserRequest) =>
 const apiDeleteUser = (jwt: string, id: number) =>
     apiDelete({ endpoint: `${baseEndpoint}/${id}`, jwt });
 
-const apiEditUserAuthorities = (jwt: string, body: EditUserAuthoritiesRequest) =>
-    returnDataFrom<User>(() => apiPut({ endpoint: `${baseEndpoint}/${body.id}/authorities`, jwt, body: Array.from(body.authorities) }));
-
-export { apiGetUsers, apiCreateUser, apiGetMe, apiEditMe, apiEditUser, apiDeleteUser, apiEditUserAuthorities };
+export { apiGetUsers, apiCreateUser, apiGetMe, apiEditMe, apiEditUser, apiDeleteUser };
