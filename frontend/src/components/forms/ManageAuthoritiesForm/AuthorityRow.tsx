@@ -2,7 +2,7 @@ import { Form, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import type { Authority } from '../../../utils/types';
 import { capitalise, screamingSnakeCaseToSentence } from '../../../utils/string-utils';
 import { InfoCircle } from 'react-bootstrap-icons';
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 import { AuthorityPrerequisitesContext } from '../../../context/AuthoritiesContext';
 
 interface AuthorityRowProps {
