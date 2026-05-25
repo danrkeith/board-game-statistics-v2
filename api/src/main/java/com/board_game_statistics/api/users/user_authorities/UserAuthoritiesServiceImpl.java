@@ -23,7 +23,7 @@ public class UserAuthoritiesServiceImpl implements UserAuthoritiesService {
     }
 
     @Override
-    public User setAuthorities(long userId, Set<Authority> authorities) {
+    public User setUserAuthorities(long userId, Set<Authority> authorities) {
         Map<Authority, List<Authority>> authoritiesMissingPrerequisites = getAuthoritiesMissingPrerequisites(authorities);
 
         if (!authoritiesMissingPrerequisites.isEmpty()) {
@@ -54,5 +54,16 @@ public class UserAuthoritiesServiceImpl implements UserAuthoritiesService {
         }
 
         return authoritiesMissingPrerequisites;
+    }
+
+    @Override
+    public Map<Authority, List<Authority>> getAuthorityPrerequisites() {
+        EnumMap<Authority, List<Authority>> authorityPrerequisites = new EnumMap<>(Authority.class);
+
+        for (Authority authority : Authority.values()) {
+            authorityPrerequisites.put(authority, List.of(authority.getPrerequisites()));
+        }
+
+        return authorityPrerequisites;
     }
 }
