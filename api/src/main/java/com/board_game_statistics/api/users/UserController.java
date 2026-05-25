@@ -22,7 +22,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Set;
 
 @RequestMapping("/users")
 @RestController
@@ -106,14 +105,6 @@ public class UserController {
         userService.deleteUser(id);
 
         return ResponseEntity.noContent().build();
-    }
-
-    @PutMapping("/{id}/authorities")
-    @PreAuthorize("hasAuthority('GRANT_AUTHORITIES')")
-    public ResponseEntity<UserResponse> setAuthorities(@PathVariable long id, @RequestBody Set<Authority> authorities) {
-        User user = userService.setAuthorities(id, authorities);
-
-        return ResponseEntity.ok(user.asResponse());
     }
 
     @GetMapping("/{id}/groups")

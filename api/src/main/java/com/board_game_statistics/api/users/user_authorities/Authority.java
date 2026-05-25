@@ -1,4 +1,4 @@
-package com.board_game_statistics.api.users;
+package com.board_game_statistics.api.users.user_authorities;
 
 import org.springframework.security.core.GrantedAuthority;
 
