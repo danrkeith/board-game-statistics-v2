@@ -6,7 +6,7 @@ public enum Authority implements GrantedAuthority {
     MANAGE_USERS,
     GRANT_AUTHORITIES(MANAGE_USERS),
     MANAGE_GROUPS,
-    MANAGE_GROUP_MEMBERSHIPS(MANAGE_GROUPS, MANAGE_USERS);
+    MANAGE_GROUP_MEMBERSHIPS(MANAGE_USERS, MANAGE_GROUPS);
 
     private final Authority[] prerequisites;
 

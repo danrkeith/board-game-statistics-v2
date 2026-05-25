@@ -22,10 +22,16 @@ public class UserAuthoritiesController {
         this.userAuthoritiesService = userAuthoritiesService;
     }
 
+    @GetMapping("/users/authorities")
+    public ResponseEntity<Set<Authority>> getAuthorities() {
+        Set<Authority> authorities = userAuthoritiesService.getAuthorities();
+
+        return ResponseEntity.ok(authorities);
+    }
+
     @GetMapping("/users/authorities/prerequisites")
-    @PreAuthorize("hasAuthority('GRANT_AUTHORITIES')")
-    public ResponseEntity<Map<Authority, List<Authority>>> getAuthorityPrerequisites() {
-        Map<Authority, List<Authority>> authorityPrerequisites = userAuthoritiesService.getAuthorityPrerequisites();
+    public ResponseEntity<Map<Authority, Set<Authority>>> getAuthorityPrerequisites() {
+        Map<Authority, Set<Authority>> authorityPrerequisites = userAuthoritiesService.getAuthorityPrerequisites();
 
         return ResponseEntity.ok(authorityPrerequisites);
     }
