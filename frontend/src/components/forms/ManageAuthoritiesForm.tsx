@@ -55,7 +55,10 @@ const ManageAuthoritiesForm = (props: ManageAuthoritiesFormProps) => {
                 setError(null);
             })
             .then(() => handleClose?.())
-            .catch(({ message }: Error) => setError(message))
+            .catch(({ message }: Error) => {
+                setAuthorities(initialAuthorities);
+                setError(message)
+            })
             .finally(() => setIsLoading(false));
     };
 
@@ -79,7 +82,10 @@ const ManageAuthoritiesForm = (props: ManageAuthoritiesFormProps) => {
                                                 type="checkbox"
                                                 id={authority}
                                                 checked={authorities.has(authority)}
-                                                onChange={(e) => toggleAuthority(authority, e.target.checked)}
+                                                onChange={(e) => {
+                                                    toggleAuthority(authority, e.target.checked)
+                                                    setError(null);
+                                                }}
                                             />
                                         </td>
                                         <td>{capitalise(screamingSnakeCaseToSentence(authority))}</td>

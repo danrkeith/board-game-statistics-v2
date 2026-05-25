@@ -59,25 +59,27 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         void navigate(HOME_PATH);
     };
 
-    const callWithAuth = <ReqT, ResT>(apiFunc: (jwt: string, body?: ReqT) => Promise<ResT>, body?: ReqT): Promise<ResT> => {
+    const callWithAuth = <ReqT, ResT>(
+        apiFunc: (jwt: string, body?: ReqT) => Promise<ResT>,
+        body?: ReqT
+    ): Promise<ResT> => {
         if (jwt === null) {
             const error = new Error(`Api call to ${apiFunc.name} requires auth`);
             console.error(error);
             return Promise.reject(error);
         }
 
-        if (body === undefined) {
-            return (apiFunc as (jwt: string) => Promise<ResT>)(jwt)
-                .catch((error: Error) => {
-                    if (error.cause === 'ExpiredJwtException') {
-                        logout();
-                    }
-                    return Promise.reject(error);
-                });
-        }
-        else {
-            return (apiFunc as (jwt: string, body: ReqT) => Promise<ResT>)(jwt, body);
-        }
+        const promise = body === undefined
+            ? (apiFunc as (jwt: string) => Promise<ResT>)(jwt)
+            : (apiFunc as (jwt: string, body: ReqT) => Promise<ResT>)(jwt, body);
+
+        return promise.catch((error: Error) => {
+            if (error.cause === 'ExpiredJwtException') {
+                logout();
+            }
+
+            return Promise.reject(error);
+        });
     };
 
     const contextValue: AuthContextType = {

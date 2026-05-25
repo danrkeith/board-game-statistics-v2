@@ -10,11 +10,13 @@ import java.util.stream.Collectors;
 public class MissingPrerequisiteAuthoritiesException extends InvalidInputException {
     public MissingPrerequisiteAuthoritiesException(Map<Authority, List<Authority>> authoritiesMissingPrerequisites) {
         super(
-                "The submitted authorities are missing the following prerequisites:" +
-                        authoritiesMissingPrerequisites.keySet().stream().map(
-                                authority -> "\n\t- " + authority + " requires " +
-                                        authoritiesMissingPrerequisites.get(authority).stream().map(Authority::toString).collect(Collectors.joining(", "))
-                        ).collect(Collectors.joining())
+                "The submitted authorities are missing the following prerequisites: "
+                        + authoritiesMissingPrerequisites.keySet().stream().map(
+                        authority ->
+                                "(" + authority + " requires "
+                                        + authoritiesMissingPrerequisites.get(authority).stream().map(Authority::toString).collect(Collectors.joining(", "))
+                                        + ")"
+                ).collect(Collectors.joining(", "))
         );
     }
 }
