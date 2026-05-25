@@ -2,13 +2,17 @@ package com.board_game_statistics.api.users;
 
 import com.board_game_statistics.api.users.exceptions.InvalidEmailException;
 import com.board_game_statistics.api.users.exceptions.InvalidPasswordException;
+import com.board_game_statistics.api.users.exceptions.MissingPrerequisiteAuthoritiesException;
 import com.board_game_statistics.api.users.exceptions.UserAlreadyExistsException;
 import com.board_game_statistics.api.exceptions.ResourceNotFoundException;
 import com.board_game_statistics.api.util.Validator;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Service
@@ -73,9 +77,35 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User setAuthorities(long id, Set<Authority> authorities) {
+        Map<Authority, List<Authority>> authoritiesMissingPrerequisites = getAuthoritiesMissingPrerequisites(authorities);
+
+        if (!authoritiesMissingPrerequisites.isEmpty()) {
+            throw new MissingPrerequisiteAuthoritiesException(authoritiesMissingPrerequisites);
+        }
+
         User user = getUser(id)
                 .setAuthorities(authorities);
 
         return userRepository.save(user);
+    }
+
+    private Map<Authority, List<Authority>> getAuthoritiesMissingPrerequisites(Set<Authority> authorities) {
+        EnumMap<Authority, List<Authority>> authoritiesMissingPrerequisites = new EnumMap<>(Authority.class);
+
+        for (Authority authority : authorities) {
+            List<Authority> missingPrerequisites = new ArrayList<>();
+
+            for (Authority prerequisite : authority.getPrerequisites()) {
+                if (!authorities.contains(prerequisite)) {
+                    missingPrerequisites.add(prerequisite);
+                }
+            }
+
+            if (!missingPrerequisites.isEmpty()) {
+                authoritiesMissingPrerequisites.put(authority, missingPrerequisites);
+            }
+        }
+
+        return authoritiesMissingPrerequisites;
     }
 }
