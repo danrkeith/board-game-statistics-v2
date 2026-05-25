@@ -1,7 +1,7 @@
 import type { Authority, User } from '../../utils/types';
 import { possessive } from '../../utils/string-utils';
 import { title } from '../../utils/user-utils';
-import ManageAuthoritiesForm from '../../components/forms/ManageAuthoritiesForm';
+import ManageAuthoritiesForm from '../../components/forms/ManageAuthoritiesForm/ManageAuthoritiesForm';
 import { useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import { apiEditUserAuthorities } from '../../utils/api/user-authorities-api-utils';

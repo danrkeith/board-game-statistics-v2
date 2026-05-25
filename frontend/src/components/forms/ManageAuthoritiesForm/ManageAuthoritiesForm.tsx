@@ -1,9 +1,12 @@
-import { useEffect, useState } from 'react';
-import { Authorities, type Authority, type User } from '../../utils/types';
-import FlexibleForm, { type ModalOrFormProps } from './FlexibleForm';
-import { Form, Spinner, Table } from 'react-bootstrap';
-import { equal } from '../../utils/collection-utils';
-import { capitalise, screamingSnakeCaseToSentence } from '../../utils/string-utils';
+import { useContext, useEffect, useState } from 'react';
+import { Authorities, type Authority, type User } from '../../../utils/types';
+import FlexibleForm, { type ModalOrFormProps } from '../FlexibleForm';
+import { Form, OverlayTrigger, Spinner, Table, Tooltip } from 'react-bootstrap';
+import { equal } from '../../../utils/collection-utils';
+import { capitalise, screamingSnakeCaseToSentence } from '../../../utils/string-utils';
+import { InfoCircle } from 'react-bootstrap-icons';
+import { AuthoritiesContext } from '../../../context/AuthoritiesContext';
+import AuthorityRow from './AuthorityRow';
 
 type ManageAuthoritiesFormProps = {
     user?: User;
@@ -76,20 +79,13 @@ const ManageAuthoritiesForm = (props: ManageAuthoritiesFormProps) => {
                         <Table striped borderless>
                             <tbody>
                                 {Authorities.map((authority: Authority) => (
-                                    <tr key={authority}>
-                                        <td>
-                                            <Form.Check
-                                                type="checkbox"
-                                                id={authority}
-                                                checked={authorities.has(authority)}
-                                                onChange={(e) => {
-                                                    toggleAuthority(authority, e.target.checked)
-                                                    setError(null);
-                                                }}
-                                            />
-                                        </td>
-                                        <td>{capitalise(screamingSnakeCaseToSentence(authority))}</td>
-                                    </tr>
+                                    <AuthorityRow
+                                        key={authority}
+                                        authority={authority}
+                                        authorities={authorities}
+                                        toggleAuthority={toggleAuthority}
+                                        setError={setError}
+                                    />
                                 ))}
                             </tbody>
                         </Table>
