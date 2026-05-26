@@ -1,5 +1,6 @@
 import type { Authority, User } from '../types';
 import { apiGet, apiPut, returnDataFrom } from './api-utils';
+import { jsonToUser, type JsonUser } from './users-api-utils';
 
 interface EditUserAuthoritiesRequest {
     id: number;
@@ -19,6 +20,7 @@ const apiGetAuthorityPrerequisites = (jwt: string): Promise<Map<Authority, Set<A
 
 
 const apiEditUserAuthorities = (jwt: string, body: EditUserAuthoritiesRequest): Promise<User> =>
-    returnDataFrom<User>(() => apiPut({ endpoint: `/users/${body.id}/authorities`, jwt, body: Array.from(body.authorities) }));
+    returnDataFrom<JsonUser>(() => apiPut({ endpoint: `/users/${body.id}/authorities`, jwt, body: Array.from(body.authorities) }))
+        .then(jsonToUser);
 
 export { apiGetAuthorityPrerequisites, apiEditUserAuthorities };

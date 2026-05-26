@@ -29,8 +29,8 @@ const ManageAuthoritiesForm = (props: ManageAuthoritiesFormProps) => {
 
     useEffect(() => {
         if (user) {
-            setAuthorities(new Set(user.authorities));
-            setInitialAuthorities(new Set(user.authorities));
+            setAuthorities(user.authorities);
+            setInitialAuthorities(user.authorities);
         }
     }, [user]);
 
