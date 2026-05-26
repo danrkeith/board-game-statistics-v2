@@ -97,7 +97,7 @@ const ManageAuthoritiesForm = (props: ManageAuthoritiesFormProps) => {
                                                 authorities={authorities}
                                                 disabled={
                                                     ![...(authorityPrerequisites?.get(authority) ?? new Set())]
-                                                        .every((prerequisite) => authorities.has(prerequisite))
+                                                        .every(prerequisite => authorities.has(prerequisite))
                                                 }
                                                 toggleAuthority={toggleAuthority}
                                                 setError={setError}

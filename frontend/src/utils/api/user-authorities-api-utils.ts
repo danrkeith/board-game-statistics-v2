@@ -13,11 +13,10 @@ const apiGetAuthorityPrerequisites = (jwt: string): Promise<Map<Authority, Set<A
             Object.entries(record).map(
                 ([authority, prerequisites]) => [
                     authority as Authority,
-                    new Set(prerequisites)
-                ] as const)
-            )
+                    new Set(prerequisites),
+                ] as const),
+        ),
         );
-
 
 const apiEditUserAuthorities = (jwt: string, body: EditUserAuthoritiesRequest): Promise<User> =>
     returnDataFrom<JsonUser>(() => apiPut({ endpoint: `/users/${body.id}/authorities`, jwt, body: Array.from(body.authorities) }))
