@@ -14,7 +14,7 @@ interface ConstantProviderProps {
 const ConstantContext = React.createContext<ConstantContextType>({});
 
 const ConstantProvider = ({ children }: ConstantProviderProps) => {
-    const { isLoading: authIsLoading, callWithAuth } = useContext(AuthContext);
+    const { isLoading: authIsLoading, jwt, callWithAuth } = useContext(AuthContext);
 
     const [authorityPrerequisites, setAuthorityPrerequisites] = useState<Map<Authority, Set<Authority>>>();
 
@@ -23,9 +23,14 @@ const ConstantProvider = ({ children }: ConstantProviderProps) => {
             return;
         }
 
+        if (!jwt) {
+            setAuthorityPrerequisites(undefined);
+            return;
+        }
+
         void callWithAuth(apiGetAuthorityPrerequisites)
             .then(setAuthorityPrerequisites);
-    }, [authIsLoading, callWithAuth]);
+    }, [authIsLoading, jwt, callWithAuth]);
 
     const contextValue = { authorityPrerequisites };
 
