@@ -3,7 +3,7 @@ import type { Authority } from '../../../utils/types';
 import { capitalise, screamingSnakeCaseToSentence } from '../../../utils/string-utils';
 import { InfoCircle } from 'react-bootstrap-icons';
 import { useContext } from 'react';
-import { AuthorityPrerequisitesContext } from '../../../context/AuthoritiesContext';
+import { ConstantContext } from '../../../context/ConstantContext';
 
 interface AuthorityRowProps {
     authority: Authority;
@@ -14,7 +14,7 @@ interface AuthorityRowProps {
 }
 
 const AuthorityRow = ({ authority, authorities, disabled, toggleAuthority, setError }: AuthorityRowProps) => {
-    const { prerequisites } = useContext(AuthorityPrerequisitesContext);
+    const { authorityPrerequisites } = useContext(ConstantContext);
 
     const display = (authority: Authority) => capitalise(screamingSnakeCaseToSentence(authority));
 
@@ -36,14 +36,14 @@ const AuthorityRow = ({ authority, authorities, disabled, toggleAuthority, setEr
             <td>
                 <div className="d-flex align-items-center">
                     {display(authority)}
-                    {prerequisites && prerequisites[authority].length !== 0 && (
+                    {authorityPrerequisites && authorityPrerequisites[authority].length !== 0 && (
                         <OverlayTrigger
                             placement="right"
                             delay={{ show: 250, hide: 400 }}
                             overlay={props => (
                                 <Tooltip {...props}>
-                                    <div>Prerequisites:</div>
-                                    {prerequisites[authority].map(prerequisite => (
+                                    <div>Requires:</div>
+                                    {authorityPrerequisites[authority].map(prerequisite => (
                                         <div key={prerequisite}>{display(prerequisite)}</div>
                                     ))}
                                 </Tooltip>
