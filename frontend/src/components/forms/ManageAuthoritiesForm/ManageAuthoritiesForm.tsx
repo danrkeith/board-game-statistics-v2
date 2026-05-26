@@ -38,11 +38,9 @@ const ManageAuthoritiesForm = (props: ManageAuthoritiesFormProps) => {
         setAuthorities((prev) => {
             const newAuthorities = new Set(prev);
 
-            const entries = Object.entries(authorityPrerequisites ?? {}) as [Authority, Authority[]][];
-
             const removeDependents = (removed: Authority) => {
-                entries.forEach(([candidate, requiredAuthorities]) => {
-                    if (requiredAuthorities.includes(removed)) {
+                authorityPrerequisites?.forEach((requiredAuthorities, candidate) => {
+                    if (requiredAuthorities.has(removed)) {
                         newAuthorities.delete(candidate);
                         removeDependents(candidate);
                     }
@@ -91,16 +89,21 @@ const ManageAuthoritiesForm = (props: ManageAuthoritiesFormProps) => {
                         <Form.Group>
                             <Table striped borderless>
                                 <tbody>
-                                    {Authorities.map((authority: Authority) => (
-                                        <AuthorityRow
-                                            key={authority}
-                                            authority={authority}
-                                            authorities={authorities}
-                                            disabled={!authorityPrerequisites?.[authority].every(prerequisite => authorities.has(prerequisite))}
-                                            toggleAuthority={toggleAuthority}
-                                            setError={setError}
-                                        />
-                                    ))}
+                                    {Authorities.map((authority: Authority) => {
+                                        return (
+                                            <AuthorityRow
+                                                key={authority}
+                                                authority={authority}
+                                                authorities={authorities}
+                                                disabled={
+                                                    ![...(authorityPrerequisites?.get(authority) ?? new Set())]
+                                                        .every((prerequisite) => authorities.has(prerequisite))
+                                                }
+                                                toggleAuthority={toggleAuthority}
+                                                setError={setError}
+                                            />
+                                        );
+                                    })}
                                 </tbody>
                             </Table>
                         </Form.Group>

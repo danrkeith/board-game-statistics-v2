@@ -36,14 +36,14 @@ const AuthorityRow = ({ authority, authorities, disabled, toggleAuthority, setEr
             <td>
                 <div className="d-flex align-items-center">
                     {display(authority)}
-                    {authorityPrerequisites && authorityPrerequisites[authority].length !== 0 && (
+                    {authorityPrerequisites && authorityPrerequisites.get(authority)?.size !== 0 && (
                         <OverlayTrigger
                             placement="right"
                             delay={{ show: 250, hide: 400 }}
                             overlay={props => (
                                 <Tooltip {...props}>
                                     <div>Requires:</div>
-                                    {authorityPrerequisites[authority].map(prerequisite => (
+                                    {[...(authorityPrerequisites.get(authority) ?? new Set())].map(prerequisite => (
                                         <div key={prerequisite}>{display(prerequisite)}</div>
                                     ))}
                                 </Tooltip>

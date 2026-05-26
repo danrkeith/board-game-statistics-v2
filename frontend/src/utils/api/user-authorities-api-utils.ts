@@ -6,9 +6,16 @@ interface EditUserAuthoritiesRequest {
     authorities: Set<string>;
 }
 
-const apiGetAuthorityPrerequisites = (jwt: string) =>
-    returnDataFrom<Record<Authority, Authority[]>>(() => apiGet({ endpoint: '/users/authorities/prerequisites', jwt }));
-        // .then(result => new Map(Object.entries(result).map(([authority, prerequisites]) => [authority, new Set(prerequisites)] as const))
+const apiGetAuthorityPrerequisites = (jwt: string): Promise<Map<Authority, Set<Authority>>> =>
+    returnDataFrom<Record<Authority, Authority[]>>(() => apiGet({ endpoint: '/users/authorities/prerequisites', jwt }))
+        .then(record => new Map(
+            Object.entries(record).map(
+                ([authority, prerequisites]) => [
+                    authority as Authority,
+                    new Set(prerequisites)
+                ] as const)
+            )
+        );
 
 
 const apiEditUserAuthorities = (jwt: string, body: EditUserAuthoritiesRequest) =>

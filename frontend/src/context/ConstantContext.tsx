@@ -4,7 +4,7 @@ import { AuthContext } from './AuthContext';
 import { apiGetAuthorityPrerequisites } from '../utils/api/user-authorities-api-utils';
 
 interface ConstantContextType {
-    authorityPrerequisites?: Record<Authority, Authority[]>;
+    authorityPrerequisites?: Map<Authority, Set<Authority>>;
 }
 
 interface ConstantProviderProps {
@@ -16,7 +16,7 @@ const ConstantContext = React.createContext<ConstantContextType>({});
 const ConstantProvider = ({ children }: ConstantProviderProps) => {
     const { isLoading: authIsLoading, callWithAuth } = useContext(AuthContext);
 
-    const [authorityPrerequisites, setAuthorityPrerequisites] = useState<Record<Authority, Authority[]>>();
+    const [authorityPrerequisites, setAuthorityPrerequisites] = useState<Map<Authority, Set<Authority>>>();
 
     useEffect(() => {
         if (authIsLoading) {
