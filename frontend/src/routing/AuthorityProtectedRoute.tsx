@@ -13,7 +13,7 @@ const AuthorityProtectedRoute = ({ requiredAuthorities }: AuthorityProtectedRout
     return (
         <ProtectedRoute isAuthenticated={
             isLoading || (user !== null && requiredAuthorities.every(
-                auth => user.authorities.includes(auth),
+                auth => user.authorities.has(auth),
             ))
         }
         />

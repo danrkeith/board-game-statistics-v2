@@ -10,6 +10,7 @@ import RegisterPage from './pages/account/RegisterPage';
 import AccountSettingsPage from './pages/account/AccountPage';
 import LoginProtectedRoute from './routing/LoginProtectedRoute';
 import AuthorityProtectedRoute from './routing/AuthorityProtectedRoute';
+import { ConstantProvider } from './context/ConstantContext';
 
 export const HOME_PATH = '/';
 export const LOGIN_PATH = '/login';
@@ -23,26 +24,28 @@ const App = () => {
     return (
         <BrowserRouter>
             <AuthProvider>
-                <UserProvider>
-                    <Header />
-                    <Container className="mt-4">
-                        <Routes>
-                            <Route path={HOME_PATH} element={<HomePage />} />
-                            <Route path={LOGIN_PATH} element={<LoginPage />} />
-                            <Route path={REGISTER_PATH} element={<RegisterPage />} />
+                <ConstantProvider>
+                    <UserProvider>
+                        <Header />
+                        <Container className="mt-4">
+                            <Routes>
+                                <Route path={HOME_PATH} element={<HomePage />} />
+                                <Route path={LOGIN_PATH} element={<LoginPage />} />
+                                <Route path={REGISTER_PATH} element={<RegisterPage />} />
 
-                            <Route element={<LoginProtectedRoute />}>
-                                <Route path={SETTINGS_PATH} element={<AccountSettingsPage />} />
+                                <Route element={<LoginProtectedRoute />}>
+                                    <Route path={SETTINGS_PATH} element={<AccountSettingsPage />} />
 
-                                <Route element={<AuthorityProtectedRoute requiredAuthorities={['MANAGE_USERS']} />}>
-                                    <Route path={MANAGE_USERS_PATH} element={<ManageUsersPage />} />
+                                    <Route element={<AuthorityProtectedRoute requiredAuthorities={['MANAGE_USERS']} />}>
+                                        <Route path={MANAGE_USERS_PATH} element={<ManageUsersPage />} />
+                                    </Route>
                                 </Route>
-                            </Route>
 
-                            <Route path="*" element={<Navigate to={HOME_PATH} />} />
-                        </Routes>
-                    </Container>
-                </UserProvider>
+                                <Route path="*" element={<Navigate to={HOME_PATH} />} />
+                            </Routes>
+                        </Container>
+                    </UserProvider>
+                </ConstantProvider>
             </AuthProvider>
         </BrowserRouter>
     );

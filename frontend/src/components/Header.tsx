@@ -24,7 +24,7 @@ const Header = () => {
                                 <Nav.Link as={Link} to={LOGIN_PATH}>Login</Nav.Link>
                             </Nav.Item>
                         )
-                        : user.authorities.includes('MANAGE_USERS') && (
+                        : user.authorities.has('MANAGE_USERS') && (
                             <Nav.Item>
                                 <Nav.Link as={Link} to={MANAGE_USERS_PATH}>
                                     Manage users

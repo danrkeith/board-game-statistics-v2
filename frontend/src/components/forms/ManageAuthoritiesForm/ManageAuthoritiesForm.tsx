@@ -4,7 +4,7 @@ import FlexibleForm, { type ModalOrFormProps } from '../FlexibleForm';
 import { Form, Spinner, Table } from 'react-bootstrap';
 import { equal } from '../../../utils/collection-utils';
 import AuthorityRow from './AuthorityRow';
-import { AuthorityPrerequisitesContext } from '../../../context/AuthoritiesContext';
+import { ConstantContext } from '../../../context/ConstantContext';
 
 type ManageAuthoritiesFormProps = {
     user?: User;
@@ -15,7 +15,7 @@ type ManageAuthoritiesFormProps = {
 const ManageAuthoritiesForm = (props: ManageAuthoritiesFormProps) => {
     const { user, onSubmit, submitCallback, handleClose } = props;
 
-    const { prerequisites } = useContext(AuthorityPrerequisitesContext);
+    const { authorityPrerequisites } = useContext(ConstantContext);
 
     const [initialAuthorities, setInitialAuthorities] = useState<Set<Authority>>();
     const [authorities, setAuthorities] = useState<Set<Authority>>();
@@ -29,8 +29,8 @@ const ManageAuthoritiesForm = (props: ManageAuthoritiesFormProps) => {
 
     useEffect(() => {
         if (user) {
-            setAuthorities(new Set(user.authorities));
-            setInitialAuthorities(new Set(user.authorities));
+            setAuthorities(user.authorities);
+            setInitialAuthorities(user.authorities);
         }
     }, [user]);
 
@@ -38,11 +38,9 @@ const ManageAuthoritiesForm = (props: ManageAuthoritiesFormProps) => {
         setAuthorities((prev) => {
             const newAuthorities = new Set(prev);
 
-            const entries = Object.entries(prerequisites ?? {}) as [Authority, Authority[]][];
-
             const removeDependents = (removed: Authority) => {
-                entries.forEach(([candidate, requiredAuthorities]) => {
-                    if (requiredAuthorities.includes(removed)) {
+                authorityPrerequisites?.forEach((requiredAuthorities, candidate) => {
+                    if (requiredAuthorities.has(removed)) {
                         newAuthorities.delete(candidate);
                         removeDependents(candidate);
                     }
@@ -91,16 +89,21 @@ const ManageAuthoritiesForm = (props: ManageAuthoritiesFormProps) => {
                         <Form.Group>
                             <Table striped borderless>
                                 <tbody>
-                                    {Authorities.map((authority: Authority) => (
-                                        <AuthorityRow
-                                            key={authority}
-                                            authority={authority}
-                                            authorities={authorities}
-                                            disabled={!prerequisites?.[authority].every(prerequisite => authorities.has(prerequisite))}
-                                            toggleAuthority={toggleAuthority}
-                                            setError={setError}
-                                        />
-                                    ))}
+                                    {Authorities.map((authority: Authority) => {
+                                        return (
+                                            <AuthorityRow
+                                                key={authority}
+                                                authority={authority}
+                                                authorities={authorities}
+                                                disabled={
+                                                    ![...(authorityPrerequisites?.get(authority) ?? new Set())]
+                                                        .every(prerequisite => authorities.has(prerequisite))
+                                                }
+                                                toggleAuthority={toggleAuthority}
+                                                setError={setError}
+                                            />
+                                        );
+                                    })}
                                 </tbody>
                             </Table>
                         </Form.Group>

@@ -6,7 +6,6 @@ import EditUserModal from './EditUserModal';
 import type { UsersReducerAction } from './ManageUsersPage';
 import DeleteUserConfirmationModal from './DeleteUserConfirmationModal';
 import ManageAuthoritiesModal from './ManageAuthoritiesModal';
-import { AuthorityPrerequisitesProvider } from '../../context/AuthoritiesContext';
 
 interface UserAction {
     user: User;
@@ -22,7 +21,7 @@ const UsersTable = ({ users, usersDispatch }: UsersTableProps) => {
     const [userAction, setUserAction] = useState<UserAction | null>(null);
 
     return (
-        <AuthorityPrerequisitesProvider>
+        <>
             <Table striped>
                 <thead>
                     <tr>
@@ -60,7 +59,7 @@ const UsersTable = ({ users, usersDispatch }: UsersTableProps) => {
                 confirmCallback={userId => usersDispatch({ type: 'REMOVE', userId })}
                 handleClose={() => setUserAction(null)}
             />
-        </AuthorityPrerequisitesProvider>
+        </>
     );
 };
 
