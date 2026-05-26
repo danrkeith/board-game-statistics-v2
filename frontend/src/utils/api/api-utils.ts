@@ -20,7 +20,7 @@ const getHeaders = (jwt?: string) => {
     };
 };
 
-const isErrorResponse = (data: object) => 'error' in data && 'message' in data;
+const isErrorResponse = (data: object | null) => !!data &&'error' in data && 'message' in data;
 
 const apiGet = ({ endpoint, jwt }: apiParameters) =>
     fetch(baseUrl + endpoint, {
@@ -49,17 +49,25 @@ const apiDelete = ({ endpoint, jwt, body }: apiParameters) =>
         headers: getHeaders(jwt),
     });
 
-const returnDataFrom = <ResT extends object>(apiFunc: () => Promise<Response>) =>
+const throwErrorResponse = <ResT extends object | null>(data: ResT | ErrorResponse): Promise<ResT> => {
+    if (isErrorResponse(data)) {
+        const errorResponse = data as ErrorResponse;
+        const error = new Error(errorResponse.message);
+        error.cause = errorResponse.error;
+        return Promise.reject(error);
+    }
+    return Promise.resolve(data as ResT);
+};
+
+const returnDataFrom = <ResT extends object>(apiFunc: () => Promise<Response>): Promise<ResT> =>
     apiFunc()
         .then((res: Response) => res.json())
-        .then((data: ResT | ErrorResponse) => {
-            if (isErrorResponse(data)) {
-                const error = new Error(data.message);
-                error.cause = data.error;
-                throw error;
-            }
+        .then(throwErrorResponse);
 
-            return data;
-        });
+const returnVoidFrom = (apiFunc: () => Promise<Response>): Promise<void> =>
+    apiFunc()
+        .then((res: Response) => res.text())
+        .then((text: string) => text ? JSON.parse(text) : null)
+        .then(throwErrorResponse);
 
-export { returnDataFrom, apiGet, apiPost, apiPut, apiDelete };
+export { returnDataFrom, returnVoidFrom, apiGet, apiPost, apiPut, apiDelete };

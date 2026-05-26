@@ -18,7 +18,7 @@ const apiGetAuthorityPrerequisites = (jwt: string): Promise<Map<Authority, Set<A
         );
 
 
-const apiEditUserAuthorities = (jwt: string, body: EditUserAuthoritiesRequest) =>
+const apiEditUserAuthorities = (jwt: string, body: EditUserAuthoritiesRequest): Promise<User> =>
     returnDataFrom<User>(() => apiPut({ endpoint: `/users/${body.id}/authorities`, jwt, body: Array.from(body.authorities) }));
 
 export { apiGetAuthorityPrerequisites, apiEditUserAuthorities };
