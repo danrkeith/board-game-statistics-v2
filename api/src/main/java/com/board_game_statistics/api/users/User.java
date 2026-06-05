@@ -96,7 +96,7 @@ public class User implements UserDetails {
     }
 
     public UserResponse asResponse() {
-        return new UserResponse(id, email, firstName, lastName, authorities);
+        return new UserResponse(id, email, firstName, lastName);
     }
 
     @Override

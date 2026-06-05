@@ -4,6 +4,7 @@ import com.board_game_statistics.api.users.User;
 import com.board_game_statistics.api.users.dto.UserResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,6 +20,13 @@ public class UserAuthoritiesController {
 
     UserAuthoritiesController(UserAuthoritiesService userAuthoritiesService) {
         this.userAuthoritiesService = userAuthoritiesService;
+    }
+
+    @GetMapping
+    public ResponseEntity<Set<Authority>> getUserAuthorities(@PathVariable long userId) {
+        Set<Authority> userAuthorities = userAuthoritiesService.getUserAuthorities(userId);
+
+        return ResponseEntity.ok(userAuthorities);
     }
 
     @PutMapping

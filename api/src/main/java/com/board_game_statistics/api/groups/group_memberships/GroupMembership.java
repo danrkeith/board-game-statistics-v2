@@ -34,7 +34,7 @@ public class GroupMembership {
     @JoinColumn(name = "group_id")
     private Group group;
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection
     @Enumerated(EnumType.STRING)
     @Column(name = "permission", nullable = false)
     private Set<Permission> permissions = EnumSet.noneOf(Permission.class);

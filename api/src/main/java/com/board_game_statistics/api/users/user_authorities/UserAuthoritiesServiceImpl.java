@@ -23,6 +23,11 @@ public class UserAuthoritiesServiceImpl implements UserAuthoritiesService {
     }
 
     @Override
+    public Set<Authority> getUserAuthorities(long userId) {
+        return userService.getUser(userId).getAuthorities();
+    }
+
+    @Override
     public User setUserAuthorities(long userId, Set<Authority> authorities) {
         Map<Authority, List<Authority>> authoritiesMissingPrerequisites = getAuthoritiesMissingPrerequisites(authorities);
 
