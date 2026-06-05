@@ -28,7 +28,7 @@ public class UserAuthoritiesServiceImpl implements UserAuthoritiesService {
     }
 
     @Override
-    public User setUserAuthorities(long userId, Set<Authority> authorities) {
+    public Set<Authority> setUserAuthorities(long userId, Set<Authority> authorities) {
         Map<Authority, List<Authority>> authoritiesMissingPrerequisites = getAuthoritiesMissingPrerequisites(authorities);
 
         if (!authoritiesMissingPrerequisites.isEmpty()) {
@@ -38,7 +38,7 @@ public class UserAuthoritiesServiceImpl implements UserAuthoritiesService {
         User user = userService.getUser(userId)
                 .setAuthorities(authorities);
 
-        return userRepository.save(user);
+        return userRepository.save(user).getAuthorities();
     }
 
     private Map<Authority, List<Authority>> getAuthoritiesMissingPrerequisites(Set<Authority> authorities) {

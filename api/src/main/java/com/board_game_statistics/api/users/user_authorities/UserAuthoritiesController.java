@@ -1,7 +1,5 @@
 package com.board_game_statistics.api.users.user_authorities;
 
-import com.board_game_statistics.api.users.User;
-import com.board_game_statistics.api.users.dto.UserResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,9 +29,9 @@ public class UserAuthoritiesController {
 
     @PutMapping
     @PreAuthorize("hasAuthority('GRANT_AUTHORITIES')")
-    public ResponseEntity<UserResponse> setUserAuthorities(@PathVariable long userId, @RequestBody Set<Authority> authorities) {
-        User user = userAuthoritiesService.setUserAuthorities(userId, authorities);
+    public ResponseEntity<Set<Authority>> setUserAuthorities(@PathVariable long userId, @RequestBody Set<Authority> authorities) {
+        Set<Authority> userAuthorities = userAuthoritiesService.setUserAuthorities(userId, authorities);
 
-        return ResponseEntity.ok(user.asResponse());
+        return ResponseEntity.ok(userAuthorities);
     }
 }
