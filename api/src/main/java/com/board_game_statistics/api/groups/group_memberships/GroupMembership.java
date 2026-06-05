@@ -63,6 +63,6 @@ public class GroupMembership {
     }
 
     public GroupMembershipResponse asResponse() {
-        return new GroupMembershipResponse(user.getId(), user.getEmail(), user.getFirstName(), user.getLastName(), permissions);
+        return new GroupMembershipResponse(user.asResponse(), permissions);
     }
 }
