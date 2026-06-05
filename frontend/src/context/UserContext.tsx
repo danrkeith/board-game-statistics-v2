@@ -48,11 +48,11 @@ const UserProvider = ({ children }: UserProviderProps) => {
 
         void callWithAuth(apiGetMe)
             .then(setUser);
-            // Continue loading, since authorities are not fetched yet
+        // Continue loading, since authorities are not fetched yet
     }, [authIsLoading, isAuthenticated, callWithAuth, logout]);
 
     useEffect(() => {
-        if (user === null) {
+        if (!isAuthenticated || user === null) {
             setAuthorities(new Set<Authority>());
             return;
         }
@@ -60,7 +60,7 @@ const UserProvider = ({ children }: UserProviderProps) => {
         void callWithAuth(apiGetUserAuthorities, user.id)
             .then(setAuthorities)
             .then(() => setIsLoading(false));
-    }, [user]);
+    }, [isAuthenticated, user, callWithAuth]);
 
     const contextValue = {
         isLoading,

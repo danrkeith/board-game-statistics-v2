@@ -32,8 +32,8 @@ const ManageAuthoritiesForm = (props: ManageAuthoritiesFormProps) => {
 
     useEffect(() => {
         if (user && isAuthenticated) {
-            callWithAuth(apiGetUserAuthorities, user.id)
-                .then(authorities => {
+            void callWithAuth(apiGetUserAuthorities, user.id)
+                .then((authorities) => {
                     setAuthorities(authorities);
                     setInitialAuthorities(authorities);
                 });

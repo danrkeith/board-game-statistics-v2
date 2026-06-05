@@ -55,35 +55,35 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
             .finally(() => setIsLoading(false));
     };
 
-    const logout = () => {
+    const logout = useCallback(() => {
         sessionStorage.removeItem(JWT_STORAGE_KEY);
         setJwt(null);
         void navigate(HOME_PATH);
-    };
+    }, [navigate]);
 
     const callWithAuth = useCallback(
         <ReqT, ResT>(
-        apiFunc: (jwt: string, body?: ReqT) => Promise<ResT>,
-        body?: ReqT,
-    ): Promise<ResT> => {
-        if (jwt === null) {
-            const error = new Error(`Api call to ${apiFunc.name} requires auth`);
-            console.error(error);
-            return Promise.reject(error);
-        }
-
-        const promise = body === undefined
-            ? (apiFunc as (jwt: string) => Promise<ResT>)(jwt)
-            : (apiFunc as (jwt: string, body: ReqT) => Promise<ResT>)(jwt, body);
-
-        return promise.catch((error: Error) => {
-            if (error.cause === 'ExpiredJwtException') {
-                logout();
+            apiFunc: (jwt: string, body?: ReqT) => Promise<ResT>,
+            body?: ReqT,
+        ): Promise<ResT> => {
+            if (jwt === null) {
+                const error = new Error(`Api call to ${apiFunc.name} requires auth`);
+                console.error(error);
+                return Promise.reject(error);
             }
 
-            return Promise.reject(error);
-        });
-    }, [jwt]);
+            const promise = body === undefined
+                ? (apiFunc as (jwt: string) => Promise<ResT>)(jwt)
+                : (apiFunc as (jwt: string, body: ReqT) => Promise<ResT>)(jwt, body);
+
+            return promise.catch((error: Error) => {
+                if (error.cause === 'ExpiredJwtException') {
+                    logout();
+                }
+
+                return Promise.reject(error);
+            });
+        }, [jwt, logout]);
 
     const contextValue: AuthContextType = {
         isLoading,

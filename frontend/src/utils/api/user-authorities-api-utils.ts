@@ -1,4 +1,4 @@
-import type { Authority, User } from '../types';
+import type { Authority } from '../types';
 import { apiGet, apiPut, returnDataFrom } from './api-utils';
 
 interface EditUserAuthoritiesRequest {
