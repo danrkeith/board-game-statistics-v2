@@ -30,7 +30,7 @@ interface UsersReducerActionRemove {
 type UsersReducerAction = UsersReducerActionSetAll | UsersReducerActionUpdate | UsersReducerActionAdd | UsersReducerActionRemove;
 
 const ManageUsersPage = () => {
-    const { isLoading, callWithAuth } = useContext(AuthContext);
+    const { isLoading, isAuthenticated, callWithAuth } = useContext(AuthContext);
     const { user, setUser } = useContext(UserContext);
 
     const usersReducer = (state: User[] | undefined, action: UsersReducerAction) => {
@@ -56,13 +56,13 @@ const ManageUsersPage = () => {
     const [action, setAction] = useState<'CREATE_USER' | null>(null);
 
     useEffect(() => {
-        if (isLoading) {
+        if (isLoading || !isAuthenticated) {
             return;
         }
 
         void callWithAuth(apiGetUsers)
             .then(users => usersDispatch({ type: 'SET_ALL', users: users }));
-    }, [isLoading, callWithAuth]);
+    }, [isLoading, isAuthenticated, callWithAuth]);
 
     return (
         <div className="mb-5">

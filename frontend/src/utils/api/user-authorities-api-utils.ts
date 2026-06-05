@@ -1,14 +1,17 @@
-import type { User } from '../types';
-import { apiPut, returnDataFrom } from './api-utils';
-import { jsonToUser, type JsonUser } from './users-api-utils';
+import type { Authority, User } from '../types';
+import { apiGet, apiPut, returnDataFrom } from './api-utils';
 
 interface EditUserAuthoritiesRequest {
     id: number;
     authorities: Set<string>;
 }
 
-const apiEditUserAuthorities = (jwt: string, body: EditUserAuthoritiesRequest): Promise<User> =>
-    returnDataFrom<JsonUser>(() => apiPut({ endpoint: `/users/${body.id}/authorities`, jwt, body: Array.from(body.authorities) }))
-        .then(jsonToUser);
+const apiGetUserAuthorities = (jwt: string, id: number): Promise<Set<Authority>> =>
+    returnDataFrom<Authority[]>(() => apiGet({ endpoint: `/users/${id}/authorities`, jwt }))
+        .then(authorities => new Set(authorities));
 
-export { apiEditUserAuthorities };
+const apiEditUserAuthorities = (jwt: string, body: EditUserAuthoritiesRequest): Promise<Set<Authority>> =>
+    returnDataFrom<Authority[]>(() => apiPut({ endpoint: `/users/${body.id}/authorities`, jwt, body: Array.from(body.authorities) }))
+        .then(authorities => new Set(authorities));
+
+export { apiGetUserAuthorities, apiEditUserAuthorities };

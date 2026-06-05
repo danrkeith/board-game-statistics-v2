@@ -8,7 +8,7 @@ import PersonDropdownToggle from './dropdowns/PersonDropdownToggle';
 
 const Header = () => {
     const { logout } = useContext(AuthContext);
-    const { isLoading, user } = useContext(UserContext);
+    const { isLoading, user, authorities } = useContext(UserContext);
 
     return (
         <Navbar>
@@ -24,7 +24,7 @@ const Header = () => {
                                 <Nav.Link as={Link} to={LOGIN_PATH}>Login</Nav.Link>
                             </Nav.Item>
                         )
-                        : user.authorities.has('MANAGE_USERS') && (
+                        : authorities.has('MANAGE_USERS') && (
                             <Nav.Item>
                                 <Nav.Link as={Link} to={MANAGE_USERS_PATH}>
                                     Manage users

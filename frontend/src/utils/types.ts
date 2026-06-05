@@ -6,7 +6,6 @@ interface User {
     email: string;
     firstName: string;
     lastName: string;
-    authorities: Set<Authority>;
 }
 
 export { Authorities };

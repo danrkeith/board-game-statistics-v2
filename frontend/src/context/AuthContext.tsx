@@ -1,11 +1,11 @@
-import { createContext, useEffect, useState } from 'react';
+import { createContext, useCallback, useEffect, useState } from 'react';
 import { apiLogin } from '../utils/api/auth-api-utils';
 import { useNavigate } from 'react-router-dom';
 import { HOME_PATH } from '../App';
 
 interface AuthContextType {
     isLoading: boolean;
-    jwt: string | null;
+    isAuthenticated: boolean;
     login: (credentials: Credentials) => Promise<void>;
     logout: () => void;
     callWithAuth<ResT>(this: void, apiFunc: (jwt: string) => Promise<ResT>): Promise<ResT>;
@@ -25,7 +25,7 @@ const JWT_STORAGE_KEY = 'jwt';
 
 const AuthContext = createContext<AuthContextType>({
     isLoading: true,
-    jwt: null,
+    isAuthenticated: false,
     login: () => new Promise(() => console.error('AuthContext.login function not attached')),
     logout: () => console.error('AuthContext.logout function not attached'),
     callWithAuth: () => new Promise(() => console.error('AuthContext.callWithAuth function not attached')),
@@ -34,6 +34,8 @@ const AuthContext = createContext<AuthContextType>({
 const AuthProvider = ({ children }: AuthProviderProps) => {
     const [isLoading, setIsLoading] = useState(true);
     const [jwt, setJwt] = useState<string | null>(null);
+
+    const isAuthenticated = jwt !== null;
 
     const navigate = useNavigate();
 
@@ -59,7 +61,8 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         void navigate(HOME_PATH);
     };
 
-    const callWithAuth = <ReqT, ResT>(
+    const callWithAuth = useCallback(
+        <ReqT, ResT>(
         apiFunc: (jwt: string, body?: ReqT) => Promise<ResT>,
         body?: ReqT,
     ): Promise<ResT> => {
@@ -80,11 +83,11 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
 
             return Promise.reject(error);
         });
-    };
+    }, [jwt]);
 
     const contextValue: AuthContextType = {
         isLoading,
-        jwt,
+        isAuthenticated,
         login,
         logout,
         callWithAuth,

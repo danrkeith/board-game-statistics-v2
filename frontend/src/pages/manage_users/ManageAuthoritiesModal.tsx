@@ -9,7 +9,7 @@ import { apiEditUserAuthorities } from '../../utils/api/user-authorities-api-uti
 interface ManageAuthoritiesModalProps {
     show: boolean;
     user?: User;
-    submitCallback?: (user: User) => void;
+    submitCallback?: (authorities: Set<Authority>) => void;
     handleClose: () => void;
 }
 

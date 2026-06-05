@@ -5,16 +5,19 @@ import { Form, Spinner, Table } from 'react-bootstrap';
 import { equal } from '../../../utils/collection-utils';
 import AuthorityRow from './AuthorityRow';
 import { ConstantContext } from '../../../context/ConstantContext';
+import { AuthContext } from '../../../context/AuthContext';
+import { apiGetUserAuthorities } from '../../../utils/api/user-authorities-api-utils';
 
 type ManageAuthoritiesFormProps = {
     user?: User;
-    onSubmit: (authorities: Set<Authority>) => Promise<User>;
-    submitCallback?: (user: User) => void;
+    onSubmit: (authorities: Set<Authority>) => Promise<Set<Authority>>;
+    submitCallback?: (authorities: Set<Authority>) => void;
 } & ModalOrFormProps;
 
 const ManageAuthoritiesForm = (props: ManageAuthoritiesFormProps) => {
     const { user, onSubmit, submitCallback, handleClose } = props;
 
+    const { callWithAuth, isAuthenticated } = useContext(AuthContext);
     const { authorityPrerequisites } = useContext(ConstantContext);
 
     const [initialAuthorities, setInitialAuthorities] = useState<Set<Authority>>();
@@ -28,11 +31,14 @@ const ManageAuthoritiesForm = (props: ManageAuthoritiesFormProps) => {
     }, [authorities, initialAuthorities]);
 
     useEffect(() => {
-        if (user) {
-            setAuthorities(user.authorities);
-            setInitialAuthorities(user.authorities);
+        if (user && isAuthenticated) {
+            callWithAuth(apiGetUserAuthorities, user.id)
+                .then(authorities => {
+                    setAuthorities(authorities);
+                    setInitialAuthorities(authorities);
+                });
         }
-    }, [user]);
+    }, [user, isAuthenticated, callWithAuth]);
 
     const toggleAuthority = (authority: Authority, value: boolean) => {
         setAuthorities((prev) => {
