@@ -9,10 +9,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+@RequestMapping("/groups/{groupId}/members")
 @RestController
 public class GroupMembershipController {
     private final GroupMembershipService groupMembershipService;
@@ -21,7 +23,7 @@ public class GroupMembershipController {
         this.groupMembershipService = groupMembershipService;
     }
 
-    @GetMapping("/groups/{groupId}/members")
+    @GetMapping
     @PreAuthorize("hasAuthority('MANAGE_GROUP_MEMBERSHIPS')")
     public ResponseEntity<List<GroupMembershipResponse>> getGroupMemberships(@PathVariable long groupId) {
         // TODO - authority check for groups outside own
@@ -32,7 +34,7 @@ public class GroupMembershipController {
         return ResponseEntity.ok(responses);
     }
 
-    @GetMapping("/groups/{groupId}/members/{userId}")
+    @GetMapping("/{userId}")
     @PreAuthorize("hasAuthority('MANAGE_GROUP_MEMBERSHIPS')")
     public ResponseEntity<GroupMembershipResponse> getGroupMembership(@PathVariable long groupId, @PathVariable long userId) {
         // TODO - authority check for groups outside own
@@ -42,7 +44,7 @@ public class GroupMembershipController {
         return ResponseEntity.ok(groupMembership.asResponse());
     }
 
-    @PutMapping("/groups/{groupId}/members/{userId}")
+    @PutMapping("/{userId}")
     @PreAuthorize("hasAuthority('MANAGE_GROUP_MEMBERSHIPS')")
     public ResponseEntity<GroupMembershipResponse> createOrEditGroupMembership(
             @PathVariable long groupId,
@@ -56,7 +58,7 @@ public class GroupMembershipController {
         return ResponseEntity.ok(newGroupMembership.asResponse());
     }
 
-    @DeleteMapping("/groups/{groupId}/members/{userId}")
+    @DeleteMapping("/{userId}")
     @PreAuthorize("hasAuthority('MANAGE_GROUP_MEMBERSHIPS')")
     public ResponseEntity<?> deleteGroupMembership(@PathVariable long groupId, @PathVariable long userId) {
         // TODO - authority check for groups outside own

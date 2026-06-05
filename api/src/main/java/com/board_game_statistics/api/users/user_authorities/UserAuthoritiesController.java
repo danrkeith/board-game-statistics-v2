@@ -4,16 +4,14 @@ import com.board_game_statistics.api.users.User;
 import com.board_game_statistics.api.users.dto.UserResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
 import java.util.Set;
 
-@RestController
+@RestController("/users/{userId}/authorities")
 public class UserAuthoritiesController {
     private final UserAuthoritiesService userAuthoritiesService;
 
@@ -21,21 +19,7 @@ public class UserAuthoritiesController {
         this.userAuthoritiesService = userAuthoritiesService;
     }
 
-    @GetMapping("/users/authorities")
-    public ResponseEntity<Set<Authority>> getAuthorities() {
-        Set<Authority> authorities = userAuthoritiesService.getAuthorities();
-
-        return ResponseEntity.ok(authorities);
-    }
-
-    @GetMapping("/users/authorities/prerequisites")
-    public ResponseEntity<Map<Authority, Set<Authority>>> getAuthorityPrerequisites() {
-        Map<Authority, Set<Authority>> authorityPrerequisites = userAuthoritiesService.getAuthorityPrerequisites();
-
-        return ResponseEntity.ok(authorityPrerequisites);
-    }
-
-    @PutMapping("/users/{userId}/authorities")
+    @PutMapping
     @PreAuthorize("hasAuthority('GRANT_AUTHORITIES')")
     public ResponseEntity<UserResponse> setUserAuthorities(@PathVariable long userId, @RequestBody Set<Authority> authorities) {
         User user = userAuthoritiesService.setUserAuthorities(userId, authorities);

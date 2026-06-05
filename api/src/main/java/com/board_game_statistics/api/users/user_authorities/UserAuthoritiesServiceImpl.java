@@ -23,22 +23,6 @@ public class UserAuthoritiesServiceImpl implements UserAuthoritiesService {
     }
 
     @Override
-    public Set<Authority> getAuthorities() {
-        return Set.of(Authority.values());
-    }
-
-    @Override
-    public Map<Authority, Set<Authority>> getAuthorityPrerequisites() {
-        EnumMap<Authority, Set<Authority>> authorityPrerequisites = new EnumMap<>(Authority.class);
-
-        for (Authority authority : Authority.values()) {
-            authorityPrerequisites.put(authority, Set.of(authority.getPrerequisites()));
-        }
-
-        return authorityPrerequisites;
-    }
-
-    @Override
     public User setUserAuthorities(long userId, Set<Authority> authorities) {
         Map<Authority, List<Authority>> authoritiesMissingPrerequisites = getAuthoritiesMissingPrerequisites(authorities);
 

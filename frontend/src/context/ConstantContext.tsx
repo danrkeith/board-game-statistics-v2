@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import type { Authority } from '../utils/types';
 import { AuthContext } from './AuthContext';
-import { apiGetAuthorityPrerequisites } from '../utils/api/user-authorities-api-utils';
+import { apiGetAuthorityPrerequisites } from '../utils/api/constant-api-utils';
 
 interface ConstantContextType {
     authorityPrerequisites?: Map<Authority, Set<Authority>>;
