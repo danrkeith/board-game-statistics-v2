@@ -1,25 +1,17 @@
-import type { Authority, User } from '../types';
+import type { Authority } from '../types';
 import { apiGet, apiPut, returnDataFrom } from './api-utils';
-import { jsonToUser, type JsonUser } from './users-api-utils';
 
 interface EditUserAuthoritiesRequest {
     id: number;
     authorities: Set<string>;
 }
 
-const apiGetAuthorityPrerequisites = (jwt: string): Promise<Map<Authority, Set<Authority>>> =>
-    returnDataFrom<Record<Authority, Authority[]>>(() => apiGet({ endpoint: '/users/authorities/prerequisites', jwt }))
-        .then(record => new Map(
-            Object.entries(record).map(
-                ([authority, prerequisites]) => [
-                    authority as Authority,
-                    new Set(prerequisites),
-                ] as const),
-        ),
-        );
+const apiGetUserAuthorities = (jwt: string, id: number): Promise<Set<Authority>> =>
+    returnDataFrom<Authority[]>(() => apiGet({ endpoint: `/users/${id}/authorities`, jwt }))
+        .then(authorities => new Set(authorities));
 
-const apiEditUserAuthorities = (jwt: string, body: EditUserAuthoritiesRequest): Promise<User> =>
-    returnDataFrom<JsonUser>(() => apiPut({ endpoint: `/users/${body.id}/authorities`, jwt, body: Array.from(body.authorities) }))
-        .then(jsonToUser);
+const apiEditUserAuthorities = (jwt: string, body: EditUserAuthoritiesRequest): Promise<Set<Authority>> =>
+    returnDataFrom<Authority[]>(() => apiPut({ endpoint: `/users/${body.id}/authorities`, jwt, body: Array.from(body.authorities) }))
+        .then(authorities => new Set(authorities));
 
-export { apiGetAuthorityPrerequisites, apiEditUserAuthorities };
+export { apiGetUserAuthorities, apiEditUserAuthorities };

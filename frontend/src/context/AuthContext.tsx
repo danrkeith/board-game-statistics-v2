@@ -1,11 +1,11 @@
-import { createContext, useEffect, useState } from 'react';
+import { createContext, useCallback, useEffect, useState } from 'react';
 import { apiLogin } from '../utils/api/auth-api-utils';
 import { useNavigate } from 'react-router-dom';
 import { HOME_PATH } from '../App';
 
 interface AuthContextType {
     isLoading: boolean;
-    jwt: string | null;
+    isAuthenticated: boolean;
     login: (credentials: Credentials) => Promise<void>;
     logout: () => void;
     callWithAuth<ResT>(this: void, apiFunc: (jwt: string) => Promise<ResT>): Promise<ResT>;
@@ -25,7 +25,7 @@ const JWT_STORAGE_KEY = 'jwt';
 
 const AuthContext = createContext<AuthContextType>({
     isLoading: true,
-    jwt: null,
+    isAuthenticated: false,
     login: () => new Promise(() => console.error('AuthContext.login function not attached')),
     logout: () => console.error('AuthContext.logout function not attached'),
     callWithAuth: () => new Promise(() => console.error('AuthContext.callWithAuth function not attached')),
@@ -34,6 +34,8 @@ const AuthContext = createContext<AuthContextType>({
 const AuthProvider = ({ children }: AuthProviderProps) => {
     const [isLoading, setIsLoading] = useState(true);
     const [jwt, setJwt] = useState<string | null>(null);
+
+    const isAuthenticated = jwt !== null;
 
     const navigate = useNavigate();
 
@@ -53,38 +55,39 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
             .finally(() => setIsLoading(false));
     };
 
-    const logout = () => {
+    const logout = useCallback(() => {
         sessionStorage.removeItem(JWT_STORAGE_KEY);
         setJwt(null);
         void navigate(HOME_PATH);
-    };
+    }, [navigate]);
 
-    const callWithAuth = <ReqT, ResT>(
-        apiFunc: (jwt: string, body?: ReqT) => Promise<ResT>,
-        body?: ReqT,
-    ): Promise<ResT> => {
-        if (jwt === null) {
-            const error = new Error(`Api call to ${apiFunc.name} requires auth`);
-            console.error(error);
-            return Promise.reject(error);
-        }
-
-        const promise = body === undefined
-            ? (apiFunc as (jwt: string) => Promise<ResT>)(jwt)
-            : (apiFunc as (jwt: string, body: ReqT) => Promise<ResT>)(jwt, body);
-
-        return promise.catch((error: Error) => {
-            if (error.cause === 'ExpiredJwtException') {
-                logout();
+    const callWithAuth = useCallback(
+        <ReqT, ResT>(
+            apiFunc: (jwt: string, body?: ReqT) => Promise<ResT>,
+            body?: ReqT,
+        ): Promise<ResT> => {
+            if (jwt === null) {
+                const error = new Error(`Api call to ${apiFunc.name} requires auth`);
+                console.error(error);
+                return Promise.reject(error);
             }
 
-            return Promise.reject(error);
-        });
-    };
+            const promise = body === undefined
+                ? (apiFunc as (jwt: string) => Promise<ResT>)(jwt)
+                : (apiFunc as (jwt: string, body: ReqT) => Promise<ResT>)(jwt, body);
+
+            return promise.catch((error: Error) => {
+                if (error.cause === 'ExpiredJwtException') {
+                    logout();
+                }
+
+                return Promise.reject(error);
+            });
+        }, [jwt, logout]);
 
     const contextValue: AuthContextType = {
         isLoading,
-        jwt,
+        isAuthenticated,
         login,
         logout,
         callWithAuth,

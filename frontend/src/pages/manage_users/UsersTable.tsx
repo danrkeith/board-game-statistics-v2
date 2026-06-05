@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { Table } from 'react-bootstrap';
 import type { User } from '../../utils/types';
 import UserRow from './UserRow';
@@ -6,6 +6,7 @@ import EditUserModal from './EditUserModal';
 import type { UsersReducerAction } from './ManageUsersPage';
 import DeleteUserConfirmationModal from './DeleteUserConfirmationModal';
 import ManageAuthoritiesModal from './ManageAuthoritiesModal';
+import { UserContext } from '../../context/UserContext';
 
 interface UserAction {
     user: User;
@@ -18,6 +19,8 @@ interface UsersTableProps {
 }
 
 const UsersTable = ({ users, usersDispatch }: UsersTableProps) => {
+    const { user, setAuthorities } = useContext(UserContext);
+
     const [userAction, setUserAction] = useState<UserAction | null>(null);
 
     return (
@@ -50,7 +53,7 @@ const UsersTable = ({ users, usersDispatch }: UsersTableProps) => {
             <ManageAuthoritiesModal
                 show={userAction?.action === 'MANAGE_AUTHORITIES'}
                 user={userAction?.user}
-                submitCallback={user => usersDispatch({ type: 'UPDATE', user })}
+                submitCallback={newAuthorities => user === userAction?.user && setAuthorities(newAuthorities)}
                 handleClose={() => setUserAction(null)}
             />
             <DeleteUserConfirmationModal

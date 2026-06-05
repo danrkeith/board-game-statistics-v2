@@ -1,7 +1,6 @@
 package com.board_game_statistics.api.users;
 
 import java.util.List;
-import java.util.Set;
 
 public interface UserService {
     List<User> getUsers();

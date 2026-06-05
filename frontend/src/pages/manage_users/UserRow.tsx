@@ -12,7 +12,7 @@ interface UserRowProps {
 }
 
 const UserRow = ({ user, handleUserAction }: UserRowProps) => {
-    const { user: currentUser } = useContext(UserContext);
+    const { user: currentUser, authorities: currentUserAuthorities } = useContext(UserContext);
 
     const isLoggedIn = currentUser?.id === user.id;
 
@@ -31,7 +31,7 @@ const UserRow = ({ user, handleUserAction }: UserRowProps) => {
                         <Dropdown.Item eventKey="EDIT">
                             Edit
                         </Dropdown.Item>
-                        {currentUser?.authorities.has('GRANT_AUTHORITIES') && (
+                        {currentUserAuthorities.has('GRANT_AUTHORITIES') && (
                             <Dropdown.Item eventKey="MANAGE_AUTHORITIES">
                                 Manage authorities
                             </Dropdown.Item>

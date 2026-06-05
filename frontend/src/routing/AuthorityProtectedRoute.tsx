@@ -8,12 +8,12 @@ interface AuthorityProtectedRouteProps {
 }
 
 const AuthorityProtectedRoute = ({ requiredAuthorities }: AuthorityProtectedRouteProps) => {
-    const { isLoading, user } = useContext(UserContext);
+    const { isLoading, user, authorities } = useContext(UserContext);
 
     return (
         <ProtectedRoute isAuthenticated={
             isLoading || (user !== null && requiredAuthorities.every(
-                auth => user.authorities.has(auth),
+                auth => authorities.has(auth),
             ))
         }
         />
