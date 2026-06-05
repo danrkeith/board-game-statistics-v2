@@ -71,14 +71,6 @@ public class UserController {
         return ResponseEntity.ok(newUser.asResponse());
     }
 
-    @GetMapping("/me/groups")
-    public ResponseEntity<List<GroupResponse>> getMyGroups(@AuthenticationPrincipal User user) {
-        List<Group> groups = groupMembershipService.getGroupsOfUser(user.getId());
-
-        List<GroupResponse> groupResponses = groups.stream().map(Group::asResponse).toList();
-        return ResponseEntity.ok(groupResponses);
-    }
-
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('MANAGE_USERS')")
     public ResponseEntity<UserResponse> getUser(@PathVariable long id) {
