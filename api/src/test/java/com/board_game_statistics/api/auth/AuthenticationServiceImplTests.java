@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Optional;
@@ -19,10 +20,7 @@ import static org.mockito.Mockito.when;
 
 @ActiveProfiles("test")
 @ExtendWith(MockitoExtension.class)
-public class AuthenticationServiceTests {
-    private static final String TEST_EMAIL = "test@example.com";
-    private static final String TEST_PASSWORD = "test-password";
-
+public class AuthenticationServiceImplTests {
     @Mock
     private UserRepository userRepository;
     @Mock
@@ -33,12 +31,22 @@ public class AuthenticationServiceTests {
 
     @Test
     void testAuthenticateSuccessfully() {
-        User user = new User().setEmail(TEST_EMAIL).setPassword(TEST_PASSWORD);
+        final String email = "test@example.com";
+        final String password = "test-password";
+        final User user = new User().setEmail(email).setPassword(password);
 
-        when(authenticationManager.authenticate(any())).thenReturn(any());
-        when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.ofNullable(user));
+        when(authenticationManager.authenticate(
+                        new UsernamePasswordAuthenticationToken(
+                                email,
+                                password
+                        )
+                )
+        ).thenReturn(any());
 
-        User authenticatedUser = authenticationService.authenticate(TEST_EMAIL, TEST_PASSWORD);
+        when(userRepository.findByEmail(email))
+                .thenReturn(Optional.ofNullable(user));
+
+        User authenticatedUser = authenticationService.authenticate(email, password);
         Assertions.assertEquals(user, authenticatedUser);
     }
 
@@ -47,7 +55,7 @@ public class AuthenticationServiceTests {
         when(authenticationManager.authenticate(any())).thenThrow(BadCredentialsException.class);
 
         Assertions.assertThrows(BadCredentialsException.class, () ->
-                authenticationService.authenticate(TEST_EMAIL, TEST_PASSWORD)
+                authenticationService.authenticate("", "")
         );
     }
 }

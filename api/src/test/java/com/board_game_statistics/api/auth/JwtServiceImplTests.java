@@ -11,7 +11,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @ActiveProfiles("test")
-public class JwtServiceTests {
+public class JwtServiceImplTests {
     private static final User TEST_USER_1 = new User().setEmail("test0@JwtService.com").setPassword("test0-JwtService-password");
     private static final User TEST_USER_2 = new User().setEmail("test1@JwtService.com").setPassword("test1-JwtService-password");
 
