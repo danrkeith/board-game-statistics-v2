@@ -14,7 +14,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import org.springframework.lang.NonNull;
 
 import java.util.EnumSet;
 import java.util.Set;
@@ -39,7 +38,7 @@ public class GroupMembership {
     @Column(name = "permission", nullable = false)
     private Set<Permission> permissions = EnumSet.noneOf(Permission.class);
 
-    public @NonNull User getUser() {
+    public User getUser() {
         return user;
     }
 
@@ -48,7 +47,7 @@ public class GroupMembership {
         return this;
     }
 
-    public @NonNull Group getGroup() {
+    public Group getGroup() {
         return group;
     }
 

@@ -6,7 +6,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import org.springframework.lang.Nullable;
 
 @Table(name = "groups")
 @Entity
@@ -21,7 +20,7 @@ public class Group {
         return id;
     }
 
-    public @Nullable String getName() {
+    public String getName() {
         return name;
     }
 

@@ -6,19 +6,16 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-
-@ActiveProfiles("test")
 @ExtendWith(MockitoExtension.class)
 public class AuthenticationServiceImplTests {
     @Mock
@@ -39,15 +36,15 @@ public class AuthenticationServiceImplTests {
         final String password = "test-password";
         final User user = new User().setEmail(email).setPassword(password);
 
-        when(authenticationManager.authenticate(
+        Mockito.when(authenticationManager.authenticate(
                         new UsernamePasswordAuthenticationToken(
                                 email,
                                 password
                         )
                 )
-        ).thenReturn(any());
+        ).thenReturn(ArgumentMatchers.any());
 
-        when(userRepository.findByEmail(email))
+        Mockito.when(userRepository.findByEmail(email))
                 .thenReturn(Optional.ofNullable(user));
 
         User authenticatedUser = authenticationService.authenticate(email, password);
@@ -56,7 +53,7 @@ public class AuthenticationServiceImplTests {
 
     @Test
     void testAuthenticateUnsuccessfully() {
-        when(authenticationManager.authenticate(any())).thenThrow(BadCredentialsException.class);
+        Mockito.when(authenticationManager.authenticate(ArgumentMatchers.any())).thenThrow(BadCredentialsException.class);
 
         Assertions.assertThrows(BadCredentialsException.class, () ->
                 authenticationService.authenticate("", "")

@@ -13,7 +13,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collections;
@@ -69,7 +68,7 @@ public class User implements UserDetails {
         return this;
     }
 
-    public @Nullable String getFirstName() {
+    public String getFirstName() {
         return firstName;
     }
 
@@ -78,7 +77,7 @@ public class User implements UserDetails {
         return this;
     }
 
-    public @Nullable String getLastName() {
+    public String getLastName() {
         return lastName;
     }
 

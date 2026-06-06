@@ -5,9 +5,7 @@ import io.jsonwebtoken.ExpiredJwtException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.context.ActiveProfiles;
 
-@ActiveProfiles("test")
 public class JwtServiceImplTests {
     private static final String secretKey = "bQkkQQmFMhc9L5q1zcj3Qp6zi3UG54R6PxUEKqi2e6w=";
     private static final long jwtExpiration = 3000;
@@ -17,9 +15,8 @@ public class JwtServiceImplTests {
 
     private static JwtService jwtService;
 
-
     @BeforeAll
-    static void setup() {
+    static void beforeAll() {
         jwtService = new JwtServiceImpl(secretKey, jwtExpiration);
     }
 
