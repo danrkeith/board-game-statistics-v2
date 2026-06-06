@@ -12,6 +12,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collections;
@@ -44,7 +46,7 @@ public class User implements UserDetails {
     }
 
     @Override
-    public String getUsername() {
+    public @NonNull String getUsername() {
         return email;
     }
 
@@ -58,7 +60,7 @@ public class User implements UserDetails {
     }
 
     @Override
-    public String getPassword() {
+    public @NonNull String getPassword() {
         return password;
     }
 
@@ -67,7 +69,7 @@ public class User implements UserDetails {
         return this;
     }
 
-    public String getFirstName() {
+    public @Nullable String getFirstName() {
         return firstName;
     }
 
@@ -76,7 +78,7 @@ public class User implements UserDetails {
         return this;
     }
 
-    public String getLastName() {
+    public @Nullable String getLastName() {
         return lastName;
     }
 
@@ -86,7 +88,7 @@ public class User implements UserDetails {
     }
 
     @Override
-    public Set<Authority> getAuthorities() {
+    public @NonNull Set<Authority> getAuthorities() {
         return authorities != null ? authorities : Collections.emptySet();
     }
 
