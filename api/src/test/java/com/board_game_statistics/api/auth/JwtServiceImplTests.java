@@ -3,23 +3,25 @@ package com.board_game_statistics.api.auth;
 import com.board_game_statistics.api.users.User;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-@SpringBootTest
 @ActiveProfiles("test")
 public class JwtServiceImplTests {
+    private static final String secretKey = "bQkkQQmFMhc9L5q1zcj3Qp6zi3UG54R6PxUEKqi2e6w=";
+    private static final long jwtExpiration = 3000;
+
     private static final User TEST_USER_1 = new User().setEmail("test0@JwtService.com").setPassword("test0-JwtService-password");
     private static final User TEST_USER_2 = new User().setEmail("test1@JwtService.com").setPassword("test1-JwtService-password");
 
-    @Autowired
-    private JwtService jwtService;
+    private static JwtService jwtService;
 
-    @Value("${security.jwt.expiration-time}")
-    private long jwtExpiration;
+
+    @BeforeAll
+    static void setup() {
+        jwtService = new JwtServiceImpl(secretKey, jwtExpiration);
+    }
 
     @Test
     void generateTokenAndExtractUsername() {

@@ -3,9 +3,9 @@ package com.board_game_statistics.api.auth;
 import com.board_game_statistics.api.users.User;
 import com.board_game_statistics.api.users.UserRepository;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,8 +26,12 @@ public class AuthenticationServiceImplTests {
     @Mock
     private AuthenticationManager authenticationManager;
 
-    @InjectMocks
-    private AuthenticationServiceImpl authenticationService;
+    private AuthenticationService authenticationService;
+
+    @BeforeEach
+    void setUp() {
+        authenticationService = new AuthenticationServiceImpl(userRepository, authenticationManager);
+    }
 
     @Test
     void testAuthenticateSuccessfully() {
