@@ -10,8 +10,8 @@ public class JwtServiceImplTests {
     private static final String secretKey = "bQkkQQmFMhc9L5q1zcj3Qp6zi3UG54R6PxUEKqi2e6w=";
     private static final long jwtExpiration = 3000;
 
-    private static final User TEST_USER_1 = new User().setEmail("test0@JwtService.com").setPassword("test0-JwtService-password");
-    private static final User TEST_USER_2 = new User().setEmail("test1@JwtService.com").setPassword("test1-JwtService-password");
+    private static final User TEST_USER_1 = User.builder().email("test0@JwtService.com").password("test0-JwtService-password").build();
+    private static final User TEST_USER_2 = User.builder().email("test1@JwtService.com").password("test1-JwtService-password").build();
 
     private static JwtService jwtService;
 

@@ -57,9 +57,10 @@ public class AuthenticationControllerIntegrationTests {
 
         Assertions.assertTrue(jwtService.isTokenValid(
                 loginResponse.jwt(),
-                new User()
-                        .setEmail(EMAIL)
-                        .setPassword(passwordEncoder.encode(PASSWORD)))
+                User.builder()
+                        .email(EMAIL)
+                        .password(passwordEncoder.encode(PASSWORD))
+                        .build())
         );
         Assertions.assertEquals(loginResponse.expiresIn(), jwtExpiration);
     }

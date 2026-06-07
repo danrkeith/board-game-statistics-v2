@@ -39,11 +39,12 @@ public class UserServiceImpl implements UserService {
             throw new InvalidPasswordException();
         }
 
-        User user = new User()
-                .setEmail(email)
-                .setPassword(passwordEncoder.encode(password))
-                .setFirstName(firstName)
-                .setLastName(lastName);
+        User user = User.builder()
+                .email(email)
+                .password(passwordEncoder.encode(password))
+                .firstName(firstName)
+                .lastName(lastName)
+                .build();
 
         return userRepository.save(user);
     }
@@ -56,9 +57,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User editUser(long id, String firstName, String lastName) {
-        User user = getUser(id)
-                .setFirstName(firstName)
-                .setLastName(lastName);
+        User user = getUser(id);
+
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
 
         return userRepository.save(user);
     }

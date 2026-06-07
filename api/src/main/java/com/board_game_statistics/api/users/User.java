@@ -12,6 +12,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.springframework.lang.NonNull;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -19,8 +25,11 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
 
-@Table(name = "users")
 @Entity
+@Table(name = "users")
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString(exclude = "password")
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,16 +41,23 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password;
 
+    @Setter
     private String firstName;
+    @Setter
     private String lastName;
 
+    @Setter
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     @Column(name = "authority", nullable = false)
     private Set<Authority> authorities = EnumSet.noneOf(Authority.class);
 
-    public long getId() {
-        return id;
+    @Builder
+    public User(String email, String password, String firstName, String lastName) {
+        this.email = email;
+        this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
     }
 
     @Override
@@ -49,41 +65,9 @@ public class User implements UserDetails {
         return email;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public User setEmail(String email) {
-        this.email = email;
-        return this;
-    }
-
     @Override
-    public String getPassword() {
+    public @NonNull String getPassword() {
         return password;
-    }
-
-    public User setPassword(String password) {
-        this.password = password;
-        return this;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public User setFirstName(String firstName) {
-        this.firstName = firstName;
-        return this;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public User setLastName(String lastName) {
-        this.lastName = lastName;
-        return this;
     }
 
     @Override
@@ -91,29 +75,7 @@ public class User implements UserDetails {
         return authorities != null ? authorities : Collections.emptySet();
     }
 
-    public User setAuthorities(Set<Authority> authorities) {
-        this.authorities = authorities;
-        return this;
-    }
-
     public UserResponse asResponse() {
         return new UserResponse(id, email, firstName, lastName);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        User user = (User) o;
-        return id == user.id
-                && email.equals(user.email)
-                && password.equals(user.password)
-                && firstName.equals(user.firstName)
-                && lastName.equals(user.lastName)
-                && authorities.equals(user.authorities);
     }
 }

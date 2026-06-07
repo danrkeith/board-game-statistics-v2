@@ -34,14 +34,13 @@ public class AuthenticationServiceImplTests {
     void testAuthenticateSuccessfully() {
         final String email = "test@example.com";
         final String password = "test-password";
-        final User user = new User().setEmail(email).setPassword(password);
+        final User user = User.builder().email(email).password(password).build();
 
         Mockito.when(authenticationManager.authenticate(
-                        new UsernamePasswordAuthenticationToken(
-                                email,
-                                password
-                        )
-                )
+                new UsernamePasswordAuthenticationToken(
+                        email,
+                        password
+                ))
         ).thenReturn(ArgumentMatchers.any());
 
         Mockito.when(userRepository.findByEmail(email))
