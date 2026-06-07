@@ -59,7 +59,7 @@ public class User implements UserDetails {
     }
 
     @Override
-    public @NonNull String getPassword() {
+    public String getPassword() {
         return password;
     }
 
