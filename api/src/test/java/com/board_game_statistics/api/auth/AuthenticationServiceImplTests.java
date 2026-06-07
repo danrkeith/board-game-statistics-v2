@@ -18,15 +18,15 @@ import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 public class AuthenticationServiceImplTests {
+    private AuthenticationService authenticationService;
+
     @Mock
     private UserRepository userRepository;
     @Mock
     private AuthenticationManager authenticationManager;
 
-    private AuthenticationService authenticationService;
-
     @BeforeEach
-    void setUp() {
+    void beforeEach() {
         authenticationService = new AuthenticationServiceImpl(userRepository, authenticationManager);
     }
 
