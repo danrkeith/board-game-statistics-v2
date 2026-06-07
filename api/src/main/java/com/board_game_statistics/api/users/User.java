@@ -53,7 +53,7 @@ public class User implements UserDetails {
     private Set<Authority> authorities = EnumSet.noneOf(Authority.class);
 
     @Builder
-    public User(String email, String password, String firstName, String lastName) {
+    private User(String email, String password, String firstName, String lastName) {
         this.email = email;
         this.password = password;
         this.firstName = firstName;

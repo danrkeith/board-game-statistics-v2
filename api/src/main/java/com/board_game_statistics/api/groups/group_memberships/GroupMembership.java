@@ -14,12 +14,22 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.util.EnumSet;
 import java.util.Set;
 
-@Table(name = "group_memberships")
 @Entity
+@Table(name = "group_memberships")
+@Getter
+@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString
 public class GroupMembership {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,27 +48,11 @@ public class GroupMembership {
     @Column(name = "permission", nullable = false)
     private Set<Permission> permissions = EnumSet.noneOf(Permission.class);
 
-    public User getUser() {
-        return user;
-    }
-
-    public GroupMembership setUser(User user) {
+    @Builder
+    private GroupMembership(User user, Group group, Set<Permission> permissions) {
         this.user = user;
-        return this;
-    }
-
-    public Group getGroup() {
-        return group;
-    }
-
-    public GroupMembership setGroup(Group group) {
         this.group = group;
-        return this;
-    }
-
-    public GroupMembership setPermissions(Set<Permission> permissions) {
         this.permissions = permissions;
-        return this;
     }
 
     public GroupMembershipResponse asResponse() {

@@ -49,16 +49,18 @@ public class GroupMembershipServiceImpl implements GroupMembershipService {
 
         if (existingGroupMembership.isPresent()) {
             // Edit group
-            newGroupMembership = existingGroupMembership.get().setPermissions(permissions);
+            newGroupMembership = existingGroupMembership.get();
+            newGroupMembership.setPermissions(permissions);
         } else {
             // Create group
             User user = userService.getUser(userId);
             Group group = groupService.getGroup(groupId);
 
-            newGroupMembership = new GroupMembership()
-                    .setUser(user)
-                    .setGroup(group)
-                    .setPermissions(permissions);
+            newGroupMembership = GroupMembership.builder()
+                    .user(user)
+                    .group(group)
+                    .permissions(permissions)
+                    .build();
         }
 
         return groupMembershipRepository.save(newGroupMembership);
