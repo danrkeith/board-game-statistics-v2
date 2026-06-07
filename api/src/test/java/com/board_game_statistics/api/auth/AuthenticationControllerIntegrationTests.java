@@ -4,7 +4,7 @@ import com.board_game_statistics.api.auth.dto.LoginRequest;
 import com.board_game_statistics.api.auth.dto.LoginResponse;
 import com.board_game_statistics.api.exceptions.ErrorResponse;
 import com.board_game_statistics.api.users.User;
-import com.board_game_statistics.api.users.UserService;
+import com.board_game_statistics.api.users.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,6 +19,8 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.List;
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 public class AuthenticationControllerIntegrationTests {
@@ -28,25 +30,26 @@ public class AuthenticationControllerIntegrationTests {
     @Value("${security.jwt.expiration-time}")
     private long jwtExpiration;
 
-    private long savedUserId;
-
     @Autowired
     private TestRestTemplate testRestTemplate;
     @Autowired
     private JwtService jwtService;
     @Autowired
-    private UserService userService;
+    private UserRepository userRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
 
     @BeforeEach
     void beforeEach() {
-        savedUserId = userService.createUser(EMAIL, PASSWORD, null, null).getId();
+        userRepository.save(User.builder()
+                .email(EMAIL)
+                .password(passwordEncoder.encode(PASSWORD))
+                .build());
     }
 
     @AfterEach
     void afterEach() {
-        userService.deleteUser(savedUserId);
+        userRepository.deleteAll();
     }
 
     @Test
@@ -54,6 +57,8 @@ public class AuthenticationControllerIntegrationTests {
         LoginRequest loginRequest = new LoginRequest(EMAIL, PASSWORD);
 
         LoginResponse loginResponse = testRestTemplate.postForObject("/auth/login", loginRequest, LoginResponse.class);
+
+        List<User> users = userRepository.findAll();
 
         Assertions.assertTrue(jwtService.isTokenValid(
                 loginResponse.jwt(),
