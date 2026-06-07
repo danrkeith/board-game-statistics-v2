@@ -27,9 +27,9 @@ public class JwtExceptionHandlerFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
-        try{
+        try {
             filterChain.doFilter(request, response);
-        } catch(JwtException e){
+        } catch (JwtException e) {
             exceptionResolver.resolveException(request, response, null, e);
         }
     }

@@ -22,11 +22,11 @@ import java.util.List;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfiguration {
-    @Value("${frontend.url}")
-    private String frontendUrl;
-
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final JwtExceptionHandlerFilter jwtExceptionHandlerFilter;
+
+    @Value("${frontend.url}")
+    private String frontendUrl;
 
     public SecurityConfiguration(
             JwtAuthenticationFilter jwtAuthenticationFilter,

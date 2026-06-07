@@ -1,9 +1,9 @@
 package com.board_game_statistics.api.users;
 
+import com.board_game_statistics.api.exceptions.ResourceNotFoundException;
 import com.board_game_statistics.api.users.exceptions.InvalidEmailException;
 import com.board_game_statistics.api.users.exceptions.InvalidPasswordException;
 import com.board_game_statistics.api.users.exceptions.UserAlreadyExistsException;
-import com.board_game_statistics.api.exceptions.ResourceNotFoundException;
 import com.board_game_statistics.api.util.Validator;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

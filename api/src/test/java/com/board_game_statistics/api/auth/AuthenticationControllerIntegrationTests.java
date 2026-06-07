@@ -39,6 +39,12 @@ public class AuthenticationControllerIntegrationTests {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    private static void assertBadCredentialsResponse(ResponseEntity<ErrorResponse> responseEntity) {
+        Assertions.assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
+        Assertions.assertNotNull(responseEntity.getBody());
+        Assertions.assertEquals(BadCredentialsException.class.getSimpleName(), responseEntity.getBody().error());
+    }
+
     @BeforeEach
     void beforeEach() {
         userRepository.save(User.builder()
@@ -86,11 +92,5 @@ public class AuthenticationControllerIntegrationTests {
         ResponseEntity<ErrorResponse> responseEntity = testRestTemplate.postForEntity("/auth/login", loginRequest, ErrorResponse.class);
 
         assertBadCredentialsResponse(responseEntity);
-    }
-
-    private static void assertBadCredentialsResponse(ResponseEntity<ErrorResponse> responseEntity) {
-        Assertions.assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
-        Assertions.assertNotNull(responseEntity.getBody());
-        Assertions.assertEquals(BadCredentialsException.class.getSimpleName(), responseEntity.getBody().error());
     }
 }
