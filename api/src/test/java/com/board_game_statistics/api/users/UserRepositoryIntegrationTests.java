@@ -50,7 +50,7 @@ public class UserRepositoryIntegrationTests {
     }
 
     @Test
-    void testDoesNotFindByEmail() {
+    void testFindByEmailWhereUserDoesNotExist() {
         Optional<User> optionalUser = userRepository.findByEmail("not-existent-email");
 
         Assertions.assertFalse(optionalUser.isPresent());
@@ -62,7 +62,7 @@ public class UserRepositoryIntegrationTests {
     }
 
     @Test
-    void testDoesNotExistByEmail() {
+    void testExistsByEmailWhereUserDoesNotExist() {
         Assertions.assertFalse(userRepository.existsByEmail("not-existent-email"));
     }
 }

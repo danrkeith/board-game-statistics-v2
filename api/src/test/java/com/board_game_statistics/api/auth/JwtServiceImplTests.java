@@ -21,7 +21,7 @@ public class JwtServiceImplTests {
     }
 
     @Test
-    void generateTokenAndExtractUsername() {
+    void testGenerateTokenAndExtractUsername() {
         String token = jwtService.generateToken(TEST_USER_1);
         String extractedUsername = jwtService.extractUsername(token);
 
@@ -29,7 +29,7 @@ public class JwtServiceImplTests {
     }
 
     @Test
-    void generatedTokenIsValid() {
+    void testGeneratedTokenIsValid() {
         String token = jwtService.generateToken(TEST_USER_1);
         boolean isValid = jwtService.isTokenValid(token, TEST_USER_1);
 
@@ -37,7 +37,7 @@ public class JwtServiceImplTests {
     }
 
     @Test
-    void generatedTokenForDifferentUserIsNotValid() {
+    void testGeneratedTokenForDifferentUserIsNotValid() {
         String token = jwtService.generateToken(TEST_USER_1);
         boolean isValid = jwtService.isTokenValid(token, TEST_USER_2);
 
@@ -45,7 +45,7 @@ public class JwtServiceImplTests {
     }
 
     @Test
-    void expiredTokenIsNotValid() throws InterruptedException {
+    void testExpiredTokenIsNotValid() throws InterruptedException {
         String token = jwtService.generateToken(TEST_USER_1);
         Thread.sleep(jwtExpiration);
 

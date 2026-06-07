@@ -19,8 +19,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.List;
-
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 public class AuthenticationControllerIntegrationTests {
@@ -63,8 +61,6 @@ public class AuthenticationControllerIntegrationTests {
         LoginRequest loginRequest = new LoginRequest(EMAIL, PASSWORD);
 
         LoginResponse loginResponse = testRestTemplate.postForObject("/auth/login", loginRequest, LoginResponse.class);
-
-        List<User> users = userRepository.findAll();
 
         Assertions.assertTrue(jwtService.isTokenValid(
                 loginResponse.jwt(),

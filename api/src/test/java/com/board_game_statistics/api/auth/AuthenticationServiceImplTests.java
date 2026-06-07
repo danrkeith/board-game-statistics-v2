@@ -52,7 +52,8 @@ public class AuthenticationServiceImplTests {
 
     @Test
     void testAuthenticateUnsuccessfully() {
-        Mockito.when(authenticationManager.authenticate(ArgumentMatchers.any())).thenThrow(BadCredentialsException.class);
+        Mockito.when(authenticationManager.authenticate(ArgumentMatchers.any()))
+                .thenThrow(BadCredentialsException.class);
 
         Assertions.assertThrows(BadCredentialsException.class, () ->
                 authenticationService.authenticate("", "")
