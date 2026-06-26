@@ -1,0 +1,78 @@
+package com.board_game_statistics.api.users;
+
+import com.board_game_statistics.api.IntegrationTestUtil;
+import com.board_game_statistics.api.users.dto.UserResponse;
+import com.board_game_statistics.api.users.user_authorities.Authority;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
+
+import java.util.EnumSet;
+import java.util.List;
+
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("test")
+public class UserControllerIntegrationTests {
+    private record UserDetails(String email, String password, String firstName, String lastName, EnumSet<Authority> authorities) {}
+
+    private static final UserDetails[] TEST_USERS = {
+            new UserDetails("first@example.com", "first-password", "First", "Firstson", EnumSet.of(Authority.MANAGE_USERS)),
+            new UserDetails("second@example.com", "second-password", "Second", "Secondson", EnumSet.noneOf(Authority.class)),
+            new UserDetails("third@example.com", "third-password", "Third", "Thirdson", EnumSet.noneOf(Authority.class)),
+    };
+
+    private static String jwt;
+
+    @Autowired
+    private TestRestTemplate testRestTemplate;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @BeforeEach
+    void beforeEach() {
+        for (UserDetails user : TEST_USERS) {
+            userRepository.save(User.builder()
+                    .email(user.email())
+                    .password(passwordEncoder.encode(user.password()))
+                    .firstName(user.firstName())
+                    .lastName(user.lastName())
+                    .authorities(user.authorities())
+                    .build());
+        }
+    }
+
+    @AfterEach
+    void afterEach() {
+        userRepository.deleteAll();
+    }
+
+    @Test
+    void testGetUsers() {
+        UserDetails user = TEST_USERS[0];
+
+        ResponseEntity<List<UserResponse>> responseEntity = testRestTemplate.exchange(
+                "/users",
+                HttpMethod.GET,
+                IntegrationTestUtil.loginAndGetJwtEntity(testRestTemplate, user.email(), user.password()),
+                new ParameterizedTypeReference<>() {}
+        );
+
+        Assertions.assertNotNull(responseEntity);
+
+        List<UserResponse> userResponses = responseEntity.getBody();
+
+        Assertions.assertNotNull(userResponses);
+        Assertions.assertEquals(TEST_USERS.length, userResponses.size());
+    }
+}

@@ -1,5 +1,6 @@
 package com.board_game_statistics.api.auth;
 
+import com.board_game_statistics.api.IntegrationTestUtil;
 import com.board_game_statistics.api.auth.dto.LoginRequest;
 import com.board_game_statistics.api.auth.dto.LoginResponse;
 import com.board_game_statistics.api.exceptions.ErrorResponse;
@@ -22,8 +23,9 @@ import org.springframework.test.context.ActiveProfiles;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 public class AuthenticationControllerIntegrationTests {
-    private static final String EMAIL = "test@example.com";
-    private static final String PASSWORD = "test-password";
+    private record UserDetails(String email, String password) {}
+
+    private static final UserDetails TEST_USER = new UserDetails("test@example.com", "test-password");
 
     @Value("${security.jwt.expiration-time}")
     private long jwtExpiration;
@@ -37,17 +39,11 @@ public class AuthenticationControllerIntegrationTests {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    private static void assertBadCredentialsResponse(ResponseEntity<ErrorResponse> responseEntity) {
-        Assertions.assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
-        Assertions.assertNotNull(responseEntity.getBody());
-        Assertions.assertEquals(BadCredentialsException.class.getSimpleName(), responseEntity.getBody().error());
-    }
-
     @BeforeEach
     void beforeEach() {
         userRepository.save(User.builder()
-                .email(EMAIL)
-                .password(passwordEncoder.encode(PASSWORD))
+                .email(TEST_USER.email())
+                .password(passwordEncoder.encode(TEST_USER.password()))
                 .build());
     }
 
@@ -58,15 +54,17 @@ public class AuthenticationControllerIntegrationTests {
 
     @Test
     void testLoginSuccessfully() {
-        LoginRequest loginRequest = new LoginRequest(EMAIL, PASSWORD);
+        ResponseEntity<LoginResponse> responseEntity = IntegrationTestUtil.login(testRestTemplate, TEST_USER.email(), TEST_USER.password());
+        Assertions.assertTrue(responseEntity.getStatusCode().is2xxSuccessful());
 
-        LoginResponse loginResponse = testRestTemplate.postForObject("/auth/login", loginRequest, LoginResponse.class);
+        LoginResponse loginResponse = responseEntity.getBody();
+        Assertions.assertNotNull(loginResponse);
 
         Assertions.assertTrue(jwtService.isTokenValid(
                 loginResponse.jwt(),
                 User.builder()
-                        .email(EMAIL)
-                        .password(passwordEncoder.encode(PASSWORD))
+                        .email(TEST_USER.email())
+                        .password(passwordEncoder.encode(TEST_USER.password()))
                         .build())
         );
         Assertions.assertEquals(loginResponse.expiresIn(), jwtExpiration);
@@ -74,7 +72,7 @@ public class AuthenticationControllerIntegrationTests {
 
     @Test
     void testLoginWithIncorrectPassword() {
-        LoginRequest loginRequest = new LoginRequest(EMAIL, "incorrect-password");
+        LoginRequest loginRequest = new LoginRequest(TEST_USER.email(), "incorrect-password");
 
         ResponseEntity<ErrorResponse> responseEntity = testRestTemplate.postForEntity("/auth/login", loginRequest, ErrorResponse.class);
 
@@ -88,5 +86,13 @@ public class AuthenticationControllerIntegrationTests {
         ResponseEntity<ErrorResponse> responseEntity = testRestTemplate.postForEntity("/auth/login", loginRequest, ErrorResponse.class);
 
         assertBadCredentialsResponse(responseEntity);
+    }
+
+    private static void assertBadCredentialsResponse(ResponseEntity<ErrorResponse> responseEntity) {
+        Assertions.assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
+
+        ErrorResponse errorResponse = responseEntity.getBody();
+        Assertions.assertNotNull(errorResponse);
+        Assertions.assertEquals(BadCredentialsException.class.getSimpleName(), responseEntity.getBody().error());
     }
 }
