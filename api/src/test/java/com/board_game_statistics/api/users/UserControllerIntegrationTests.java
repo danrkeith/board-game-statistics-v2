@@ -18,19 +18,19 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Objects;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 public class UserControllerIntegrationTests {
-    private record UserDetails(String email, String password, String firstName, String lastName, EnumSet<Authority> authorities) {}
+    private record UserDetails(String email, String password, String firstName, String lastName,
+                               EnumSet<Authority> authorities) {}
 
     private static final UserDetails[] TEST_USERS = {
             new UserDetails("first@example.com", "first-password", "First", "Firstson", EnumSet.of(Authority.MANAGE_USERS)),
             new UserDetails("second@example.com", "second-password", "Second", "Secondson", EnumSet.noneOf(Authority.class)),
             new UserDetails("third@example.com", "third-password", "Third", "Thirdson", EnumSet.noneOf(Authority.class)),
     };
-
-    private static String jwt;
 
     @Autowired
     private TestRestTemplate testRestTemplate;
@@ -74,5 +74,22 @@ public class UserControllerIntegrationTests {
 
         Assertions.assertNotNull(userResponses);
         Assertions.assertEquals(TEST_USERS.length, userResponses.size());
+
+        for (int i = 0; i < userResponses.size(); ++i) {
+            Assertions.assertTrue(hasEqualContents(TEST_USERS[i], userResponses.get(i)));
+        }
+    }
+
+    private boolean hasEqualContents(UserDetails userDetails, UserResponse userResponse) {
+        return (
+                userDetails == null
+                        && userResponse == null
+        ) || (
+                userDetails != null
+                        && userResponse != null
+                        && Objects.equals(userDetails.email(), userResponse.email())
+                        && Objects.equals(userDetails.firstName(), userResponse.firstName())
+                        && Objects.equals(userDetails.lastName(), userResponse.lastName())
+        );
     }
 }
