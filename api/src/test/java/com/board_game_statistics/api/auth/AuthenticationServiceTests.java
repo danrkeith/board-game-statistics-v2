@@ -17,7 +17,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
-public class AuthenticationServiceImplTests {
+public class AuthenticationServiceTests {
     private AuthenticationService authenticationService;
 
     @Mock

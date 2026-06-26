@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class JwtServiceImplTests {
+public class JwtServiceTests {
     private static final String secretKey = "bQkkQQmFMhc9L5q1zcj3Qp6zi3UG54R6PxUEKqi2e6w=";
     private static final long jwtExpiration = 3000;
 
