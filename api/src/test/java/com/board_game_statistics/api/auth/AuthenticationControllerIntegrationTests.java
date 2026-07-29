@@ -89,10 +89,6 @@ public class AuthenticationControllerIntegrationTests {
     }
 
     private static void assertBadCredentialsResponse(ResponseEntity<ErrorResponse> responseEntity) {
-        Assertions.assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
-
-        ErrorResponse errorResponse = responseEntity.getBody();
-        Assertions.assertNotNull(errorResponse);
-        Assertions.assertEquals(BadCredentialsException.class.getSimpleName(), responseEntity.getBody().error());
+        IntegrationTestUtil.assertErrorResponse(responseEntity, BadCredentialsException.class, HttpStatus.UNAUTHORIZED);
     }
 }

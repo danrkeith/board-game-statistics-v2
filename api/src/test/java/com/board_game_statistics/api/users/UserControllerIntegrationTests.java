@@ -1,8 +1,11 @@
 package com.board_game_statistics.api.users;
 
 import com.board_game_statistics.api.IntegrationTestUtil;
+import com.board_game_statistics.api.exceptions.ErrorResponse;
 import com.board_game_statistics.api.users.dto.CreateUserRequest;
 import com.board_game_statistics.api.users.dto.UserResponse;
+import com.board_game_statistics.api.users.exceptions.InvalidEmailException;
+import com.board_game_statistics.api.users.exceptions.InvalidPasswordException;
 import com.board_game_statistics.api.users.user_authorities.Authority;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -14,6 +17,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
@@ -84,7 +88,7 @@ public class UserControllerIntegrationTests {
     }
 
     @Test
-    void testCreateAndGetUserFromOtherAccount() {
+    void testCreateUserAndGetUserFromOtherAccount() {
         UserDetails newUser = new UserDetails(
                 "fourth@example.com", "fourth-password", "Fourth", "Fourthson", EnumSet.noneOf(Authority.class)
         );
@@ -106,7 +110,7 @@ public class UserControllerIntegrationTests {
     }
 
     @Test
-    void testCreateAndGetMe() {
+    void testCreateUserAndGetMe() {
         UserDetails newUser = new UserDetails(
                 "fourth@example.com", "fourth-password", "Fourth", "Fourthson", EnumSet.noneOf(Authority.class)
         );
@@ -121,6 +125,38 @@ public class UserControllerIntegrationTests {
         );
 
         assertUserResponseEntityHasUserDetails(getMeResponseEntity, newUser);
+    }
+
+    @Test
+    void testCreateUserWithInvalidEmail() {
+        UserDetails newUser = new UserDetails("abc", "fourth-password", "Fourth", "Fourthson", EnumSet.noneOf(Authority.class));
+
+        CreateUserRequest request = createUserRequestFrom(newUser);
+
+        ResponseEntity<ErrorResponse> responseEntity = testRestTemplate.exchange(
+                "/users",
+                HttpMethod.POST,
+                new HttpEntity<>(request),
+                new ParameterizedTypeReference<>() {}
+        );
+
+        assertInvalidEmailResponse(responseEntity);
+    }
+
+    @Test
+    void testCreateUserWithInvalidPassword() {
+        UserDetails newUser = new UserDetails("fourth@example.com", "abc", "Fourth", "Fourthson", EnumSet.noneOf(Authority.class));
+
+        CreateUserRequest request = createUserRequestFrom(newUser);
+
+        ResponseEntity<ErrorResponse> responseEntity = testRestTemplate.exchange(
+                "/users",
+                HttpMethod.POST,
+                new HttpEntity<>(request),
+                new ParameterizedTypeReference<>() {}
+        );
+
+        assertInvalidPasswordResponse(responseEntity);
     }
 
     private ResponseEntity<UserResponse> createUserAndAssertExpectedResponse(UserDetails userDetails) {
@@ -144,6 +180,14 @@ public class UserControllerIntegrationTests {
         UserResponse responseBody = responseEntity.getBody();
         Assertions.assertNotNull(responseBody);
         Assertions.assertTrue(hasEqualContents(expectedUserDetails, responseBody));
+    }
+
+    private void assertInvalidEmailResponse(ResponseEntity<ErrorResponse> responseEntity) {
+        IntegrationTestUtil.assertErrorResponse(responseEntity, InvalidEmailException.class, HttpStatus.BAD_REQUEST);
+    }
+
+    private void assertInvalidPasswordResponse(ResponseEntity<ErrorResponse> responseEntity) {
+        IntegrationTestUtil.assertErrorResponse(responseEntity, InvalidPasswordException.class, HttpStatus.BAD_REQUEST);
     }
 
     private boolean hasEqualContents(UserDetails userDetails, UserResponse userResponse) {
