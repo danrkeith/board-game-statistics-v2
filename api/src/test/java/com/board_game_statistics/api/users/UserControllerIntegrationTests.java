@@ -1,6 +1,7 @@
 package com.board_game_statistics.api.users;
 
 import com.board_game_statistics.api.IntegrationTestUtil;
+import com.board_game_statistics.api.users.dto.CreateUserRequest;
 import com.board_game_statistics.api.users.dto.UserResponse;
 import com.board_game_statistics.api.users.user_authorities.Authority;
 import org.junit.jupiter.api.AfterEach;
@@ -11,11 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.net.URI;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
@@ -80,6 +83,49 @@ public class UserControllerIntegrationTests {
         }
     }
 
+    @Test
+    void testCreateAndGetUser() {
+        // Create user
+
+        UserDetails newUser = new UserDetails(
+                "fourth@example.com", "fourth-password", "Fourth", "Fourthson", EnumSet.noneOf(Authority.class)
+        );
+
+        CreateUserRequest request = createUserRequestFrom(newUser);
+
+        ResponseEntity<UserResponse> createUserResponseEntity = testRestTemplate.exchange(
+                "/users",
+                HttpMethod.POST,
+                new HttpEntity<>(request),
+                new ParameterizedTypeReference<>() {}
+        );
+
+        Assertions.assertNotNull(createUserResponseEntity);
+
+        UserResponse createUserResponseBody = createUserResponseEntity.getBody();
+        Assertions.assertNotNull(createUserResponseBody);
+        Assertions.assertTrue(hasEqualContents(newUser, createUserResponseBody));
+
+        // Get user
+
+        UserDetails currentUser = TEST_USERS[0];
+
+        URI userUri = createUserResponseEntity.getHeaders().getLocation();
+
+        ResponseEntity<UserResponse> getUserResponseEntity = testRestTemplate.exchange(
+                userUri,
+                HttpMethod.GET,
+                IntegrationTestUtil.loginAndGetJwtEntity(testRestTemplate, currentUser.email(), currentUser.password()),
+                new ParameterizedTypeReference<>() {}
+        );
+
+        Assertions.assertNotNull(getUserResponseEntity);
+
+        UserResponse getUserResponseBody = getUserResponseEntity.getBody();
+        Assertions.assertNotNull(getUserResponseBody);
+        Assertions.assertTrue(hasEqualContents(newUser, getUserResponseBody));
+    }
+
     private boolean hasEqualContents(UserDetails userDetails, UserResponse userResponse) {
         return (
                 userDetails == null
@@ -91,5 +137,9 @@ public class UserControllerIntegrationTests {
                         && Objects.equals(userDetails.firstName(), userResponse.firstName())
                         && Objects.equals(userDetails.lastName(), userResponse.lastName())
         );
+    }
+
+    private CreateUserRequest createUserRequestFrom(UserDetails userDetails) {
+        return new CreateUserRequest(userDetails.email(), userDetails.password(), userDetails.firstName(), userDetails.lastName());
     }
 }
