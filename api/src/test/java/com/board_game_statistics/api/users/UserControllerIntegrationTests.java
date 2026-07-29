@@ -84,29 +84,12 @@ public class UserControllerIntegrationTests {
     }
 
     @Test
-    void testCreateAndGetUser() {
-        // Create user
-
+    void testCreateAndGetUserFromOtherAccount() {
         UserDetails newUser = new UserDetails(
                 "fourth@example.com", "fourth-password", "Fourth", "Fourthson", EnumSet.noneOf(Authority.class)
         );
 
-        CreateUserRequest request = createUserRequestFrom(newUser);
-
-        ResponseEntity<UserResponse> createUserResponseEntity = testRestTemplate.exchange(
-                "/users",
-                HttpMethod.POST,
-                new HttpEntity<>(request),
-                new ParameterizedTypeReference<>() {}
-        );
-
-        Assertions.assertNotNull(createUserResponseEntity);
-
-        UserResponse createUserResponseBody = createUserResponseEntity.getBody();
-        Assertions.assertNotNull(createUserResponseBody);
-        Assertions.assertTrue(hasEqualContents(newUser, createUserResponseBody));
-
-        // Get user
+        ResponseEntity<UserResponse> createUserResponseEntity = createUserAndAssertExpectedResponse(newUser);
 
         UserDetails currentUser = TEST_USERS[0];
 
@@ -119,11 +102,48 @@ public class UserControllerIntegrationTests {
                 new ParameterizedTypeReference<>() {}
         );
 
-        Assertions.assertNotNull(getUserResponseEntity);
+        assertUserResponseEntityHasUserDetails(getUserResponseEntity, newUser);
+    }
 
-        UserResponse getUserResponseBody = getUserResponseEntity.getBody();
-        Assertions.assertNotNull(getUserResponseBody);
-        Assertions.assertTrue(hasEqualContents(newUser, getUserResponseBody));
+    @Test
+    void testCreateAndGetMe() {
+        UserDetails newUser = new UserDetails(
+                "fourth@example.com", "fourth-password", "Fourth", "Fourthson", EnumSet.noneOf(Authority.class)
+        );
+
+        createUserAndAssertExpectedResponse(newUser);
+
+        ResponseEntity<UserResponse> getMeResponseEntity = testRestTemplate.exchange(
+                "/users/me",
+                HttpMethod.GET,
+                IntegrationTestUtil.loginAndGetJwtEntity(testRestTemplate, newUser.email(), newUser.password()),
+                new ParameterizedTypeReference<>() {}
+        );
+
+        assertUserResponseEntityHasUserDetails(getMeResponseEntity, newUser);
+    }
+
+    private ResponseEntity<UserResponse> createUserAndAssertExpectedResponse(UserDetails userDetails) {
+        CreateUserRequest request = createUserRequestFrom(userDetails);
+
+        ResponseEntity<UserResponse> createUserResponseEntity = testRestTemplate.exchange(
+                "/users",
+                HttpMethod.POST,
+                new HttpEntity<>(request),
+                new ParameterizedTypeReference<>() {}
+        );
+
+        assertUserResponseEntityHasUserDetails(createUserResponseEntity, userDetails);
+
+        return createUserResponseEntity;
+    }
+
+    private void assertUserResponseEntityHasUserDetails(ResponseEntity<UserResponse> responseEntity, UserDetails expectedUserDetails) {
+        Assertions.assertNotNull(responseEntity);
+
+        UserResponse responseBody = responseEntity.getBody();
+        Assertions.assertNotNull(responseBody);
+        Assertions.assertTrue(hasEqualContents(expectedUserDetails, responseBody));
     }
 
     private boolean hasEqualContents(UserDetails userDetails, UserResponse userResponse) {
