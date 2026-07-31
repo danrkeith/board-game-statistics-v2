@@ -27,6 +27,7 @@ import java.net.URI;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import static com.board_game_statistics.api.IntegrationTestUtil.HttpEntityFactory;
 import static com.board_game_statistics.api.IntegrationTestUtil.login;
@@ -142,11 +143,10 @@ public class UserControllerIntegrationTests {
 
         CreateUserRequest request = createUserRequestFrom(newUser);
 
-        ResponseEntity<ErrorResponse> responseEntity = testRestTemplate.exchange(
+        ResponseEntity<ErrorResponse> responseEntity = testRestTemplate.postForEntity(
                 "/users",
-                HttpMethod.POST,
-                new HttpEntity<>(request),
-                new ParameterizedTypeReference<>() {}
+                request,
+                ErrorResponse.class
         );
 
         assertInvalidEmailResponse(responseEntity);
@@ -158,11 +158,10 @@ public class UserControllerIntegrationTests {
 
         CreateUserRequest request = createUserRequestFrom(newUser);
 
-        ResponseEntity<ErrorResponse> responseEntity = testRestTemplate.exchange(
+        ResponseEntity<ErrorResponse> responseEntity = testRestTemplate.postForEntity(
                 "/users",
-                HttpMethod.POST,
-                new HttpEntity<>(request),
-                new ParameterizedTypeReference<>() {}
+                request,
+                ErrorResponse.class
         );
 
         assertInvalidPasswordResponse(responseEntity);
@@ -201,6 +200,72 @@ public class UserControllerIntegrationTests {
         );
 
         assertUserResponseEntityHasUserDetails(getMeResponse, expectedEditedUser);
+    }
+
+    @Test
+    void testEditUserAndGetUserFromOtherAccount() {
+        UserDetails currentUser = TEST_USERS[0];
+
+        HttpEntityFactory jwtEntityFactory = login(testRestTemplate, currentUser.email(), currentUser.password());
+
+        ResponseEntity<List<UserResponse>> getUsersResponseEntity = testRestTemplate.exchange(
+                "/users",
+                HttpMethod.GET,
+                jwtEntityFactory.noBody(),
+                new ParameterizedTypeReference<>() {}
+        );
+
+        List<UserResponse> users = getUsersResponseEntity.getBody();
+        Assertions.assertNotNull(users);
+        Optional<UserResponse> optionalTargetUser = users.stream().filter(u -> "second@example.com".equals(u.email())).findFirst();
+        Assertions.assertTrue(optionalTargetUser.isPresent());
+        UserResponse targetUser = optionalTargetUser.get();
+
+        EditUserRequest editUserRequest = new EditUserRequest("NewSecond", "NewSecondson");
+
+        ResponseEntity<UserResponse> editUserResponseEntity = testRestTemplate.exchange(
+                "/users/" + targetUser.id(),
+                HttpMethod.PUT,
+                jwtEntityFactory.body(editUserRequest),
+                new ParameterizedTypeReference<>() {}
+        );
+
+        UserDetails expectedEditedUser = new UserDetails(
+                targetUser.email(),
+                "",
+                editUserRequest.firstName(),
+                editUserRequest.lastName(),
+                EnumSet.noneOf(Authority.class)
+        );
+
+        assertUserResponseEntityHasUserDetails(editUserResponseEntity, expectedEditedUser);
+
+        ResponseEntity<UserResponse> getUserResponse = testRestTemplate.exchange(
+                "/users/" + targetUser.id(),
+                HttpMethod.GET,
+                jwtEntityFactory.noBody(),
+                new ParameterizedTypeReference<>() {}
+        );
+
+        assertUserResponseEntityHasUserDetails(getUserResponse, expectedEditedUser);
+    }
+
+    @Test
+    void testEditUserWithoutPermissions() {
+        UserDetails user = TEST_USERS[1];
+
+        HttpEntityFactory jwtEntityFactory = login(testRestTemplate, user.email(), user.password());
+
+        EditUserRequest request = new EditUserRequest("NewFirst", "NewFirstson");
+
+        ResponseEntity<?> response = testRestTemplate.exchange(
+                "/users/1",
+                HttpMethod.PUT,
+                jwtEntityFactory.body(request),
+                new ParameterizedTypeReference<>() {}
+        );
+
+        Assertions.assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
     }
 
     private ResponseEntity<UserResponse> createUserAndAssertExpectedResponse(UserDetails userDetails) {
