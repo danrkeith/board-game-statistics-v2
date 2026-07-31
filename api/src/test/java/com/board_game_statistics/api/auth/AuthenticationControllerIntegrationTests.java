@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -54,7 +55,14 @@ public class AuthenticationControllerIntegrationTests {
 
     @Test
     void testLoginSuccessfully() {
-        ResponseEntity<LoginResponse> responseEntity = IntegrationTestUtil.login(testRestTemplate, TEST_USER.email(), TEST_USER.password());
+        LoginRequest loginRequest = new LoginRequest(TEST_USER.email(), TEST_USER.password());
+
+        ResponseEntity<LoginResponse> responseEntity = testRestTemplate.postForEntity(
+                "/auth/login",
+                new HttpEntity<>(loginRequest),
+                LoginResponse.class
+        );
+
         Assertions.assertTrue(responseEntity.getStatusCode().is2xxSuccessful());
 
         LoginResponse loginResponse = responseEntity.getBody();

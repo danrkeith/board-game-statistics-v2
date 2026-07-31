@@ -11,44 +11,37 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 public class IntegrationTestUtil {
-    public static ResponseEntity<LoginResponse> login(TestRestTemplate testRestTemplate, String username, String password) {
-        LoginRequest loginRequest = new LoginRequest(username, password);
+    public static class HttpEntityFactory {
+        private final HttpHeaders headers;
 
-        return testRestTemplate.postForEntity(
+        public HttpEntityFactory(HttpHeaders headers) {
+            this.headers = headers;
+        }
+
+        public HttpEntity<?> noBody() {
+            return new HttpEntity<>(headers);
+        }
+
+        public <P> HttpEntity<P> body(P payload) {
+            return new HttpEntity<>(payload, headers);
+        }
+    }
+
+    public static HttpEntityFactory login(TestRestTemplate testRestTemplate, String username, String password) {
+        LoginRequest request = new LoginRequest(username, password);
+
+        ResponseEntity<LoginResponse> response = testRestTemplate.postForEntity(
                 "/auth/login",
-                new HttpEntity<>(loginRequest),
+                new HttpEntity<>(request),
                 LoginResponse.class
         );
-    }
+        Assertions.assertNotNull(response);
 
-    public static String loginAndGetJwt(TestRestTemplate testRestTemplate, String username, String password) {
-        LoginResponse loginResponse = login(testRestTemplate, username, password).getBody();
-
+        LoginResponse loginResponse = response.getBody();
         Assertions.assertNotNull(loginResponse);
 
-        return loginResponse.jwt();
-    }
-
-    public static HttpEntity<?> loginAndGetJwtEntity(TestRestTemplate testRestTemplate, String username, String password) {
-        return jwtEntity(loginAndGetJwt(testRestTemplate, username, password));
-    }
-
-    public static <P> HttpEntity<P> loginAndGetJwtEntity(TestRestTemplate testRestTemplate, String username, String password, P payload) {
-        return jwtEntity(loginAndGetJwt(testRestTemplate, username, password), payload);
-    }
-
-    private static HttpEntity<?> jwtEntity(String jwt) {
-        return new HttpEntity<>(jwtHeaders(jwt));
-    }
-
-    private static <P> HttpEntity<P> jwtEntity(String jwt, P payload) {
-        return new HttpEntity<>(payload, jwtHeaders(jwt));
-    }
-
-    private static HttpHeaders jwtHeaders(String jwt) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + jwt);
-        return headers;
+        HttpHeaders headers = jwtHeaders(loginResponse.jwt());
+        return new HttpEntityFactory(headers);
     }
 
     public static <E extends RuntimeException> void assertErrorResponse(ResponseEntity<ErrorResponse> responseEntity, Class<E> errorClass, HttpStatus status) {
@@ -57,5 +50,11 @@ public class IntegrationTestUtil {
         ErrorResponse errorResponse = responseEntity.getBody();
         Assertions.assertNotNull(errorResponse);
         Assertions.assertEquals(errorClass.getSimpleName(), responseEntity.getBody().error());
+    }
+
+    private static HttpHeaders jwtHeaders(String jwt) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + jwt);
+        return headers;
     }
 }

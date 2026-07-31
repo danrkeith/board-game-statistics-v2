@@ -3,6 +3,7 @@ package com.board_game_statistics.api.users;
 import com.board_game_statistics.api.IntegrationTestUtil;
 import com.board_game_statistics.api.exceptions.ErrorResponse;
 import com.board_game_statistics.api.users.dto.CreateUserRequest;
+import com.board_game_statistics.api.users.dto.EditUserRequest;
 import com.board_game_statistics.api.users.dto.UserResponse;
 import com.board_game_statistics.api.users.exceptions.InvalidEmailException;
 import com.board_game_statistics.api.users.exceptions.InvalidPasswordException;
@@ -26,6 +27,9 @@ import java.net.URI;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
+
+import static com.board_game_statistics.api.IntegrationTestUtil.HttpEntityFactory;
+import static com.board_game_statistics.api.IntegrationTestUtil.login;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -68,10 +72,12 @@ public class UserControllerIntegrationTests {
     void testGetUsers() {
         UserDetails user = TEST_USERS[0];
 
+        HttpEntityFactory jwtEntityFactory = login(testRestTemplate, user.email(), user.password());
+
         ResponseEntity<List<UserResponse>> responseEntity = testRestTemplate.exchange(
                 "/users",
                 HttpMethod.GET,
-                IntegrationTestUtil.loginAndGetJwtEntity(testRestTemplate, user.email(), user.password()),
+                jwtEntityFactory.noBody(),
                 new ParameterizedTypeReference<>() {}
         );
 
@@ -88,6 +94,26 @@ public class UserControllerIntegrationTests {
     }
 
     @Test
+    void testCreateUserAndGetMe() {
+        UserDetails newUser = new UserDetails(
+                "fourth@example.com", "fourth-password", "Fourth", "Fourthson", EnumSet.noneOf(Authority.class)
+        );
+
+        createUserAndAssertExpectedResponse(newUser);
+
+        HttpEntityFactory jwtEntityFactory = login(testRestTemplate, newUser.email(), newUser.password());
+
+        ResponseEntity<UserResponse> getMeResponseEntity = testRestTemplate.exchange(
+                "/users/me",
+                HttpMethod.GET,
+                jwtEntityFactory.noBody(),
+                new ParameterizedTypeReference<>() {}
+        );
+
+        assertUserResponseEntityHasUserDetails(getMeResponseEntity, newUser);
+    }
+
+    @Test
     void testCreateUserAndGetUserFromOtherAccount() {
         UserDetails newUser = new UserDetails(
                 "fourth@example.com", "fourth-password", "Fourth", "Fourthson", EnumSet.noneOf(Authority.class)
@@ -98,33 +124,16 @@ public class UserControllerIntegrationTests {
         UserDetails currentUser = TEST_USERS[0];
 
         URI userUri = createUserResponseEntity.getHeaders().getLocation();
+        HttpEntityFactory jwtEntityFactory = login(testRestTemplate, currentUser.email(), currentUser.password());
 
         ResponseEntity<UserResponse> getUserResponseEntity = testRestTemplate.exchange(
                 userUri,
                 HttpMethod.GET,
-                IntegrationTestUtil.loginAndGetJwtEntity(testRestTemplate, currentUser.email(), currentUser.password()),
+                jwtEntityFactory.noBody(),
                 new ParameterizedTypeReference<>() {}
         );
 
         assertUserResponseEntityHasUserDetails(getUserResponseEntity, newUser);
-    }
-
-    @Test
-    void testCreateUserAndGetMe() {
-        UserDetails newUser = new UserDetails(
-                "fourth@example.com", "fourth-password", "Fourth", "Fourthson", EnumSet.noneOf(Authority.class)
-        );
-
-        createUserAndAssertExpectedResponse(newUser);
-
-        ResponseEntity<UserResponse> getMeResponseEntity = testRestTemplate.exchange(
-                "/users/me",
-                HttpMethod.GET,
-                IntegrationTestUtil.loginAndGetJwtEntity(testRestTemplate, newUser.email(), newUser.password()),
-                new ParameterizedTypeReference<>() {}
-        );
-
-        assertUserResponseEntityHasUserDetails(getMeResponseEntity, newUser);
     }
 
     @Test
@@ -157,6 +166,41 @@ public class UserControllerIntegrationTests {
         );
 
         assertInvalidPasswordResponse(responseEntity);
+    }
+
+    @Test
+    void testEditMeAndGetMe() {
+        UserDetails user = TEST_USERS[0];
+
+        HttpEntityFactory jwtEntityFactory = login(testRestTemplate, user.email(), user.password());
+
+        EditUserRequest editUserRequest = new EditUserRequest("NewFirst", "NewFirstson");
+
+        ResponseEntity<UserResponse> editMeResponse = testRestTemplate.exchange(
+                "/users/me",
+                HttpMethod.PUT,
+                jwtEntityFactory.body(editUserRequest),
+                new ParameterizedTypeReference<>() {}
+        );
+
+        UserDetails expectedEditedUser = new UserDetails(
+                user.email(),
+                user.password(),
+                editUserRequest.firstName(),
+                editUserRequest.lastName(),
+                EnumSet.noneOf(Authority.class)
+        );
+
+        assertUserResponseEntityHasUserDetails(editMeResponse, expectedEditedUser);
+
+        ResponseEntity<UserResponse> getMeResponse = testRestTemplate.exchange(
+                "/users/me",
+                HttpMethod.GET,
+                jwtEntityFactory.noBody(),
+                new ParameterizedTypeReference<>() {}
+        );
+
+        assertUserResponseEntityHasUserDetails(getMeResponse, expectedEditedUser);
     }
 
     private ResponseEntity<UserResponse> createUserAndAssertExpectedResponse(UserDetails userDetails) {
