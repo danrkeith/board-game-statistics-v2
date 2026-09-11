@@ -1,136 +1,179 @@
 package com.board_game_statistics.api.users;
 
+import com.board_game_statistics.api.exceptions.ResourceNotFoundException;
 import com.board_game_statistics.api.users.exceptions.InvalidEmailException;
 import com.board_game_statistics.api.users.exceptions.InvalidPasswordException;
 import com.board_game_statistics.api.users.exceptions.UserAlreadyExistsException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
-@SpringBootTest
-@ActiveProfiles("test")
-@Transactional
+@ExtendWith(MockitoExtension.class)
 public class UserServiceTests {
-    private static final String[] TEST_EMAILS = {
-            "test0@example.com",
-            "test1@example.com",
-            "test2@example.com"
-    };
-    private static final String[] TEST_PASSWORDS = {
-            "test0-password",
-            "test1-password",
-            "test2-password"
-    };
-    private static final String TEST_EMAIL_FOR_CREATE = "test-create@example.com";
-    private static final String TEST_PASSWORD_FOR_CREATE = "test-create-password";
-    private static final String INVALID_EMAIL = "not-an-email";
-    private static final String INVALID_PASSWORD = "abc";
-
-    @Autowired
     private UserService userService;
-    @Autowired
+
+    @Mock
     private UserRepository userRepository;
-    @Autowired
+    @Mock
     private PasswordEncoder passwordEncoder;
 
     @BeforeEach
     void beforeEach() {
-        for (int i = 0; i < TEST_EMAILS.length; i++) {
-            userRepository.save(new User()
-                    .setEmail(TEST_EMAILS[i])
-                    .setPassword(passwordEncoder.encode(TEST_PASSWORDS[i]))
-            );
-        }
+        userService = new UserServiceImpl(userRepository, passwordEncoder);
     }
 
     @Test
-    void getUsers() {
-        List<User> users = userService.getUsers();
+    void testGetUsers() {
+        List<User> users = List.of(
+                User.builder().email("first@example.com").password("first-password").build(),
+                User.builder().email("second@example.com").password("second-password").build()
+        );
 
-        Assertions.assertEquals(TEST_EMAILS.length, users.size());
-        for (int i = 0; i < TEST_EMAILS.length; i++) {
-            Assertions.assertEquals(TEST_EMAILS[i], users.get(i).getEmail());
-        }
+        Mockito.when(userRepository.findByOrderById()).thenReturn(users);
+
+        Assertions.assertEquals(users, userService.getUsers());
     }
 
     @Test
-    @Transactional
     void testCreateUser() {
-        User savedUser = userService.createUser(TEST_EMAIL_FOR_CREATE, TEST_PASSWORD_FOR_CREATE, null, null);
+        final String password = "test-password";
+        final String encodedPassword = "encoded-test-password";
 
-        Assertions.assertEquals(TEST_EMAIL_FOR_CREATE, savedUser.getEmail());
+        User user = User.builder()
+                .email("test@example.com")
+                .password(encodedPassword)
+                .firstName("test-first-name")
+                .lastName("test-last-name")
+                .build();
+
+        Mockito.when(userRepository.existsByEmail(user.getEmail()))
+                .thenReturn(false);
+
+        Mockito.when(passwordEncoder.encode(password))
+                .thenReturn(encodedPassword);
+
+        userService.createUser(
+                user.getEmail(),
+                password,
+                user.getFirstName(),
+                user.getLastName()
+        );
+
+        Mockito.verify(userRepository)
+                .save(ArgumentMatchers.eq(user));
     }
 
     @Test
-    @Transactional
-    void testCreateUserTwice() {
-        userService.createUser(TEST_EMAIL_FOR_CREATE, TEST_PASSWORD_FOR_CREATE, null, null);
+    void testCreateUserWhereUserAlreadyExists() {
+        final String email = "test@example.com";
+
+        Mockito.when(userRepository.existsByEmail(email))
+                .thenReturn(true);
 
         Assertions.assertThrows(UserAlreadyExistsException.class, () ->
-                userService.createUser(TEST_EMAIL_FOR_CREATE, TEST_PASSWORD_FOR_CREATE, null, null)
+                userService.createUser(email, "test-password", "test-firstName", "test-lastName")
         );
     }
 
     @Test
-    @Transactional
-    void testCreateUserInvalidEmail() {
+    void testCreateUserWithInvalidEmail() {
+        final String email = "test-example.com";
+
+        Mockito.when(userRepository.existsByEmail(email))
+                .thenReturn(false);
+
         Assertions.assertThrows(InvalidEmailException.class, () ->
-                userService.createUser(INVALID_EMAIL, TEST_PASSWORD_FOR_CREATE, null, null)
+                userService.createUser(email, "test-password", "test-firstName", "test-lastName")
         );
     }
 
     @Test
-    @Transactional
-    void testCreateUserInvalidPassword() {
+    void testCreateUserWithInvalidPassword() {
+        final String email = "test@example.com";
+
+        Mockito.when(userRepository.existsByEmail(email))
+                .thenReturn(false);
+
         Assertions.assertThrows(InvalidPasswordException.class, () ->
-                userService.createUser(TEST_EMAIL_FOR_CREATE, INVALID_PASSWORD, null, null)
+                userService.createUser(email, "invalid", "test-firstName", "test-lastName")
         );
     }
 
     @Test
-    void getUserById() {
-        List<User> users = userService.getUsers();
-        User expectedUser = users.getFirst();
+    void testGetUser() {
+        final long id = 1;
+        final User user = User.builder().email("test@example.com").password("test-password").build();
 
-        User actualUser = userService.getUser(expectedUser.getId());
+        Mockito.when(userRepository.findById(id))
+                .thenReturn(Optional.of(user));
 
-        Assertions.assertEquals(expectedUser, actualUser);
+        Assertions.assertEquals(user, userService.getUser(id));
     }
 
     @Test
-    void editUser() {
-        final long id = userService.createUser(TEST_EMAIL_FOR_CREATE, TEST_PASSWORD_FOR_CREATE, null, null).getId();
-        final String firstName = "John";
-        final String lastName = "Smith";
+    void testGetUserWithInvalidId() {
+        final long id = 1;
 
-        User beforeUser = userService.getUser(id);
-        Assertions.assertNull(beforeUser.getFirstName());
-        Assertions.assertNull(beforeUser.getLastName());
+        Mockito.when(userRepository.findById(id))
+                .thenReturn(Optional.empty());
 
-        User afterUser = userService.editUser(id, firstName, lastName);
-        User verifyAfterUser = userService.getUser(id);
-
-        Assertions.assertEquals(firstName, afterUser.getFirstName());
-        Assertions.assertEquals(lastName, afterUser.getLastName());
-        Assertions.assertEquals(afterUser, verifyAfterUser);
+        ResourceNotFoundException e = Assertions.assertThrows(ResourceNotFoundException.class, () ->
+                userService.getUser(id)
+        );
+        Assertions.assertEquals("User does not exist", e.getMessage());
     }
 
     @Test
-    void deleteUser() {
-        List<User> usersBeforeDelete = userService.getUsers();
+    void testEditUser() {
+        final long id = 1;
+        final String email = "test@example.com";
+        final String password = "test-password";
+        final User initialUser = User.builder()
+                .email(email)
+                .password(password)
+                .build();
 
-        Assertions.assertEquals(TEST_EMAILS.length, usersBeforeDelete.size());
+        Mockito.when(userRepository.findById(id))
+                .thenReturn(Optional.of(initialUser));
 
-        userService.deleteUser(usersBeforeDelete.getFirst().getId());
-        List<User> usersAfterDelete = userService.getUsers();
+        final String firstName = "firstName";
+        final String lastName = "lastName";
+        final User editedUser = User.builder()
+                .email(email)
+                .password(password)
+                .firstName(firstName)
+                .lastName(lastName)
+                .build();
 
-        Assertions.assertEquals(TEST_EMAILS.length - 1, usersAfterDelete.size());
+        userService.editUser(id, firstName, lastName);
+
+        Mockito.verify(userRepository)
+                .save(ArgumentMatchers.eq(editedUser));
+    }
+
+    @Test
+    void testDeleteUser() {
+        final long id = 1;
+        final User user = User.builder()
+                .email("test@example.com")
+                .password("test-password")
+                .build();
+
+        Mockito.when(userRepository.findById(id))
+                .thenReturn(Optional.of(user));
+
+        userService.deleteUser(id);
+
+        Mockito.verify(userRepository)
+                .delete(user);
     }
 }

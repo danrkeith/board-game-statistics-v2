@@ -10,28 +10,28 @@ public class ValidatorTests {
     private static final String INVALID_PASSWORD = "abc";
 
     @Test
-    void isEmail() {
+    void testIsEmail() {
         boolean isEmail = Validator.isEmail(VALID_EMAIL);
 
         Assertions.assertTrue(isEmail);
     }
 
     @Test
-    void isNotEmail() {
+    void testIsNotEmail() {
         boolean isEmail = Validator.isEmail(INVALID_EMAIL);
 
         Assertions.assertFalse(isEmail);
     }
 
     @Test
-    void isValidPassword() {
+    void testIsValidPassword() {
         boolean isValidPassword = Validator.isValidPassword(VALID_PASSWORD);
 
         Assertions.assertTrue(isValidPassword);
     }
 
     @Test
-    void isNotValidPassword() {
+    void testIsNotValidPassword() {
         boolean isValidPassword = Validator.isValidPassword(INVALID_PASSWORD);
 
         Assertions.assertFalse(isValidPassword);

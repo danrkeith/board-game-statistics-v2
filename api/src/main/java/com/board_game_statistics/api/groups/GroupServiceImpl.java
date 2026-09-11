@@ -20,7 +20,7 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public Group createGroup(String name) {
-        Group group = new Group().setName(name);
+        Group group = new Group(name);
 
         return groupRepository.save(group);
     }
@@ -33,7 +33,9 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public Group editGroup(long id, String name) {
-        Group group = getGroup(id).setName(name);
+        Group group = getGroup(id);
+
+        group.setName(name);
 
         return groupRepository.save(group);
     }

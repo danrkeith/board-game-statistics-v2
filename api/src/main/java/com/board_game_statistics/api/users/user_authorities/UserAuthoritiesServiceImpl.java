@@ -35,8 +35,9 @@ public class UserAuthoritiesServiceImpl implements UserAuthoritiesService {
             throw new MissingPrerequisiteAuthoritiesException(authoritiesMissingPrerequisites);
         }
 
-        User user = userService.getUser(userId)
-                .setAuthorities(authorities);
+        User user = userService.getUser(userId);
+
+        user.setAuthorities(authorities);
 
         return userRepository.save(user).getAuthorities();
     }

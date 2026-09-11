@@ -16,11 +16,16 @@ import java.util.function.Function;
 
 @Service
 public class JwtServiceImpl implements JwtService {
-    @Value("${security.jwt.secret-key}")
-    private String secretKey;
+    private final String secretKey;
+    private final long jwtExpiration;
 
-    @Value("${security.jwt.expiration-time}")
-    private long jwtExpiration;
+    public JwtServiceImpl(
+            @Value("${security.jwt.secret-key}") String secretKey,
+            @Value("${security.jwt.expiration-time}") long jwtExpiration
+    ) {
+        this.secretKey = secretKey;
+        this.jwtExpiration = jwtExpiration;
+    }
 
     @Override
     public String extractUsername(String token) {

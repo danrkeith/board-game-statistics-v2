@@ -3,26 +3,25 @@ package com.board_game_statistics.api.auth;
 import com.board_game_statistics.api.users.User;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 
-@SpringBootTest
-@ActiveProfiles("test")
 public class JwtServiceTests {
-    private static final User TEST_USER_1 = new User().setEmail("test0@JwtService.com").setPassword("test0-JwtService-password");
-    private static final User TEST_USER_2 = new User().setEmail("test1@JwtService.com").setPassword("test1-JwtService-password");
+    private static final String secretKey = "bQkkQQmFMhc9L5q1zcj3Qp6zi3UG54R6PxUEKqi2e6w=";
+    private static final long jwtExpiration = 3000;
 
-    @Autowired
-    private JwtService jwtService;
+    private static final User TEST_USER_1 = User.builder().email("test0@JwtService.com").password("test0-JwtService-password").build();
+    private static final User TEST_USER_2 = User.builder().email("test1@JwtService.com").password("test1-JwtService-password").build();
 
-    @Value("${security.jwt.expiration-time}")
-    private long jwtExpiration;
+    private static JwtService jwtService;
+
+    @BeforeAll
+    static void beforeAll() {
+        jwtService = new JwtServiceImpl(secretKey, jwtExpiration);
+    }
 
     @Test
-    void generateTokenAndExtractUsername() {
+    void testGenerateTokenAndExtractUsername() {
         String token = jwtService.generateToken(TEST_USER_1);
         String extractedUsername = jwtService.extractUsername(token);
 
@@ -30,7 +29,7 @@ public class JwtServiceTests {
     }
 
     @Test
-    void generatedTokenIsValid() {
+    void testGeneratedTokenIsValid() {
         String token = jwtService.generateToken(TEST_USER_1);
         boolean isValid = jwtService.isTokenValid(token, TEST_USER_1);
 
@@ -38,7 +37,7 @@ public class JwtServiceTests {
     }
 
     @Test
-    void generatedTokenForDifferentUserIsNotValid() {
+    void testGeneratedTokenForDifferentUserIsNotValid() {
         String token = jwtService.generateToken(TEST_USER_1);
         boolean isValid = jwtService.isTokenValid(token, TEST_USER_2);
 
@@ -46,7 +45,7 @@ public class JwtServiceTests {
     }
 
     @Test
-    void expiredTokenIsNotValid() throws InterruptedException {
+    void testExpiredTokenIsNotValid() throws InterruptedException {
         String token = jwtService.generateToken(TEST_USER_1);
         Thread.sleep(jwtExpiration);
 
