@@ -5,9 +5,7 @@ import org.springframework.security.core.GrantedAuthority;
 
 public enum Authority implements GrantedAuthority {
     MANAGE_USERS,
-    GRANT_AUTHORITIES(MANAGE_USERS),
-    MANAGE_GROUPS,
-    MANAGE_GROUP_MEMBERSHIPS(MANAGE_USERS, MANAGE_GROUPS);
+    GRANT_AUTHORITIES(MANAGE_USERS);
 
     @Getter
     private final Authority[] prerequisites;

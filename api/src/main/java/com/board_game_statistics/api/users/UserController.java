@@ -1,8 +1,5 @@
 package com.board_game_statistics.api.users;
 
-import com.board_game_statistics.api.groups.Group;
-import com.board_game_statistics.api.groups.dto.GroupResponse;
-import com.board_game_statistics.api.groups.group_memberships.GroupMembershipService;
 import com.board_game_statistics.api.users.dto.CreateUserRequest;
 import com.board_game_statistics.api.users.dto.EditUserRequest;
 import com.board_game_statistics.api.users.dto.UserResponse;
@@ -27,11 +24,9 @@ import java.util.List;
 @RestController
 public class UserController {
     private final UserService userService;
-    private final GroupMembershipService groupMembershipService;
 
-    public UserController(UserService userService, GroupMembershipService groupMembershipService) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.groupMembershipService = groupMembershipService;
     }
 
     @GetMapping
@@ -97,16 +92,6 @@ public class UserController {
         userService.deleteUser(id);
 
         return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping("/{id}/groups")
-    // TODO - more granular authorities for viewing as compared to editing
-    @PreAuthorize("hasAuthority('MANAGE_USERS') and hasAuthority('MANAGE_GROUP_MEMBERSHIPS')")
-    public ResponseEntity<List<GroupResponse>> getUserGroups(@PathVariable long id) {
-        List<Group> groups = groupMembershipService.getGroupsOfUser(id);
-
-        List<GroupResponse> groupResponses = groups.stream().map(Group::asResponse).toList();
-        return ResponseEntity.ok(groupResponses);
     }
 
     // TODO - change password
