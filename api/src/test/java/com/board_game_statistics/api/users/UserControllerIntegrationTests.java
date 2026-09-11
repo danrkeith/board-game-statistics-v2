@@ -208,18 +208,7 @@ public class UserControllerIntegrationTests {
 
         HttpEntityFactory jwtEntityFactory = login(testRestTemplate, currentUser.email(), currentUser.password());
 
-        ResponseEntity<List<UserResponse>> getUsersResponseEntity = testRestTemplate.exchange(
-                "/users",
-                HttpMethod.GET,
-                jwtEntityFactory.noBody(),
-                new ParameterizedTypeReference<>() {}
-        );
-
-        List<UserResponse> users = getUsersResponseEntity.getBody();
-        Assertions.assertNotNull(users);
-        Optional<UserResponse> optionalTargetUser = users.stream().filter(u -> "second@example.com".equals(u.email())).findFirst();
-        Assertions.assertTrue(optionalTargetUser.isPresent());
-        UserResponse targetUser = optionalTargetUser.get();
+        UserResponse targetUser = getUserByEmail(jwtEntityFactory, TEST_USERS[1].email());
 
         EditUserRequest editUserRequest = new EditUserRequest("NewSecond", "NewSecondson");
 
@@ -266,6 +255,71 @@ public class UserControllerIntegrationTests {
         );
 
         Assertions.assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+    }
+
+    @Test
+    void testDeleteUser() {
+        UserDetails user = TEST_USERS[0];
+
+        HttpEntityFactory jwtEntityFactory = login(testRestTemplate, user.email(), user.password());
+
+        UserResponse targetUser = getUserByEmail(jwtEntityFactory, TEST_USERS[1].email());
+
+        ResponseEntity<?> deleteResponse = testRestTemplate.exchange(
+                "/users/" + targetUser.id(),
+                HttpMethod.DELETE,
+                jwtEntityFactory.noBody(),
+                new ParameterizedTypeReference<>() {}
+        );
+
+        Assertions.assertEquals(HttpStatus.NO_CONTENT, deleteResponse.getStatusCode());
+
+        ResponseEntity<List<UserResponse>> getUsersResponse = testRestTemplate.exchange(
+                "/users",
+                HttpMethod.GET,
+                jwtEntityFactory.noBody(),
+                new ParameterizedTypeReference<>() {}
+        );
+
+        Assertions.assertNotNull(getUsersResponse);
+
+        List<UserResponse> userResponses = getUsersResponse.getBody();
+
+        Assertions.assertNotNull(userResponses);
+        Assertions.assertEquals(TEST_USERS.length - 1, userResponses.size());
+    }
+
+    @Test
+    void testDeleteSelf() {
+        UserDetails user = TEST_USERS[0];
+
+        HttpEntityFactory jwtEntityFactory = login(testRestTemplate, user.email(), user.password());
+
+        UserResponse targetUser = getUserByEmail(jwtEntityFactory, user.email());
+
+        ResponseEntity<?> deleteResponse = testRestTemplate.exchange(
+                "/users/" + targetUser.id(),
+                HttpMethod.DELETE,
+                jwtEntityFactory.noBody(),
+                new ParameterizedTypeReference<>() {}
+        );
+
+        Assertions.assertEquals(HttpStatus.FORBIDDEN, deleteResponse.getStatusCode());
+    }
+
+    private UserResponse getUserByEmail(HttpEntityFactory jwtEntityFactory, String email) {
+        ResponseEntity<List<UserResponse>> getUsersResponseEntity = testRestTemplate.exchange(
+                "/users",
+                HttpMethod.GET,
+                jwtEntityFactory.noBody(),
+                new ParameterizedTypeReference<>() {}
+        );
+
+        List<UserResponse> users = getUsersResponseEntity.getBody();
+        Assertions.assertNotNull(users);
+        Optional<UserResponse> optionalTargetUser = users.stream().filter(u -> email.equals(u.email())).findFirst();
+        Assertions.assertTrue(optionalTargetUser.isPresent());
+        return optionalTargetUser.get();
     }
 
     private ResponseEntity<UserResponse> createUserAndAssertExpectedResponse(UserDetails userDetails) {
